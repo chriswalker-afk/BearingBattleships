@@ -8,8 +8,9 @@
   const W=1000,H=650,U=50,SHIP_MARGIN=28,PORTAL_RADIUS=46;
   const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
   const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
-  const mk=(name,theme,width,route,count,armoured,speed,description)=>({
+  const mk=(name,theme,width,route,count,armoured,speed,description,branches=[])=>({
     name,theme,width,route:route.map(([x,y])=>({x,y})),
+    branches:branches.map(part=>part.map(([x,y])=>({x,y}))),
     count,armoured,speed,description,
     start:{x:route[0][0],y:route[0][1]},
     exit:{x:route[route.length-1][0],y:route[route.length-1][1]}
@@ -20,25 +21,32 @@
       2,0,8,'Wide, gentle channels, two turns and a whirlpool exit.'),
     mk('Shimmering Lagoon','lagoon',184,
       [[150,500],[350,500],[350,300],[650,300],[650,150],[850,150]],
-      2,0,9,'Sandbars and a winding turquoise lagoon.'),
+      2,0,9,'Sandbars and a winding turquoise lagoon.',
+      [[[250,500],[250,600]]]),
     mk('Mangrove Delta','mangrove',176,
       [[150,150],[350,150],[350,500],[600,500],[600,250],[850,250]],
-      3,0,10,'Navigate around mangrove roots and muddy islands.'),
+      3,0,10,'Navigate around mangrove roots and muddy islands.',
+      [[[350,350],[150,350]]]),
     mk('Coral Labyrinth','reef',170,
       [[150,500],[300,500],[300,150],[500,150],[500,450],[750,450],[750,150],[850,150]],
-      3,1,11,'Coral reefs, tighter turns and your first armoured guardian.'),
+      3,1,11,'Coral reefs, tighter turns and your first armoured guardian.',
+      [[[300,300],[150,300]]]),
     mk('Rocky Archipelago','rocks',164,
       [[150,200],[300,200],[300,500],[500,500],[500,150],[700,150],[700,450],[850,450]],
-      4,1,12,'Wind through basalt islands, hidden passages and guardians.'),
+      4,1,12,'Wind through basalt islands, hidden passages and guardians.',
+      [[[300,400],[150,400]]]),
     mk('Frozen Fjords','ice',158,
       [[150,500],[350,500],[350,200],[550,200],[550,450],[750,450],[750,150],[850,150]],
-      4,1,12,'Narrow icy channels between glittering glaciers.'),
+      4,1,12,'Narrow icy channels between glittering glaciers.',
+      [[[350,300],[150,300]]]),
     mk('Stormy Strait','storm',152,
       [[150,150],[350,150],[350,500],[550,500],[550,200],[750,200],[750,500],[850,500]],
-      4,2,14,'Storm clouds and rugged reef walls: watch every turn.'),
+      4,2,14,'Storm clouds and rugged reef walls: watch every turn.',
+      [[[350,350],[150,350]],[[650,200],[650,100]]]),
     mk('Astral Escape','space',148,
       [[150,500],[350,500],[350,150],[550,150],[550,450],[750,450],[750,150],[850,150]],
-      5,2,15,'Pilot the final starlane between asteroid fields to a warp portal!')
+      5,2,15,'Pilot the final starlane between asteroid fields to a warp portal!',
+      [[[350,300],[150,300]],[[650,450],[650,550]]])
   ];
   const palettes={
     water:{land:'#cbd9bd',rim:'#8cafa0',water:'#6fd4dc',shine:'#c3f7ef',dark:'#1a708c',feature:'#839f77',icon:'🌿'},
@@ -53,6 +61,8 @@
   for(const [i,m] of maps.entries()){
     const length=m.route.slice(1).reduce((total,p,j)=>total+distance(m.route[j],p),0);
     m.level=i+1;m.length=length;m.palette=palettes[m.theme];
+    for(const branch of m.branches)Object.freeze(branch);
+    Object.freeze(m.branches);
     Object.freeze(m.route);Object.freeze(m.start);Object.freeze(m.exit);Object.freeze(m);
   }
   Object.freeze(maps);
@@ -72,8 +82,8 @@
     if(p.x<35||p.x>W-35||p.y<35||p.y>H-35)return false;
     const allowed=map.width/2-margin;
     if(allowed<=0)return false;
-    return map.route.slice(1).some((q,j)=>
-      distanceToSegment(p,map.route[j],q).distance<=allowed+1e-6);
+    return [map.route,...map.branches].some(route=>route.slice(1).some((q,j)=>
+      distanceToSegment(p,route[j],q).distance<=allowed+1e-6));
   }
   // A straight 1–5-unit MOVE must remain in the navigable water for its
   // ENTIRE length. Endpoints alone are insufficient at maze corners.
@@ -145,9 +155,16 @@
     return {id,x:enemy.x,y:enemy.y,from:{x:enemy.x,y:enemy.y},
       appearsAt:now,settlesAt:now+260,expiresAfterMove:moveCount+9};
   }
-  function trace(c,map){
-    c.beginPath();c.moveTo(map.route[0].x,map.route[0].y);
-    for(const p of map.route.slice(1))c.lineTo(p.x,p.y);
+  function trace(c,route){
+    c.beginPath();c.moveTo(route[0].x,route[0].y);
+    for(const p of route.slice(1))c.lineTo(p.x,p.y);
+  }
+  function traceAll(c,map,color,width){
+    c.strokeStyle=color;c.lineWidth=width;
+    // Side branches are painted first so they merge smoothly into the main
+    // navigable channel, rather than looking like overlaps or separate tiles.
+    for(const branch of map.branches){trace(c,branch);c.stroke();}
+    trace(c,map.route);c.stroke();
   }
   function decor(c,map,now){
     const {land,feature}=map.palette,space=map.theme==='space';
@@ -185,12 +202,12 @@
     c.save();
     decor(c,map,now);
     c.lineCap='round';c.lineJoin='round';
-    trace(c,map);c.strokeStyle=colors.rim;c.lineWidth=map.width+23;c.stroke();
-    trace(c,map);c.strokeStyle=colors.dark;c.lineWidth=map.width+7;c.stroke();
+    traceAll(c,map,colors.rim,map.width+23);
+    traceAll(c,map,colors.dark,map.width+7);
     const grad=c.createLinearGradient(0,0,W,H);
     grad.addColorStop(0,colors.shine);grad.addColorStop(.48,colors.water);
     grad.addColorStop(1,space?'#403977':colors.water);
-    trace(c,map);c.strokeStyle=grad;c.lineWidth=map.width;c.stroke();
+    traceAll(c,map,grad,map.width);
     // Light translucent stripes and north-up grid retain the original
     // 50px-per-unit scale, without revealing routes or target bearings.
     c.save();c.strokeStyle=space?'rgba(187,189,255,.16)':'rgba(13,101,130,.13)';
@@ -267,6 +284,24 @@
           if(!moveClear(map,current,next))
             throw new Error('Maze route not navigable at '+map.name+' segment '+i);
           current=next;travelled+=step;
+        }
+      }
+      for(const branch of map.branches){
+        const at=branch[0];
+        const joined=map.route.slice(1).some((b,i)=>
+          distanceToSegment(at,map.route[i],b).distance<=.01);
+        if(!joined)throw new Error('False channel is disconnected at '+map.name);
+        for(let i=1;i<branch.length;i++){
+          const a=branch[i-1],b=branch[i],len=distance(a,b);
+          if((a.x!==b.x&&a.y!==b.y)||len%50!==0)
+            throw new Error('False channel must use legal 1-unit steps at '+map.name);
+          for(let n=0;n<len;n+=250){
+            const end=Math.min(len,n+250);
+            const p={x:a.x+(b.x-a.x)*n/len,y:a.y+(b.y-a.y)*n/len};
+            const q={x:a.x+(b.x-a.x)*end/len,y:a.y+(b.y-a.y)*end/len};
+            if(!moveClear(map,p,q))
+              throw new Error('False channel is not navigable at '+map.name);
+          }
         }
       }
       for(const e of enemySpawns(map))
