@@ -62,6 +62,9 @@ function harness(reducedMotion = false) {
   vm.runInContext(art, context, { filename: 'pass-a-art.js' });
   vm.runInContext(juice, context, { filename: 'pass-b-juice.js' });
   vm.runInContext(difficulty, context, { filename: 'difficulty.js' });
+  // In the browser window IS global; this VM harness uses a separate window stub.
+  sandbox.BloopArt=win.BloopArt;
+  sandbox.BloopJuice=win.BloopJuice;
   // Test-only source injection: no production debug hook is shipped.
   const anchor = 'start();if(!reducedMotion)requestAnimationFrame(frame);})();';
   assert.ok(inline[1].includes(anchor), 'Expected game entrypoint');
