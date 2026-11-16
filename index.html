@@ -64,7 +64,7 @@
 <details open><summary>What is a bearing?</summary><p>A bearing is an angle measured <b>clockwise from north</b>, written using <b>three figures</b>. For example, east is 090°, south is 180°, west is 270° and north is 000°.</p></details>
 <details><summary>How do I use the protractor?</summary><ol><li>Drag its centre onto your ship.</li><li>Rotate it so its 0° / N direction points upwards (north).</li><li>Read clockwise from north to the creature, using its position on the circular scale.</li><li>Type a three-figure bearing in Captain's orders.</li></ol><p>Think of 045° as halfway between north and east, while 315° is northwest.</p></details>
 <details><summary>How do I use the ruler?</summary><p>The ruler pivots around the <b>blue 0 mark at the centre of its short end</b>, not its middle. Drag its body to position that mark on your ship. Then drag the <b>orange handle on its far end</b> to turn the ruler towards a creature without shifting the 0 mark. Read distance from 0 along the marked edge; each grid square is 1 unit. Bubble range is up to 8 units; movement is limited to 1–5 units.</p></details>
-<details><summary>What do the + and − sea zoom buttons do?</summary><p>Use <b>+</b> to magnify the sea and <b>−</b> to step back out. The percentage button returns to the <b>100% full-map view</b>; the maximum is <b>200%</b>. The view follows your ship as it sails. Your ruler, protractor, grid and sea creatures all magnify together, so <b>one square is still one unit</b> and your three-figure bearings and firing distances stay unchanged. At higher zoom levels some enemies may be outside the visible area: zoom out to 100% to find them again.</p></details>
+<details><summary>What do the + and − sea zoom buttons do?</summary><p>Use <b>+</b> to magnify the sea and <b>−</b> to step back out. The percentage button returns to the <b>100% full-map view</b>; the maximum is <b>200%</b>. The view follows your ship as it sails. Your ruler, protractor, grid and sea creatures all magnify together, so <b>one square is still one unit</b> and your three-figure bearings and firing distances stay unchanged. At higher zoom levels some enemies may be outside the visible area: zoom out to 100% to find them again. If the far-end ruler handle is off-screen, rotate using the additional <b>small orange grip near the ruler’s zero end</b>.</p></details>
 <details><summary>Why do turns alternate between Fire and Move?</summary><p>Each <b>valid turn</b> has a set phase: <b>Fire → Move → Fire → Move</b>. You start by firing. After you complete the order, surviving sea sillies swim closer and the next phase is announced. The highlighted phase and large action button show what you must do now. You cannot skip a phase. This continues across levels, including two-hit helmet enemies.</p><p>An invalid bearing, distance or off-map move does not use a turn or change your phase.</p></details>
 <details><summary>What does an incorrect bearing warning mean?</summary><p>Use a three-digit bearing from <b>000° to 359°</b> (e.g. 005°, 045°, 270°). North is 000°, not 360°. The warning pop-in explains whether digits are missing or the number is out of range. Correct the entry and try again: your turn is not lost.</p></details>
 <details><summary>How do three-figure bearings work?</summary><p>Always write three digits: 5° is <b>005°</b>, 45° is <b>045°</b>, and 120° remains <b>120°</b>. 360° points north too, but this game uses 000°.</p></details>
@@ -122,6 +122,7 @@ let collisionGhosts=[],animating=false,animEnd=0,pendingEnd=false,pendingPhase=n
 let streak=0,bestStreak=0,waveNo=1,cues=[],speechCue=null,celebrationCue=null,damageUntil=0;
 const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const RULER_LENGTH=8*U, RULER_HALF_WIDTH=20, RULER_HANDLE_X=RULER_LENGTH+18;
+const RULER_NEAR_GRIP={x:65,y:-38};
 // ruler.x/y are the centre of the short (0-unit) end, not the midpoint.
 let pro={x:400,y:355,a:0},ruler={x:320,y:560,a:0};
 const tutorials=[
@@ -130,7 +131,7 @@ const tutorials=[
 ['Your maths mission','Bearings are angles measured <b>clockwise from north</b>. North is up, and the compass below the board always shows it. You must enter bearings using three figures, such as 045°, 090° or 275°.'],
 ['Measure with the protractor','Use the <b>Protractor</b> button to show it. Drag the transparent disk by its body until the centre is on your ship. Drag the orange circle on its rim to rotate it; keep the N/0° line pointing north. Read the angle clockwise towards a creature. There is no auto-aim.'],
 ['Measure with the ruler','<b>The small blue circle at 0 is the pivot.</b> Drag the ruler body until the blue 0 circle sits at the centre of your ship. Now drag the orange handle at the far end: the ruler rotates while its 0 end stays fixed. Read distance in grid units (one square = one unit). Bubbles can travel 1–8 units.'],
-['Zoom the sea scene','Use the <b>− and + buttons</b> under the sea to zoom from <b>100% (full map)</b> up to <b>200%</b>. The percentage button resets the view to 100%. The camera follows your ship while you sail, so nearby creatures and measuring tools become easier to see. <b>Bearings, grid units, shot range, ship movement and enemy hitboxes never change.</b> Zoom back to 100% to see every enemy on the whole map.'],
+['Zoom the sea scene','Use the <b>− and + buttons</b> under the sea to zoom from <b>100% (full map)</b> up to <b>200%</b>. The percentage button resets the view to 100%. The camera follows your ship while you sail. If the ruler’s far orange handle goes off-screen, use its <b>small orange rotation grip near the zero end</b>. <b>Bearings, grid units, shot range, ship movement and enemy hitboxes never change.</b> Zoom back to 100% to see every enemy.'],
 ['Firing phase','Your first turn is a <b>FIRE PHASE</b>. You cannot choose the phase: the game alternates automatically. Use your protractor and ruler to measure a target, enter a three-figure bearing and a whole-number range of 1–8 units, then press <b>Launch bubble!</b>. A bubble travels in a straight line. Hitting a creature pops it, except for the first hit on a two-hit helmet.'],
 ['Moving phase','After a valid firing turn, a clear pop-in announces <b>MOVE PHASE</b>. You must now sail. Measure the bearing you want to travel, then enter a three-figure bearing and a whole-number distance of 1–5 units. A move cannot leave the map. After a valid move, the game switches back to <b>FIRE PHASE</b>. Enemies move closer after either kind of turn.'],
 ['Mistakes and pop-in warnings','Incorrect bearings trigger a clear red warning. Bearings are always <b>three figures</b>, measured clockwise from north: write <b>045°</b>, not 45°. North is <b>000°</b>, not 360°. Invalid bearings, distances and off-map moves do <b>not</b> use a turn, move enemies or change the current phase. Correct your input and try again.'],
@@ -574,7 +575,17 @@ function instruments(){if(showP){ctx.save();ctx.translate(pro.x,pro.y);ctx.rotat
   ctx.fillStyle='rgba(255,255,255,.94)';ctx.strokeStyle='#0c80aa';ctx.lineWidth=2.5;
   ctx.beginPath();ctx.arc(0,0,9,0,Math.PI*2);ctx.fill();ctx.stroke();
   ctx.fillStyle='#0c80aa';ctx.beginPath();ctx.arc(0,0,3.5,0,Math.PI*2);ctx.fill();
-  // Orange rotation handle is beyond the 8-unit mark, leaving that mark readable.
+  // A second orange rotation grip is kept near zero so it remains on-screen
+  // even when zoomed in. It sits just OUTSIDE the graduated ruler body.
+  ctx.strokeStyle='#bd7762';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.moveTo(RULER_NEAR_GRIP.x,-RULER_HALF_WIDTH);
+  ctx.lineTo(RULER_NEAR_GRIP.x,RULER_NEAR_GRIP.y);ctx.stroke();
+  ctx.fillStyle='#ed6c4d';ctx.strokeStyle='#a94445';ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.arc(RULER_NEAR_GRIP.x,RULER_NEAR_GRIP.y,10,0,Math.PI*2);
+  ctx.fill();ctx.stroke();
+  ctx.strokeStyle='#fff';ctx.lineWidth=1.8;ctx.beginPath();
+  ctx.arc(RULER_NEAR_GRIP.x,RULER_NEAR_GRIP.y,4,0,Math.PI*2);ctx.stroke();
+  // The original far-end orange handle remains beyond the 8-unit mark.
   ctx.strokeStyle='#bd7762';ctx.lineWidth=3;
   ctx.beginPath();ctx.moveTo(RULER_LENGTH,0);ctx.lineTo(RULER_HANDLE_X,0);ctx.stroke();
   ctx.fillStyle='#ed6c4d';ctx.strokeStyle='#a94445';ctx.lineWidth=1.7;
@@ -679,7 +690,9 @@ function rulerHandleRadius(){const rect=canvas.getBoundingClientRect();return Ma
 canvas.addEventListener('pointerdown',e=>{
   const p=pointer(e),pr=rotatePoint(p,pro,pro.a),rr=rotatePoint(p,ruler,ruler.a);
   if(showR&&Math.hypot(rr.x-RULER_HANDLE_X,rr.y)<rulerHandleRadius()){
-    drag={tool:'ruler',kind:'rotate'};
+    drag={tool:'ruler',kind:'rotate',angleOffset:Math.atan2(p.y-ruler.y,p.x-ruler.x)-ruler.a};
+  }else if(showR&&Math.hypot(rr.x-RULER_NEAR_GRIP.x,rr.y-RULER_NEAR_GRIP.y)<rulerHandleRadius()){
+    drag={tool:'ruler',kind:'rotate',angleOffset:Math.atan2(p.y-ruler.y,p.x-ruler.x)-ruler.a};
   }else if(showP&&Math.hypot(pr.x,pr.y+145)<20){
     drag={tool:'pro',kind:'rotate'};
   }else if(showR&&rr.x>=-12&&rr.x<=RULER_LENGTH+5&&Math.abs(rr.y)<=RULER_HALF_WIDTH+5){
@@ -689,7 +702,7 @@ canvas.addEventListener('pointerdown',e=>{
   }
   if(drag){canvas.setPointerCapture(e.pointerId);e.preventDefault()}
 });
-canvas.addEventListener('pointermove',e=>{if(!drag)return;const p=pointer(e),t=drag.tool==='pro'?pro:ruler;if(drag.kind==='move'){t.x=safe(p.x-drag.dx,0,W);t.y=safe(p.y-drag.dy,0,H)}else{const ang=Math.atan2(p.y-t.y,p.x-t.x);t.a=drag.tool==='pro'?ang+Math.PI/2:ang}draw()});
+canvas.addEventListener('pointermove',e=>{if(!drag)return;const p=pointer(e),t=drag.tool==='pro'?pro:ruler;if(drag.kind==='move'){t.x=safe(p.x-drag.dx,0,W);t.y=safe(p.y-drag.dy,0,H)}else{const ang=Math.atan2(p.y-t.y,p.x-t.x);t.a=drag.tool==='pro'?ang+Math.PI/2:ang-(drag.angleOffset||0)}draw()});
 function endDrag(){drag=null}canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',endDrag);
 $('zoomOutBtn').addEventListener('click',()=>setZoom(sceneZoom-window.BloopZoom.STEP));
 $('zoomInBtn').addEventListener('click',()=>setZoom(sceneZoom+window.BloopZoom.STEP));
