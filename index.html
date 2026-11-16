@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#103b63"><title>Bloop! Bearing Battles</title>
 <style>
 :root{font-family:system-ui,"Trebuchet MS",sans-serif;color:#163554;background:#e8f7fa}*{box-sizing:border-box}body{margin:0}button,input{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:11px 15px;font-weight:800;background:#fff;color:#16466c;box-shadow:0 3px 0 #c2d4db}button:hover{filter:brightness(.95)}button:focus-visible,input:focus-visible{outline:3px solid #ffb830;outline-offset:2px}.shell{max-width:1500px;margin:auto;padding:15px}header{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}h1{margin:0;font-size:clamp(1.6rem,3vw,2.6rem);letter-spacing:-1px;color:#10476c}header p{margin:2px 0 0}.pill{background:#ffe38a;border-radius:99px;padding:6px 12px;font-weight:850}.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:16px;margin-top:14px}.seaWrap{min-width:0}.sea{position:relative;background:#91ddeb;border:8px solid #fff;border-radius:22px;box-shadow:0 8px 0 #c1d6dc;overflow:hidden;touch-action:none}canvas{display:block;width:100%;height:auto;aspect-ratio:1000/650;touch-action:none}.seafooter{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 4px}.compass{display:flex;align-items:center;gap:9px;font-weight:850;color:#16466c}.compass svg{width:72px;height:72px;flex:none}.panel{background:#fff;border-radius:20px;padding:18px;box-shadow:0 6px 0 #c9dfe1}.stack{display:flex;flex-direction:column;gap:14px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{border-radius:13px;background:#e8f6fa;padding:10px 4px;text-align:center;font-size:.8rem}.stat strong{display:block;font-size:1.45rem}.bar{display:flex;gap:8px;flex-wrap:wrap}.bar button{flex:1;padding:10px 6px}.active{background:#ffda79!important;color:#163554!important}.fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.fields label{display:grid;gap:5px;font-size:.88rem;font-weight:750}.fields input{min-width:0;border:2px solid #a8d4e0;border-radius:10px;padding:10px;background:#f6fcfe}h2{margin:0 0 9px;font-size:1.2rem}h3{margin:0 0 8px}p{line-height:1.5}.small{font-size:.85rem}.hint{background:#fff5cf;border-radius:12px;padding:11px;font-size:.9rem}.primary{background:#ffab59;color:#522c17}.secondary{background:#18618a;color:#fff}.muted{color:#5c7886}.log{min-height:77px;background:#eaf6f9;border-radius:12px;padding:12px;font-size:.93rem;font-weight:650}dialog{border:0;border-radius:20px;box-shadow:0 20px 100px #123b5e73;max-width:min(700px,94vw);max-height:90vh;padding:0;color:#183e57}dialog::backdrop{background:#0b2746a9}.modal{padding:22px}.modal h2{font-size:1.7rem}.modal .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.tutorialStep{padding:13px;background:#e8f6fa;border-radius:12px;min-height:135px}.badge{display:inline-block;padding:4px 9px;border-radius:25px;background:#ffdb82;font-size:.8rem;font-weight:bold}details{border-top:1px solid #c2dde3;padding:11px 0}summary{cursor:pointer;font-weight:800}ol,ul{line-height:1.65;padding-left:23px}.gameover{position:absolute;inset:0;background:#092a4fba;color:#fff;display:none;align-items:center;justify-content:center;text-align:center;flex-direction:column;padding:24px}.gameover.show{display:flex}.gameover h2{font-size:clamp(2rem,5vw,3.8rem)}.wide{width:100%}@media(max-width:950px){.layout{grid-template-columns:1fr}.panel{padding:13px}.stack{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.stack>.panel:last-child{grid-column:1/-1}}@media(max-width:570px){.stack{grid-template-columns:1fr}.shell{padding:8px}.sea{border-width:4px}.panel{padding:13px}.compass svg{width:58px;height:58px}.seafooter{font-size:.83rem}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
-</style></head><body><main class="shell">
+</style><link rel="stylesheet" href="pass-a.css"></head><body><main class="shell">
 <header><div><h1>🐙 Bloop! Bearing Battles</h1><p>Steer the S.S. Wobble. Outsmart the approaching sea sillies!</p></div><div class="bar"><button id="tutorialBtn">📖 Tutorial</button><button id="mathBtn">📐 Maths help</button><button id="resetBtn">↻ New game</button></div></header>
 <div class="layout"><div class="seaWrap"><div class="sea" id="sea"><canvas id="board" width="1000" height="650" aria-label="Play area with your ship and approaching enemies. North is at the top. Use the draggable ruler and protractor to measure."></canvas><div id="end" class="gameover" role="status"><h2 id="endTitle"></h2><p id="endText"></p><button id="againBtn" class="primary">Try again!</button></div></div><div class="seafooter"><div class="compass"><svg viewBox="0 0 100 100" role="img" aria-label="North is up; east right, south down, west left"><circle cx="50" cy="50" r="45" fill="#fff" stroke="#115b85" stroke-width="4"/><path d="M50 9L61 52L50 44L39 52Z" fill="#ef7564"/><path d="M50 91L61 52L50 59L39 52Z" fill="#269bba"/><text x="50" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">N</text><text x="84" y="54" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">E</text><text x="50" y="90" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">S</text><text x="16" y="54" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">W</text></svg><span>North stays at the top</span></div><span class="small muted">Each grid square = 1 nautical unit · Tools are yours to move and rotate</span></div></div>
 <div class="stack"><section class="panel"><h2>Ship's log</h2><div class="stats"><div class="stat">Turn<strong id="turn">1</strong></div><div class="stat">Score<strong id="score">0</strong></div><div class="stat">Hearts<strong id="hearts">♥♥♥</strong></div></div><p class="small muted">Enemies are coming closer. A creature that reaches your ship costs a heart.</p><div class="log" id="log" aria-live="polite">Ahoy! Measure an angle, then choose your order.</div></section>
@@ -19,10 +19,14 @@
 <details><summary>Why might a shot miss?</summary><p>Check that your protractor is centred on the ship, 0° points north, you have measured clockwise, and your range is long enough. A bubble travels in a straight line along the bearing you enter.</p></details>
 <details><summary>Challenge: reverse bearings</summary><p>The bearing from A to B is 070°. From B to A, turn 180°: the reverse bearing is <b>250°</b>. If the original bearing is over 180°, subtract 180° instead.</p></details>
 <div class="actions"><button class="secondary" id="closeMath">Back to game</button></div></div></dialog>
+<script src="pass-a-art.js"></script>
 <script>
 (()=>{'use strict';
 const canvas=document.getElementById('board'),ctx=canvas.getContext('2d'),$=id=>document.getElementById(id),W=1000,H=650,U=50;
-let ship,enemies,turn,score,hearts,mode='fire',finished=false,showP=true,showR=true,drag=null,flash=null;
+let ship,enemies,turn,score,hearts,mode='fire',finished=false,showP=true,showR=true,drag=null;
+let shipMotion=null,shotMotion=null,impactMotion=null,waveMotion=null,hitGhost=null;
+let collisionGhosts=[],animating=false,animEnd=0,pendingEnd=false;
+const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let pro={x:400,y:355,a:0},ruler={x:550,y:470,a:-.35};
 const tutorials=[
 ['Welcome aboard!','You are captain of the S.S. Wobble, a very brave (and extremely squeaky) ship. Silly sea creatures are swimming closer. Your job is to pop them with bubbles or sail out of danger.'],
@@ -36,23 +40,178 @@ const tutorials=[
 function safe(v,min,max){return Math.max(min,Math.min(max,v))}
 function pos(e,b,d){const a=b*Math.PI/180;return{x:e.x+Math.sin(a)*d*U,y:e.y-Math.cos(a)*d*U}}
 function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
-function spawn(n){for(let i=0;i<n;i++){let p,tries=0;do{const side=Math.floor(Math.random()*4);p={x:side===0?65:side===1?935:70+Math.random()*860,y:side===2?65:side===3?585:70+Math.random()*510};tries++}while(dist(p,ship)<260&&tries<50);enemies.push({x:p.x,y:p.y,type:Math.floor(Math.random()*3),bob:Math.random()*6.28})}}
-function start(){ship={x:500,y:325};enemies=[];turn=1;score=0;hearts=3;finished=false;flash=null;pro={x:500,y:325,a:0};ruler={x:520,y:440,a:0};spawn(3);$('end').classList.remove('show');$('log').textContent='Ahoy! Try measuring a creature. Every order costs one turn.';refresh();draw()}
+function spawn(n,at=0){for(let i=0;i<n;i++){let p,tries=0;do{const side=Math.floor(Math.random()*4);p={x:side===0?65:side===1?935:70+Math.random()*860,y:side===2?65:side===3?585:70+Math.random()*510};tries++}while(dist(p,ship)<260&&tries<50);enemies.push({x:p.x,y:p.y,type:Math.floor(Math.random()*3),bob:Math.random()*6.28,bornAt:at})}}
+function start(){
+  ship={x:500,y:325,heading:0};enemies=[];turn=1;score=0;hearts=3;finished=false;
+  shipMotion=null;shotMotion=null;impactMotion=null;waveMotion=null;hitGhost=null;
+  collisionGhosts=[];pendingEnd=false;animating=false;animEnd=0;
+  pro={x:500,y:325,a:0};ruler={x:520,y:440,a:0};
+  spawn(3);$('end').classList.remove('show');setLocked(false);
+  $('log').textContent='Ahoy! Measure a creature, then choose your order. Every order uses a turn.';
+  refresh();draw();
+}
+function setLocked(locked){
+  for(const id of ['actionBtn','fireMode','moveMode','bearing','distance'])$(id).disabled=locked;
+}
+function showEnding(){
+  $('endTitle').textContent='Bloop! Shipwreck!';
+  $('endText').textContent='You bubbled '+score+' sea sillies. Try another voyage and sharpen those bearings!';
+  $('end').classList.add('show');
+}
+
 function refresh(){$('turn').textContent=turn;$('score').textContent=score;$('hearts').textContent='♥'.repeat(hearts)+'♡'.repeat(3-hearts)}
 function message(s){$('log').textContent=s}
-function updateMode(m){mode=m;for(const [id,is] of [['fireMode',m==='fire'],['moveMode',m==='move']]){$(id).classList.toggle('active',is);$(id).setAttribute('aria-pressed',String(is))}$('modeInfo').textContent=m==='fire'?'Launch a bubble at the bearing you enter. One target per shot.':'Sail using a bearing and a distance (1–5 units).';$('actionBtn').textContent=m==='fire'?'Launch bubble!':'Sail away!';$('distance').max=m==='fire'?8:5;$('distance').placeholder=m==='fire'?'1–8':'1–5';$('distanceLabel').firstChild.textContent=m==='fire'?'Range (units)':'Distance (units)'}
-function order(){if(finished)return;const b=$('bearing').value.trim(),d=Number($('distance').value),max=mode==='fire'?8:5;if(!/^\d{3}$/.test(b)||Number(b)>359){message('Use a three-figure bearing from 000 to 359, such as 045. No turn used.');return}if(!Number.isInteger(d)||d<1||d>max){message('Enter a whole-number '+(mode==='fire'?'range from 1 to 8':'distance from 1 to 5')+'. No turn used.');return}
-const dest=pos(ship,Number(b),d);
-if(mode==='move'&&(dest.x<35||dest.x>965||dest.y<35||dest.y>615)){message('That course sails off the map. Try a different bearing or distance. No turn used.');return}
-let result='';
-if(mode==='move'){ship=dest;result='S.S. Wobble sailed '+d+' unit'+(d===1?'':'s')+' on bearing '+b+'°. '}
-else{const dx=dest.x-ship.x,dy=dest.y-ship.y,len=Math.hypot(dx,dy),ux=dx/len,uy=dy/len;let best=null,bestT=Infinity;for(const e of enemies){const vx=e.x-ship.x,vy=e.y-ship.y,t=vx*ux+vy*uy;const miss=Math.abs(vx*uy-vy*ux);if(t>=0&&t<=len+16&&miss<=22&&t<bestT){best=e;bestT=t}}flash={a:{...ship},b:{x:ship.x+ux*(best?bestT:len),y:ship.y+uy*(best?bestT:len)},until:performance.now()+750};if(best){enemies.splice(enemies.indexOf(best),1);score++;result='POP! A sea silly was bubbled. +1 point! '}else result='Sploosh! Your bubble missed. Recheck your bearing and range. '}
-turn++;const attacks=[];for(let i=enemies.length-1;i>=0;i--){const e=enemies[i],dd=dist(e,ship),speed=17+Math.min(12,Math.floor(turn/5)*2);if(dd>0){e.x+=(ship.x-e.x)/dd*Math.min(speed,dd);e.y+=(ship.y-e.y)/dd*Math.min(speed,dd)}if(dist(e,ship)<45){enemies.splice(i,1);hearts--;attacks.push('A silly bonked your ship! −1 heart.')}}if(enemies.length===0&&hearts>0){spawn(3+Math.min(3,Math.floor(score/4)));result+='New sea sillies have appeared! '}if(attacks.length)result+=attacks.join(' ');message(result+' Turn '+turn+'.');refresh();if(hearts<=0){finished=true;$('endTitle').textContent='Bloop! Shipwreck!';$('endText').textContent='You bubbled '+score+' sea sillies. Try another voyage and sharpen those bearings!';$('end').classList.add('show')}draw()}
+function updateMode(m){if(animating)return;mode=m;for(const [id,is] of [['fireMode',m==='fire'],['moveMode',m==='move']]){$(id).classList.toggle('active',is);$(id).setAttribute('aria-pressed',String(is))}$('modeInfo').textContent=m==='fire'?'Launch a bubble at the bearing you enter. One target per shot.':'Sail using a bearing and a distance (1–5 units).';$('actionBtn').textContent=m==='fire'?'Launch bubble!':'Sail away!';$('distance').max=m==='fire'?8:5;$('distance').placeholder=m==='fire'?'1–8':'1–5';$('distanceLabel').firstChild.textContent=m==='fire'?'Range (units)':'Distance (units)'}
+function order(){
+  if(finished||animating)return;
+  const bearing=$('bearing').value.trim(),distance=Number($('distance').value);
+  const max=mode==='fire'?8:5;
+  if(!/^\d{3}$/.test(bearing)||Number(bearing)>359){
+    message('Use a three-figure bearing from 000 to 359, such as 045. No turn used.');return;
+  }
+  if(!Number.isInteger(distance)||distance<1||distance>max){
+    message('Enter a whole-number '+(mode==='fire'?'range from 1 to 8':'distance from 1 to 5')+'. No turn used.');return;
+  }
+  const dest=pos(ship,Number(bearing),distance);
+  if(mode==='move'&&(dest.x<35||dest.x>965||dest.y<35||dest.y>615)){
+    message('That course sails off the map. Try a different bearing or distance. No turn used.');return;
+  }
+  const now=performance.now(),oldShip={...ship};
+  const shotDuration=reducedMotion?0:650;
+  const sailDuration=reducedMotion?0:750;
+  const advanceDelay=(mode==='fire'?shotDuration:sailDuration)+(reducedMotion?0:120);
+  const advanceDuration=reducedMotion?0:570;
+  const oldEnemyPositions=new Map(enemies.map(e=>[e,{x:e.x,y:e.y}]));
+  let result='';
+  shipMotion=null;shotMotion=null;impactMotion=null;waveMotion=null;
+  hitGhost=null;collisionGhosts=[];
+  if(mode==='move'){
+    const oldHeading=oldShip.heading||0;
+    const requested=Number(bearing)*Math.PI/180;
+    // Shortest visual turn to the compass heading, while the maths uses absolute north.
+    const delta=Math.atan2(Math.sin(requested-oldHeading),Math.cos(requested-oldHeading));
+    ship={...dest,heading:oldHeading+delta};
+    shipMotion={from:oldShip,to:{...ship},start:now,duration:sailDuration,headingFrom:oldHeading,headingDelta:delta};
+    result='S.S. Wobble sailed '+distance+' unit'+(distance===1?'':'s')+' on bearing '+bearing+'°. ';
+  }else{
+    const dx=dest.x-ship.x,dy=dest.y-ship.y,length=Math.hypot(dx,dy);
+    const ux=dx/length,uy=dy/length;
+    let best=null,bestT=Infinity;
+    for(const enemy of enemies){
+      const vx=enemy.x-ship.x,vy=enemy.y-ship.y,t=vx*ux+vy*uy;
+      const miss=Math.abs(vx*uy-vy*ux);
+      if(t>=0&&t<=length+16&&miss<=22&&t<bestT){best=enemy;bestT=t;}
+    }
+    const endpoint={x:ship.x+ux*(best?bestT:length),y:ship.y+uy*(best?bestT:length)};
+    shotMotion={from:oldShip,to:endpoint,start:now,duration:shotDuration,hit:!!best};
+    impactMotion={x:endpoint.x,y:endpoint.y,start:now+shotDuration,duration:reducedMotion?0:450,hit:!!best};
+    if(best){
+      hitGhost={...best};
+      enemies.splice(enemies.indexOf(best),1);score++;
+      result='POP! A sea silly was bubbled. +1 point! ';
+    }else{
+      result='Sploosh! Your bubble missed. Recheck your bearing and range. ';
+    }
+  }
+
+  turn++;
+  let bumps=0;
+  // Logical state advances immediately, but the render interpolates from the old positions.
+  // This preserves the exact collision and bearing rules from Pass 1.
+  for(let i=enemies.length-1;i>=0;i--){
+    const enemy=enemies[i],old=oldEnemyPositions.get(enemy);
+    const dd=dist(enemy,ship),speed=17+Math.min(12,Math.floor(turn/5)*2);
+    if(dd>0){
+      enemy.x+=(ship.x-enemy.x)/dd*Math.min(speed,dd);
+      enemy.y+=(ship.y-enemy.y)/dd*Math.min(speed,dd);
+    }
+    enemy.motion={from:old,to:{x:enemy.x,y:enemy.y},start:now+advanceDelay,duration:advanceDuration};
+    if(dist(enemy,ship)<45){
+      // Keep a temporary visual ghost so the creature can reach the ship visibly.
+      collisionGhosts.push({creature:{...enemy},motion:enemy.motion,impact:{
+        x:ship.x,y:ship.y,start:now+advanceDelay+advanceDuration,duration:reducedMotion?0:450
+      }});
+      enemies.splice(i,1);hearts=Math.max(0,hearts-1);bumps++;
+    }
+  }
+  if(bumps)result+=bumps===1?'A silly bonked your ship! −1 heart. ':bumps+' sillies bonked your ship! −'+bumps+' hearts. ';
+  if(enemies.length===0&&hearts>0){
+    const spawnAt=now+advanceDelay+advanceDuration+(reducedMotion?0:170);
+    spawn(3+Math.min(3,Math.floor(score/4)),spawnAt);
+    waveMotion={start:spawnAt};
+    result+='New sea sillies incoming! ';
+  }
+
+  if(hearts<=0){finished=true;pendingEnd=true;}
+  animEnd=now+advanceDelay+advanceDuration+(reducedMotion?0:560);
+  animating=!reducedMotion;
+  setLocked(animating);
+  if(reducedMotion&&pendingEnd){showEnding();pendingEnd=false;}
+  message(result+' Turn '+turn+'.');refresh();draw(now);
+}
+
 function grid(){ctx.fillStyle='#9ee2ed';ctx.fillRect(0,0,W,H);ctx.strokeStyle='rgba(19,99,133,.18)';ctx.lineWidth=1;for(let x=0;x<=W;x+=U){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}for(let y=0;y<=H;y+=U){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}ctx.font='bold 13px system-ui';ctx.fillStyle='#347a95';ctx.fillText('N ↑',18,25);for(let i=0;i<20;i++){const x=(i*171+43)%980,y=(i*113+91)%630;ctx.strokeStyle='rgba(255,255,255,.36)';ctx.beginPath();ctx.arc(x,y,5,0,Math.PI);ctx.stroke()}}
 function creature(e){const {x,y,type}=e;ctx.save();ctx.translate(x,y);ctx.shadowColor='#3e92a3';ctx.shadowBlur=10;ctx.shadowOffsetY=4;const color=['#db7dc9','#ffc76b','#91bf71'][type];ctx.fillStyle=color;ctx.strokeStyle='#235571';ctx.lineWidth=3;if(type===0){for(let i=-2;i<=2;i++){ctx.beginPath();ctx.moveTo(i*9,7);ctx.quadraticCurveTo(i*12,35,i*10+5,31);ctx.stroke()}ctx.beginPath();ctx.ellipse(0,0,25,21,0,0,7);ctx.fill();ctx.stroke()}else if(type===1){ctx.beginPath();ctx.arc(0,0,24,0,7);ctx.fill();ctx.stroke();for(let i=0;i<8;i++){ctx.beginPath();ctx.moveTo(Math.cos(i*Math.PI/4)*22,Math.sin(i*Math.PI/4)*22);ctx.lineTo(Math.cos(i*Math.PI/4)*29,Math.sin(i*Math.PI/4)*29);ctx.stroke()}}else{ctx.beginPath();ctx.ellipse(0,0,28,18,0,0,7);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(-16,-11);ctx.lineTo(-24,-25);ctx.lineTo(-5,-18);ctx.moveTo(12,-12);ctx.lineTo(23,-24);ctx.lineTo(24,-4);ctx.stroke()}ctx.shadowBlur=0;ctx.fillStyle='#fff';for(const xx of [-9,9]){ctx.beginPath();ctx.arc(xx,-3,7,0,7);ctx.fill();ctx.fillStyle='#173b57';ctx.beginPath();ctx.arc(xx+1,-3,3,0,7);ctx.fill();ctx.fillStyle='#fff'}ctx.strokeStyle='#224962';ctx.beginPath();ctx.arc(0,7,6,0,Math.PI);ctx.stroke();ctx.restore()}
 function boat(){ctx.save();ctx.translate(ship.x,ship.y);ctx.shadowColor='#235a6e';ctx.shadowBlur=12;ctx.shadowOffsetY=4;ctx.fillStyle='#0f658d';ctx.strokeStyle='#19435d';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,-28);ctx.lineTo(26,9);ctx.lineTo(19,25);ctx.lineTo(-19,25);ctx.lineTo(-26,9);ctx.closePath();ctx.fill();ctx.stroke();ctx.shadowBlur=0;ctx.fillStyle='#ffebbe';ctx.fillRect(-15,0,30,12);ctx.fillStyle='#ff8d6c';ctx.fillRect(-4,-17,8,17);ctx.beginPath();ctx.moveTo(5,-15);ctx.lineTo(22,-3);ctx.lineTo(5,-3);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(-8,17,4,0,7);ctx.arc(8,17,4,0,7);ctx.fill();ctx.restore()}
 function instruments(){if(showP){ctx.save();ctx.translate(pro.x,pro.y);ctx.rotate(pro.a);ctx.fillStyle='rgba(255,255,255,.36)';ctx.strokeStyle='#137ea2';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,145,0,7);ctx.fill();ctx.stroke();for(let deg=0;deg<360;deg+=5){const ang=(deg-90)*Math.PI/180,inner=deg%30===0?120:deg%10===0?130:136;ctx.strokeStyle='#236f90';ctx.lineWidth=deg%30===0?2:1;ctx.beginPath();ctx.moveTo(Math.cos(ang)*inner,Math.sin(ang)*inner);ctx.lineTo(Math.cos(ang)*145,Math.sin(ang)*145);ctx.stroke();if(deg%30===0){ctx.save();ctx.fillStyle='#164b73';ctx.font='bold 13px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.translate(Math.cos(ang)*106,Math.sin(ang)*106);ctx.rotate(-pro.a);ctx.fillText(String(deg).padStart(3,'0'),0,0);ctx.restore()}}ctx.fillStyle='#ed6c4d';ctx.beginPath();ctx.arc(0,-145,10,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.strokeStyle='#146486';ctx.beginPath();ctx.arc(0,0,6,0,7);ctx.fill();ctx.stroke();ctx.restore()}if(showR){ctx.save();ctx.translate(ruler.x,ruler.y);ctx.rotate(ruler.a);ctx.fillStyle='rgba(255,240,181,.77)';ctx.strokeStyle='#916b33';ctx.lineWidth=2;ctx.fillRect(-200,-20,400,40);ctx.strokeRect(-200,-20,400,40);for(let i=0;i<=8;i++){let x=-200+i*50;ctx.beginPath();ctx.moveTo(x,-20);ctx.lineTo(x,i%2===0?2:-5);ctx.stroke();if(i<8){ctx.font='bold 12px system-ui';ctx.fillStyle='#5b4625';ctx.fillText(String(i),x+3,14)}}ctx.fillStyle='#ed6c4d';ctx.beginPath();ctx.arc(200,0,10,0,7);ctx.fill();ctx.restore()}}
-function draw(){ctx.clearRect(0,0,W,H);grid();for(const e of enemies)creature(e);boat();if(flash&&performance.now()<flash.until){ctx.save();ctx.strokeStyle='#fff';ctx.lineWidth=9;ctx.setLineDash([13,12]);ctx.beginPath();ctx.moveTo(flash.a.x,flash.a.y);ctx.lineTo(flash.b.x,flash.b.y);ctx.stroke();ctx.restore()}instruments()}
+function lerpPoint(m,now){
+  if(!m)return null;
+  const t=m.duration?BloopArt.clamp((now-m.start)/m.duration,0,1):1;
+  const k=BloopArt.ease(t);
+  return{x:m.from.x+(m.to.x-m.from.x)*k,y:m.from.y+(m.to.y-m.from.y)*k};
+}
+function draw(now=performance.now()){
+  const artNow=reducedMotion?0:now;
+  BloopArt.drawSea(ctx,artNow,W,H,U);
+  // Enemies, and their targetable centres, use the same unmodified board coordinates.
+  for(const e of enemies){
+    if(now<(e.bornAt||0))continue;
+    const p=e.motion?lerpPoint(e.motion,now):e;
+    const moving=e.motion&&now>e.motion.start&&now<e.motion.start+e.motion.duration;
+    if(moving){
+      const t=(now-e.motion.start)/e.motion.duration;
+      BloopArt.drawWake(ctx,e.motion.from,p,t,'enemy');
+    }
+    const age=now-(e.bornAt||0);
+    const scale=e.bornAt&&!reducedMotion?(.35+.65*BloopArt.ease(age/380)):1;
+    BloopArt.drawCreature(ctx,{...e,x:p.x,y:p.y},artNow,scale);
+  }
+  if(hitGhost&&shotMotion&&now<shotMotion.start+shotMotion.duration){
+    BloopArt.drawCreature(ctx,hitGhost,artNow);
+  }
+  for(const ghost of collisionGhosts){
+    if(now<ghost.impact.start){
+      const p=lerpPoint(ghost.motion,now);
+      BloopArt.drawCreature(ctx,{...ghost.creature,x:p.x,y:p.y},artNow);
+    }
+    BloopArt.drawDamage(ctx,ghost.impact,now);
+  }
+  const renderedShip=shipMotion?lerpPoint(shipMotion,now):ship;
+  if(shipMotion){
+    const progress=shipMotion.duration?BloopArt.clamp((now-shipMotion.start)/shipMotion.duration,0,1):1;
+    renderedShip.heading=shipMotion.headingFrom+shipMotion.headingDelta*BloopArt.ease(progress);
+  }
+  const shipUnderway=shipMotion&&now>=shipMotion.start&&now<shipMotion.start+shipMotion.duration;
+  if(shipUnderway){
+    BloopArt.drawWake(ctx,shipMotion.from,renderedShip,
+      (now-shipMotion.start)/shipMotion.duration,'ship');
+  }
+  BloopArt.drawBoat(ctx,renderedShip,artNow,shipUnderway);
+  BloopArt.drawProjectile(ctx,shotMotion,now);
+  BloopArt.drawImpact(ctx,impactMotion,now);
+  BloopArt.drawWaveTag(ctx,waveMotion,now,W);
+  // Physical measuring tools are drawn last: their ticks remain readable.
+  instruments();
+}
+function frame(now){
+  if(animating&&now>=animEnd){
+    animating=false;setLocked(false);
+    if(pendingEnd){showEnding();pendingEnd=false;}
+  }
+  draw(now);
+  requestAnimationFrame(frame);
+}
+
 function pointer(e){const b=canvas.getBoundingClientRect();return{x:(e.clientX-b.left)*W/b.width,y:(e.clientY-b.top)*H/b.height}}
 function rotatePoint(p,c,a){const x=p.x-c.x,y=p.y-c.y;return{x:x*Math.cos(-a)-y*Math.sin(-a),y:x*Math.sin(-a)+y*Math.cos(-a)}}
 canvas.addEventListener('pointerdown',e=>{const p=pointer(e),pr=rotatePoint(p,pro,pro.a),rr=rotatePoint(p,ruler,ruler.a);if(showR&&Math.hypot(rr.x-200,rr.y)<20)drag={tool:'ruler',kind:'rotate'};else if(showP&&Math.hypot(pr.x,pr.y+145)<20)drag={tool:'pro',kind:'rotate'};else if(showR&&rr.x>-205&&rr.x<205&&Math.abs(rr.y)<23)drag={tool:'ruler',kind:'move',dx:p.x-ruler.x,dy:p.y-ruler.y};else if(showP&&Math.hypot(pr.x,pr.y)<148)drag={tool:'pro',kind:'move',dx:p.x-pro.x,dy:p.y-pro.y};if(drag){canvas.setPointerCapture(e.pointerId);e.preventDefault()}});
@@ -62,5 +221,5 @@ $('actionBtn').addEventListener('click',order);$('fireMode').addEventListener('c
 $('protractorBtn').addEventListener('click',()=>{showP=!showP;$('protractorBtn').classList.toggle('active',showP);$('protractorBtn').setAttribute('aria-pressed',String(showP));draw()});$('rulerBtn').addEventListener('click',()=>{showR=!showR;$('rulerBtn').classList.toggle('active',showR);$('rulerBtn').setAttribute('aria-pressed',String(showR));draw()});
 function tutorialStep(){const s=tutorials[step];$('stepNo').textContent='Step '+(step+1)+' of '+tutorials.length;$('stepTitle').textContent=s[0];$('stepBody').innerHTML='<p>'+s[1]+'</p>';$('prevStep').disabled=step===0;$('nextStep').textContent=step===tutorials.length-1?'Start playing!':'Next →'}
 $('tutorialBtn').onclick=()=>{step=0;tutorialStep();$('tutorial').showModal()};$('prevStep').onclick=()=>{step=Math.max(0,step-1);tutorialStep()};$('nextStep').onclick=()=>{if(step===tutorials.length-1)$('tutorial').close();else{step++;tutorialStep()}};$('closeTutorial').onclick=()=>$('tutorial').close();$('mathBtn').onclick=()=>$('maths').showModal();$('closeMath').onclick=()=>$('maths').close();for(const d of [$('tutorial'),$('maths')])d.addEventListener('click',e=>{if(e.target===d)d.close()});
-start();})();
+start();if(!reducedMotion)requestAnimationFrame(frame);})();
 </script></body></html>

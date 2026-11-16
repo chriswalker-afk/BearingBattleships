@@ -4,7 +4,7 @@ A colourful, standalone browser game for Foundation Edexcel International GCSE M
 
 ## Play
 
-Open `index.html` in a modern browser. No installation, assets, server, build step or external dependencies are required. Once the feature branch is merged, enable **GitHub Pages → Deploy from a branch → main / (root)** in the repository settings to publish it.
+Open `index.html` in a modern browser. Keep `pass-a.css` and `pass-a-art.js` beside it: they provide the illustrated theme and canvas animations. No installation, server, build step or external dependencies are required. Once the feature branch is merged, enable **GitHub Pages → Deploy from a branch → main / (root)** in the repository settings to publish it.
 
 ## Learning goals
 
@@ -27,7 +27,27 @@ All rendering is on one scalable canvas; the interface adapts to narrow screens.
 
 ## Teacher notes
 
-The game provides no automatic aiming guide or target-bearing solution. The temporary white trajectory appears **only after firing**, giving feedback on the chosen bearing. To increase mathematical challenge, ask students to explain how they measured and why their shot missed. Grid squares are 50 virtual pixels, and distances are measured in whole units; shooting a bubble 5 units at a target 4.2 units away can hit it if the bearing is accurate.
+The game provides no automatic aiming guide or target-bearing solution. A bubble projectile and short trailing bubbles appear **only after firing**; its pop or splash shows the outcome, with no advance aiming preview. To increase mathematical challenge, ask students to explain how they measured and why their shot missed. Grid squares are 50 virtual pixels, and distances are measured in whole units; shooting a bubble 5 units at a target 4.2 units away can hit it if the bearing is accurate.
+
+## Visual/animation Pass A
+
+- Illustrated, gently animated ocean with a visible manual-measurement grid.
+- Redesigned north-facing S.S. Wobble and three distinctive cartoon sea-creature species.
+- Ambient boat rocking and creature swaying/blinking without changing target coordinates.
+- Smooth ship sailing, enemy approaches, and delayed wave arrivals.
+- Travelling bubble projectiles, pop rings, splashes, wakes and damage ripples.
+- UI refinements that keep instrument labels, buttons and information readable.
+- `prefers-reduced-motion` support: motion and decorative animation are suppressed for users who request it.
+- Turns and hit detection remain discrete and unchanged; actions are locked while visual transitions play.
+
+### Quick manual verification
+
+1. Move the protractor centre over the ship and rotate its orange handle; check that the north/000° line still points up and that all angle marks remain legible.
+2. Move and rotate the ruler, checking that one numbered unit still corresponds to one grid square.
+3. Enter `45`: the order should be rejected without using a turn. Enter `045` and a valid range: watch the bubble travel, then see the surviving creatures approach.
+4. Switch to Move and sail one unit on `180`; observe a smooth voyage south, followed by the creatures.
+5. Trigger hits and misses to review the distinct pop/splash effects, then check loss of hearts, wave spawns and restart.
+6. Verify small screens and reduced-motion settings. Check that no animated artwork or decoration is mistaken for a target or measurement guide.
 
 ## Future ideas
 
