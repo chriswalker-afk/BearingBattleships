@@ -33,7 +33,7 @@ test('the 12-level schedule changes exactly one difficulty dimension each time',
     assert.ok(b[changed[0]]>a[changed[0]],'Difficulty increases at level '+level);
     assert.ok(b.armoured<b.count,'Each level still has ordinary creatures');
   }
-  assert.throws(()=>plan.get(13),RangeError);
+  assert.throws(()=>plan.get(13),/Unknown Bloop level/);
 });
 test('levels are visible but manual mathematical tools are unchanged',()=>{
   assert.match(html, /difficulty\.js/);
