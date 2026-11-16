@@ -16,7 +16,7 @@ Open `index.html` in a modern browser. Keep the accompanying `pass-a.css`, `pass
 
 ## Controls
 
-1. Use the draggable **protractor** and **ruler** over the board. Drag the orange handles to rotate them. The centre of the protractor and 0-unit end of the ruler can be positioned by hand.
+1. Use the draggable **protractor** and **ruler** over the board. Drag the protractor's body to move it and orange rim handle to rotate it. For the ruler, position the **blue 0 marker** at your ship by dragging the ruler body; drag the **orange handle at the far end (past 8)** to rotate about that 0 marker without shifting it.
 2. Choose **Fire** or **Move**.
 3. Type a three-digit bearing from `000` to `359` and a whole-number range/distance.
 4. **Fire:** range 1–8 units, bubble follows a ray; a hit requires passing through a creature. **Move:** distance 1–5 units, must remain on the board.
@@ -105,6 +105,32 @@ node --test tests/*.test.cjs
 The new \`tests/single-screen.test.cjs\` covers required controls, responsive CSS rules and the board-fitting calculations. The existing \`tests/smoke.test.cjs\` continues to cover bearings, turns, creatures, waves, hearts and reduced motion.
 
 Review in Chrome/Edge at 1366×768, 1280×720 and 1024×600; confirm that the compass, status, instructions, Fire/Move buttons, both inputs, main action and tool toggles are simultaneously visible. At 390px mobile width and larger text/zoom, verify that **scrolling remains possible** and no buttons are clipped. Check that the protractor/ruler still drag and rotate correctly.
+
+## Ruler pivot — zero-end anchoring (PR #5)
+
+The ruler has been adjusted to work like a physical straightedge being held at its zero end:
+
+- **Pivot:** the blue ring/dot at the **0-unit mark**, centred along the short (40-pixel-wide) end. It is the ruler's position and its rotation origin.
+- **Move:** drag the ruler's body or blue 0 pivot to place the 0 mark over the centre of your ship.
+- **Rotate:** drag the orange handle just beyond the ruler's **8-unit end**. This changes the angle without moving the blue zero pivot.
+- **Measure:** the numbered edge now runs from **0 to 8 units** away from the pivot, with each tick exactly one grid square apart.
+
+The old centre-based pivot is removed from both drawing and pointer picking. The protractor and all firing/movement rules remain unchanged.
+
+### Manual QA
+
+1. Start a game and identify the blue pivot at the **0** end of the ruler; the opposite orange handle should be beyond **8**.
+2. Drag the ruler to put blue 0 directly over the ship. Rotate using the orange far-end handle: the blue 0 should remain over the ship.
+3. Try all four quadrants and an angled target; the 0 mark should stay fixed through the drag.
+4. Drag the ruler by its body: both ends must translate together without changing its angle.
+5. Repeat at a narrower browser width or increased zoom; the distal handle remains selectable.
+6. Hide/re-show the ruler and check that the protractor, shooting and movement still work as before.
+
+Run the repeatable regression tests with Node 20+:
+
+\`\`\`sh
+node --test tests/*.test.cjs
+\`\`\`
 
 ## Future ideas
 

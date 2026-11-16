@@ -44,14 +44,14 @@
     <button id="protractorBtn" class="active" aria-pressed="true" title="Show or hide protractor">◉ Protractor</button>
     <button id="rulerBtn" class="active" aria-pressed="true" title="Show or hide ruler">📏 Ruler</button>
   </div>
-  <p class="toolHint"><strong>Drag</strong> to move · <strong>Orange handle</strong> to rotate. More guidance in Maths help.</p>
+  <p class="toolHint"><strong>Ruler:</strong> place blue <strong>0 pivot</strong> on your ship; drag the orange far-end handle to rotate. Drag its body to move.</p>
 </section>
 </aside></div></main>
 <dialog id="tutorial"><div class="modal"><span class="badge" id="stepNo">Step 1 of 7</span><h2 id="stepTitle"></h2><div class="tutorialStep" id="stepBody"></div><div class="actions"><button id="prevStep">← Back</button><button id="nextStep" class="secondary">Next →</button><button id="closeTutorial">Close</button></div></div></dialog>
 <dialog id="maths"><div class="modal"><h2>📐 Bearings maths help</h2><p>These examples explain the skill without giving away where any creature is.</p>
 <details open><summary>What is a bearing?</summary><p>A bearing is an angle measured <b>clockwise from north</b>, written using <b>three figures</b>. For example, east is 090°, south is 180°, west is 270° and north is 000°.</p></details>
 <details><summary>How do I use the protractor?</summary><ol><li>Drag its centre onto your ship.</li><li>Rotate it so its 0° / N direction points upwards (north).</li><li>Read clockwise from north to the creature, using its position on the circular scale.</li><li>Type a three-figure bearing in Captain's orders.</li></ol><p>Think of 045° as halfway between north and east, while 315° is northwest.</p></details>
-<details><summary>How do I use the ruler?</summary><p>Move and rotate the ruler so it connects your ship to a creature. The board grid is spaced one nautical unit apart. Count squares or use the ruler's unit markings. Bubble range is up to 8 units; moving is limited to 1–5 units.</p></details>
+<details><summary>How do I use the ruler?</summary><p>The ruler pivots around the <b>blue 0 mark at the centre of its short end</b>, not its middle. Drag its body to position that mark on your ship. Then drag the <b>orange handle on its far end</b> to turn the ruler towards a creature without shifting the 0 mark. Read distance from 0 along the marked edge; each grid square is 1 unit. Bubble range is up to 8 units; movement is limited to 1–5 units.</p></details>
 <details><summary>How do three-figure bearings work?</summary><p>Always write three digits: 5° is <b>005°</b>, 45° is <b>045°</b>, and 120° remains <b>120°</b>. 360° points north too, but this game uses 000°.</p></details>
 <details><summary>What if I measure an angle anticlockwise?</summary><p>Bearings still go clockwise. If a direction is 40° anticlockwise from north, its bearing is 360° − 40° = <b>320°</b>.</p></details>
 <details><summary>Worked example: firing northeast</summary><p>A target is 3 squares east and 3 squares north of your ship. It is halfway between north and east: the bearing is <b>045°</b>. Its distance is about 4.2 units, so a bubble with range 5 units reaches it. This is a generic example, not a game hint.</p></details>
@@ -67,12 +67,14 @@ let shipMotion=null,shotMotion=null,impactMotion=null,waveMotion=null,hitGhost=n
 let collisionGhosts=[],animating=false,animEnd=0,pendingEnd=false;
 let streak=0,bestStreak=0,waveNo=1,cues=[],speechCue=null,celebrationCue=null,damageUntil=0;
 const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-let pro={x:400,y:355,a:0},ruler={x:550,y:470,a:-.35};
+const RULER_LENGTH=8*U, RULER_HALF_WIDTH=20, RULER_HANDLE_X=RULER_LENGTH+18;
+// ruler.x/y are the centre of the short (0-unit) end, not the midpoint.
+let pro={x:400,y:355,a:0},ruler={x:320,y:560,a:0};
 const tutorials=[
 ['Welcome aboard!','You are captain of the S.S. Wobble, a very brave (and extremely squeaky) ship. Silly sea creatures are swimming closer. Your job is to pop them with bubbles or sail out of danger.'],
 ['Your maths mission','Bearings are angles measured <b>clockwise from north</b>. North is up, and the compass below the board always shows it. You must enter bearings using three figures, such as 045°, 090° or 275°.'],
 ['Measure with the protractor','Use the <b>Protractor</b> button to show it. Drag the transparent disk by its body until the centre is on your ship. Drag the orange circle on its rim to rotate it; keep the N/0° line pointing north. Read the angle clockwise towards a creature. There is no auto-aim.'],
-['Measure with the ruler','The grid shows units of distance. Move the ruler by dragging the body and rotate it using its orange handle. Line its 0 end up with your ship and check how far your target is. A bubble can travel 1–8 units.'],
+['Measure with the ruler','<b>The small blue circle at 0 is the pivot.</b> Drag the ruler body until the blue 0 circle sits at the centre of your ship. Now drag the orange handle at the far end: the ruler rotates while its 0 end stays fixed. Read distance in grid units (one square = one unit). Bubbles can travel 1–8 units.'],
 ['Fire a bubble','Choose <b>Fire</b>, enter your three-figure bearing and a range from 1 to 8 units, then choose <b>Launch bubble!</b> Your bubble flies in a straight line. If it crosses a creature within its range, you score a point. A near miss is still a miss.'],
 ['Steer the ship','Choose <b>Move</b>. Enter a bearing and a distance of 1–5 units. The ship sails in that direction. You cannot sail outside the playing area. Moving and firing each use one turn.'],
 ['Survive the sillies!','After every valid order, surviving creatures swim closer. If one touches your ship, you lose a heart. Lose all three hearts and the game ends. Pop enough creatures and new ones arrive. Use <b>Maths help</b> any time for full explanations. Ready, captain?']
@@ -87,7 +89,7 @@ function start(){
   collisionGhosts=[];pendingEnd=false;animating=false;animEnd=0;
   streak=0;bestStreak=0;waveNo=1;cues=[];speechCue=null;celebrationCue=null;damageUntil=0;
   clearCelebrations();showPhase('🧭 Captain’s turn','ready');$('waveNo').textContent='1';
-  pro={x:500,y:325,a:0};ruler={x:520,y:440,a:0};
+  pro={x:500,y:325,a:0};ruler={x:320,y:560,a:0};
   spawn(3);$('end').classList.remove('show');setLocked(false);
   $('log').textContent='Ahoy! Measure a creature, then choose your order. Every order uses a turn.';
   refresh();draw();
@@ -269,7 +271,37 @@ function order(){
 function grid(){ctx.fillStyle='#9ee2ed';ctx.fillRect(0,0,W,H);ctx.strokeStyle='rgba(19,99,133,.18)';ctx.lineWidth=1;for(let x=0;x<=W;x+=U){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}for(let y=0;y<=H;y+=U){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}ctx.font='bold 13px system-ui';ctx.fillStyle='#347a95';ctx.fillText('N ↑',18,25);for(let i=0;i<20;i++){const x=(i*171+43)%980,y=(i*113+91)%630;ctx.strokeStyle='rgba(255,255,255,.36)';ctx.beginPath();ctx.arc(x,y,5,0,Math.PI);ctx.stroke()}}
 function creature(e){const {x,y,type}=e;ctx.save();ctx.translate(x,y);ctx.shadowColor='#3e92a3';ctx.shadowBlur=10;ctx.shadowOffsetY=4;const color=['#db7dc9','#ffc76b','#91bf71'][type];ctx.fillStyle=color;ctx.strokeStyle='#235571';ctx.lineWidth=3;if(type===0){for(let i=-2;i<=2;i++){ctx.beginPath();ctx.moveTo(i*9,7);ctx.quadraticCurveTo(i*12,35,i*10+5,31);ctx.stroke()}ctx.beginPath();ctx.ellipse(0,0,25,21,0,0,7);ctx.fill();ctx.stroke()}else if(type===1){ctx.beginPath();ctx.arc(0,0,24,0,7);ctx.fill();ctx.stroke();for(let i=0;i<8;i++){ctx.beginPath();ctx.moveTo(Math.cos(i*Math.PI/4)*22,Math.sin(i*Math.PI/4)*22);ctx.lineTo(Math.cos(i*Math.PI/4)*29,Math.sin(i*Math.PI/4)*29);ctx.stroke()}}else{ctx.beginPath();ctx.ellipse(0,0,28,18,0,0,7);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(-16,-11);ctx.lineTo(-24,-25);ctx.lineTo(-5,-18);ctx.moveTo(12,-12);ctx.lineTo(23,-24);ctx.lineTo(24,-4);ctx.stroke()}ctx.shadowBlur=0;ctx.fillStyle='#fff';for(const xx of [-9,9]){ctx.beginPath();ctx.arc(xx,-3,7,0,7);ctx.fill();ctx.fillStyle='#173b57';ctx.beginPath();ctx.arc(xx+1,-3,3,0,7);ctx.fill();ctx.fillStyle='#fff'}ctx.strokeStyle='#224962';ctx.beginPath();ctx.arc(0,7,6,0,Math.PI);ctx.stroke();ctx.restore()}
 function boat(){ctx.save();ctx.translate(ship.x,ship.y);ctx.shadowColor='#235a6e';ctx.shadowBlur=12;ctx.shadowOffsetY=4;ctx.fillStyle='#0f658d';ctx.strokeStyle='#19435d';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,-28);ctx.lineTo(26,9);ctx.lineTo(19,25);ctx.lineTo(-19,25);ctx.lineTo(-26,9);ctx.closePath();ctx.fill();ctx.stroke();ctx.shadowBlur=0;ctx.fillStyle='#ffebbe';ctx.fillRect(-15,0,30,12);ctx.fillStyle='#ff8d6c';ctx.fillRect(-4,-17,8,17);ctx.beginPath();ctx.moveTo(5,-15);ctx.lineTo(22,-3);ctx.lineTo(5,-3);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(-8,17,4,0,7);ctx.arc(8,17,4,0,7);ctx.fill();ctx.restore()}
-function instruments(){if(showP){ctx.save();ctx.translate(pro.x,pro.y);ctx.rotate(pro.a);ctx.fillStyle='rgba(255,255,255,.36)';ctx.strokeStyle='#137ea2';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,145,0,7);ctx.fill();ctx.stroke();for(let deg=0;deg<360;deg+=5){const ang=(deg-90)*Math.PI/180,inner=deg%30===0?120:deg%10===0?130:136;ctx.strokeStyle='#236f90';ctx.lineWidth=deg%30===0?2:1;ctx.beginPath();ctx.moveTo(Math.cos(ang)*inner,Math.sin(ang)*inner);ctx.lineTo(Math.cos(ang)*145,Math.sin(ang)*145);ctx.stroke();if(deg%30===0){ctx.save();ctx.fillStyle='#164b73';ctx.font='bold 13px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.translate(Math.cos(ang)*106,Math.sin(ang)*106);ctx.rotate(-pro.a);ctx.fillText(String(deg).padStart(3,'0'),0,0);ctx.restore()}}ctx.fillStyle='#ed6c4d';ctx.beginPath();ctx.arc(0,-145,10,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.strokeStyle='#146486';ctx.beginPath();ctx.arc(0,0,6,0,7);ctx.fill();ctx.stroke();ctx.restore()}if(showR){ctx.save();ctx.translate(ruler.x,ruler.y);ctx.rotate(ruler.a);ctx.fillStyle='rgba(255,240,181,.77)';ctx.strokeStyle='#916b33';ctx.lineWidth=2;ctx.fillRect(-200,-20,400,40);ctx.strokeRect(-200,-20,400,40);for(let i=0;i<=8;i++){let x=-200+i*50;ctx.beginPath();ctx.moveTo(x,-20);ctx.lineTo(x,i%2===0?2:-5);ctx.stroke();if(i<8){ctx.font='bold 12px system-ui';ctx.fillStyle='#5b4625';ctx.fillText(String(i),x+3,14)}}ctx.fillStyle='#ed6c4d';ctx.beginPath();ctx.arc(200,0,10,0,7);ctx.fill();ctx.restore()}}
+function instruments(){if(showP){ctx.save();ctx.translate(pro.x,pro.y);ctx.rotate(pro.a);ctx.fillStyle='rgba(255,255,255,.36)';ctx.strokeStyle='#137ea2';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,145,0,7);ctx.fill();ctx.stroke();for(let deg=0;deg<360;deg+=5){const ang=(deg-90)*Math.PI/180,inner=deg%30===0?120:deg%10===0?130:136;ctx.strokeStyle='#236f90';ctx.lineWidth=deg%30===0?2:1;ctx.beginPath();ctx.moveTo(Math.cos(ang)*inner,Math.sin(ang)*inner);ctx.lineTo(Math.cos(ang)*145,Math.sin(ang)*145);ctx.stroke();if(deg%30===0){ctx.save();ctx.fillStyle='#164b73';ctx.font='bold 13px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.translate(Math.cos(ang)*106,Math.sin(ang)*106);ctx.rotate(-pro.a);ctx.fillText(String(deg).padStart(3,'0'),0,0);ctx.restore()}}ctx.fillStyle='#ed6c4d';ctx.beginPath();ctx.arc(0,-145,10,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.strokeStyle='#146486';ctx.beginPath();ctx.arc(0,0,6,0,7);ctx.fill();ctx.stroke();ctx.restore()}if(showR){
+  ctx.save();
+  ctx.translate(ruler.x,ruler.y);
+  ctx.rotate(ruler.a);
+  // Zero starts at the transform origin, halfway across the short (40px) end.
+  ctx.fillStyle='rgba(255,240,181,.77)';
+  ctx.strokeStyle='#916b33';ctx.lineWidth=2;
+  ctx.fillRect(0,-RULER_HALF_WIDTH,RULER_LENGTH,RULER_HALF_WIDTH*2);
+  ctx.strokeRect(0,-RULER_HALF_WIDTH,RULER_LENGTH,RULER_HALF_WIDTH*2);
+  for(let i=0;i<=8;i++){
+    const x=i*U;
+    ctx.strokeStyle='#916b33';ctx.lineWidth=i%2===0?1.7:1.2;
+    ctx.beginPath();ctx.moveTo(x,-RULER_HALF_WIDTH);
+    ctx.lineTo(x,i%2===0?2:-5);ctx.stroke();
+    ctx.font='bold 12px system-ui';ctx.fillStyle='#5b4625';
+    ctx.fillText(String(i),i===0?10:i===8?RULER_LENGTH-13:x+3,15);
+  }
+  // Blue bullseye: the physical pivot at 0. Students can grab here to translate.
+  ctx.fillStyle='rgba(255,255,255,.94)';ctx.strokeStyle='#0c80aa';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.arc(0,0,9,0,Math.PI*2);ctx.fill();ctx.stroke();
+  ctx.fillStyle='#0c80aa';ctx.beginPath();ctx.arc(0,0,3.5,0,Math.PI*2);ctx.fill();
+  // Orange rotation handle is beyond the 8-unit mark, leaving that mark readable.
+  ctx.strokeStyle='#bd7762';ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(RULER_LENGTH,0);ctx.lineTo(RULER_HANDLE_X,0);ctx.stroke();
+  ctx.fillStyle='#ed6c4d';ctx.strokeStyle='#a94445';ctx.lineWidth=1.7;
+  ctx.beginPath();ctx.arc(RULER_HANDLE_X,0,12,0,Math.PI*2);ctx.fill();ctx.stroke();
+  ctx.strokeStyle='#fff';ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(RULER_HANDLE_X,0,5,0,Math.PI*2);ctx.stroke();
+  ctx.restore();
+}
+}
 function lerpPoint(m,now){
   if(!m)return null;
   const t=m.duration?BloopArt.clamp((now-m.start)/m.duration,0,1):1;
@@ -335,7 +367,21 @@ function frame(now){
 
 function pointer(e){const b=canvas.getBoundingClientRect();return{x:(e.clientX-b.left)*W/b.width,y:(e.clientY-b.top)*H/b.height}}
 function rotatePoint(p,c,a){const x=p.x-c.x,y=p.y-c.y;return{x:x*Math.cos(-a)-y*Math.sin(-a),y:x*Math.sin(-a)+y*Math.cos(-a)}}
-canvas.addEventListener('pointerdown',e=>{const p=pointer(e),pr=rotatePoint(p,pro,pro.a),rr=rotatePoint(p,ruler,ruler.a);if(showR&&Math.hypot(rr.x-200,rr.y)<20)drag={tool:'ruler',kind:'rotate'};else if(showP&&Math.hypot(pr.x,pr.y+145)<20)drag={tool:'pro',kind:'rotate'};else if(showR&&rr.x>-205&&rr.x<205&&Math.abs(rr.y)<23)drag={tool:'ruler',kind:'move',dx:p.x-ruler.x,dy:p.y-ruler.y};else if(showP&&Math.hypot(pr.x,pr.y)<148)drag={tool:'pro',kind:'move',dx:p.x-pro.x,dy:p.y-pro.y};if(drag){canvas.setPointerCapture(e.pointerId);e.preventDefault()}});
+// Hit testing uses the same 0-end origin and far handle as the drawing.
+function rulerHandleRadius(){const rect=canvas.getBoundingClientRect();return Math.min(60,Math.max(22,20*W/Math.max(1,rect.width)))}
+canvas.addEventListener('pointerdown',e=>{
+  const p=pointer(e),pr=rotatePoint(p,pro,pro.a),rr=rotatePoint(p,ruler,ruler.a);
+  if(showR&&Math.hypot(rr.x-RULER_HANDLE_X,rr.y)<rulerHandleRadius()){
+    drag={tool:'ruler',kind:'rotate'};
+  }else if(showP&&Math.hypot(pr.x,pr.y+145)<20){
+    drag={tool:'pro',kind:'rotate'};
+  }else if(showR&&rr.x>=-12&&rr.x<=RULER_LENGTH+5&&Math.abs(rr.y)<=RULER_HALF_WIDTH+5){
+    drag={tool:'ruler',kind:'move',dx:p.x-ruler.x,dy:p.y-ruler.y};
+  }else if(showP&&Math.hypot(pr.x,pr.y)<148){
+    drag={tool:'pro',kind:'move',dx:p.x-pro.x,dy:p.y-pro.y};
+  }
+  if(drag){canvas.setPointerCapture(e.pointerId);e.preventDefault()}
+});
 canvas.addEventListener('pointermove',e=>{if(!drag)return;const p=pointer(e),t=drag.tool==='pro'?pro:ruler;if(drag.kind==='move'){t.x=safe(p.x-drag.dx,0,W);t.y=safe(p.y-drag.dy,0,H)}else{const ang=Math.atan2(p.y-t.y,p.x-t.x);t.a=drag.tool==='pro'?ang+Math.PI/2:ang}draw()});
 function endDrag(){drag=null}canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',endDrag);
 $('actionBtn').addEventListener('click',order);for(const id of ['bearing','distance'])$(id).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();order()}});$('fireMode').addEventListener('click',()=>updateMode('fire'));$('moveMode').addEventListener('click',()=>updateMode('move'));$('resetBtn').addEventListener('click',start);$('againBtn').addEventListener('click',start);
