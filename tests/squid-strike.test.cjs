@@ -111,7 +111,8 @@ function harness(reduced=true){
     "}));squidZone=null;squidStrike=null;squidSeen=false;squidCooldown=0;updateMode('fire');refresh();},"+
     "zone(){return squidZone?{...squidZone}:null;},"+
     "strike(){return squidStrike?{...squidStrike}:null;},"+
-    "ship(){return {...ship};}};";
+    "ship(){return {...ship};},"+
+    "setShip(x,y){ship.x=x;ship.y=y;}};";
   vm.runInContext(game[1].replace(anchor,hook+anchor),box);
   function order(bearing,distance){
     el('bearing').value=bearing;el('distance').value=String(distance);
@@ -134,6 +135,19 @@ test('warn before MOVE and leave threat in place after invalid bearing or distan
   assert.equal(g.el('turn').textContent,2);
   assert.equal(w.strike(),null);
   assert.equal(g.el('hearts').textContent,'♥♥♥');
+});
+test('an off-map MOVE cannot trigger the squid or spend the turn',()=>{
+  const g=harness(),w=g.win.__testSquid;
+  w.enter(10);
+  w.setShip(965,325);
+  g.order('180',1);
+  assert.ok(w.zone());
+  g.order('090',1);
+  assert.equal(g.el('turn').textContent,2);
+  assert.equal(g.el('hearts').textContent,'♥♥♥');
+  assert.ok(w.zone(),'The red circle remains while the student corrects course');
+  assert.equal(w.strike(),null);
+  assert.match(g.el('errorPopTitle').textContent,/Off the map/);
 });
 test('a short MOVE ending inside the ring loses exactly one heart',()=>{
   const g=harness(),w=g.win.__testSquid;
