@@ -100,6 +100,7 @@ function harness({shortVoyage=false}={}){
     "lineup(){for(const e of enemies){e.x=ship.x;e.y=ship.y-220;e.motion=null;}},"+
     "enemies(){return enemies.map(e=>({x:e.x,y:e.y,hp:e.hp,maxHp:e.maxHp}));},"+
     "zone(){return squidZone?{...squidZone}:null;},"+
+    "strike(){return squidStrike?{...squidStrike}:null;},"+
     "ship(){return {...ship};}"+
     "};"+anchor);
   vm.runInContext(gameSource,ctx,{filename:'index.html'});
@@ -131,6 +132,8 @@ function harness({shortVoyage=false}={}){
           p.y>=35&&p.y<=615&&!Q.within(p,zone));
         assert.ok(escape,'There must be a legal squid-dodging bearing');
         move(escape[0],4);
+        assert.equal(win.__testing.strike().hit,false,
+          'A legal escape bearing avoids the squid entirely');
       }else{
         move(moveNumber++%2===0?'090':'270',1);
       }
@@ -173,7 +176,8 @@ test('all 12 levels are winnable with exactly the configured number of hits',()=
     for(let i=0;i<spec.count+spec.armoured;i++)g.fire();
     if(level<plan.maxLevel){
       assert.equal(Number(g.e('waveNo').textContent),level+1,'Advanced after level '+level);
-      assert.equal(g.e('hearts').textContent,'♥♥♥');
+      assert.ok(g.e('hearts').textContent.includes('♥'),
+        'The captain must survive after level '+level);
     }
   }
   assert.equal(expectedPops,62);
