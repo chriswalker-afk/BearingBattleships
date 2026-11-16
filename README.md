@@ -4,7 +4,7 @@ A colourful, standalone browser game for Foundation Edexcel International GCSE M
 
 ## Play
 
-Open `index.html` in a modern browser. Keep the accompanying `pass-a.css`, `pass-a-art.js`, `pass-b.css`, `pass-b-juice.js`, `single-screen.css` and `single-screen.js` files beside it: they provide the illustrated theme, animations and responsive layout. No installation, server, build step or external dependencies are required. Once the feature branch is merged, enable **GitHub Pages → Deploy from a branch → main / (root)** in the repository settings to publish it.
+Open `index.html` in a modern browser. Keep the accompanying `pass-a.css`, `pass-a-art.js`, `pass-b.css`, `pass-b-juice.js`, `single-screen.css`, `single-screen.js`, `difficulty.css` and `difficulty.js` files beside it: they provide the illustrated theme, animations and responsive layout. No installation, server, build step or external dependencies are required. Once the feature branch is merged, enable **GitHub Pages → Deploy from a branch → main / (root)** in the repository settings to publish it.
 
 ## Learning goals
 
@@ -20,8 +20,8 @@ Open `index.html` in a modern browser. Keep the accompanying `pass-a.css`, `pass
 2. Choose **Fire** or **Move**.
 3. Type a three-digit bearing from `000` to `359` and a whole-number range/distance.
 4. **Fire:** range 1–8 units, bubble follows a ray; a hit requires passing through a creature. **Move:** distance 1–5 units, must remain on the board.
-5. After every valid order, enemies approach. Each creature that gets close costs a heart. Lose three hearts to end the game. When all enemies are cleared, a new wave appears.
-6. Use **Tutorial** for a guided seven-step explanation and **Maths help** for optional conceptual guidance.
+5. After every valid order, enemies approach at their **current level's fixed speed**. Each creature that gets close costs a heart. Lose three hearts to end the game. Clear a level to reach the next; defeat Level 12 to complete the voyage.
+6. Use **Tutorial** for a guided eight-step explanation and **Maths help** for optional conceptual guidance.
 
 All rendering is on one scalable canvas; the interface adapts to narrow screens. No player data is collected or sent.
 
@@ -82,7 +82,7 @@ Covers bearing validation, shots/streaks, waves, damage, reset, reduced-motion c
 
 The game now uses a compact **Captain's Bridge** alongside the sea:
 
-- **Mission status:** turn, score, hearts, wave, current/best streak and a scrollable recent-message log.
+- **Mission status:** turn, score, hearts, level, current/best streak and a scrollable recent-message log.
 - **Captain's orders:** Fire / Move, three-figure bearing, range/distance and the main action button.
 - **Measuring tools:** one-tap protractor/ruler toggles with a short reminder to drag and rotate manually.
 - **Compass and scale:** always shown immediately beneath the board. Tutorial, detailed maths help and restart remain in the compact top bar.
@@ -98,11 +98,11 @@ On portrait/narrow screens, or when the viewport is shorter than 600 pixels, the
 
 Run all zero-dependency tests from the repository root using Node 20+:
 
-\`\`\`sh
+```sh
 node --test tests/*.test.cjs
-\`\`\`
+```
 
-The new \`tests/single-screen.test.cjs\` covers required controls, responsive CSS rules and the board-fitting calculations. The existing \`tests/smoke.test.cjs\` continues to cover bearings, turns, creatures, waves, hearts and reduced motion.
+The new `tests/single-screen.test.cjs` covers required controls, responsive CSS rules and the board-fitting calculations. The existing `tests/smoke.test.cjs` continues to cover bearings, turns, creatures, waves, hearts and reduced motion.
 
 Review in Chrome/Edge at 1366×768, 1280×720 and 1024×600; confirm that the compass, status, instructions, Fire/Move buttons, both inputs, main action and tool toggles are simultaneously visible. At 390px mobile width and larger text/zoom, verify that **scrolling remains possible** and no buttons are clipped. Check that the protractor/ruler still drag and rotate correctly.
 
@@ -128,9 +128,44 @@ The old centre-based pivot is removed from both drawing and pointer picking. The
 
 Run the repeatable regression tests with Node 20+:
 
-\`\`\`sh
+```sh
 node --test tests/*.test.cjs
-\`\`\`
+```
+
+## Progressive difficulty — 12-level voyage (PR #6)
+
+The game advances **one level when all creatures on the current level have been cleared**. An on-screen Level N/12 indicator and a short arrival banner explain the new challenge without solving any bearings. The student starts with the same manual protractor, ruler and north compass on every level.
+
+A central, immutable level table in `difficulty.js` enforces the rule: **each transition changes exactly one factor** — enemy **count**, swim **speed**, or the number of **armoured two-hit enemies**. There is no longer any hidden turn-based speed increase or score-based wave sizing.
+
+| Level | Enemies | Swim speed (px/turn) | Two-hit helmets | Only new difficulty |
+| --- | ---: | ---: | ---: | --- |
+| 1 | 3 | 17 | 0 | Gentle introduction |
+| 2 | 4 | 17 | 0 | +1 enemy |
+| 3 | 4 | 21 | 0 | +4 px/turn |
+| 4 | 4 | 21 | 1 | +1 helmet |
+| 5 | 5 | 21 | 1 | +1 enemy |
+| 6 | 5 | 25 | 1 | +4 px/turn |
+| 7 | 5 | 25 | 2 | +1 helmet |
+| 8 | 6 | 25 | 2 | +1 enemy |
+| 9 | 6 | 29 | 2 | +4 px/turn |
+| 10 | 6 | 29 | 3 | +1 helmet |
+| 11 | 7 | 29 | 3 | +1 enemy |
+| 12 | 7 | 33 | 3 | +4 px/turn |
+
+**Helmet behaviour:** a creature with a bubble helmet is visibly outlined with a blue ring and a **2** hit counter. One correct shot cracks its helmet and changes the counter to **1**. The creature remains alive, takes its normal advance that turn and needs one more accurate shot to pop. The first hit **does not award a point**, does not count as a pop, and does **not** break the player's existing pop streak. The final hit pops it for one point. Missing a shot still resets the current pop streak.
+
+**Completion:** clearing all 12 levels wins the voyage; hearts carry over, and three hearts lost means shipwreck. The levels grow in challenge without changing maths requirements, hit tolerance or the 1-unit grid.
+
+### Tuning and testing
+
+Teachers can rebalance the game by editing the twelve explicit entries in `difficulty.js`; the built-in `validate()` function rejects any level that changes more than one factor. Adjusting a single factor at a time makes it easier to identify which change students find difficult.
+
+```bash
+node --test tests/*.test.cjs
+```
+
+`tests/difficulty.test.cjs` verifies every scheduled transition, the first armour hit not awarding a point, the second hit removing a creature, level advancement, and the 12-level victory path. Existing smoke, ruler and viewport tests remain. Manual browser QA is still recommended, especially for helmet visibility with the protractor over the board, mobile sizing, and the learning pace at Levels 4, 7 and 10.
 
 ## Future ideas
 
