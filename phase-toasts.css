@@ -32,6 +32,7 @@
 .noticePop--error{background:linear-gradient(155deg,#fff0e5,#ffc4b7);
   border-color:#fff8f1;color:#853d3d;z-index:7}
 .noticePop--error strong{font-size:1.16rem}
+#log[data-feedback="error"]{background:#fff0ed;border-left-color:#df5a52;color:#863a37}
 .noticePop.show{animation:bloop-notice-appear 3s ease-in-out both}
 @keyframes bloop-notice-appear{
   0%{opacity:0;transform:translate(-50%,13px) scale(.92)}
