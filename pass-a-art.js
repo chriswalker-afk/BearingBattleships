@@ -142,16 +142,35 @@
     c.restore();
   }
 
-  function eyes(c, left, right, y, blink) {
+  // Pass B: extra expressions, kept within each creature's original hitbox.
+  function eyes(c, left, right, y, blink, mood = 'curious') {
     for (const x of [left, right]) {
-      if (blink) {
+      if (blink || (mood === 'cheeky' && x === left)) {
         c.strokeStyle = '#1d4969'; c.lineWidth = 2.5;
         c.beginPath(); c.moveTo(x - 5, y); c.quadraticCurveTo(x, y + 3, x + 5, y); c.stroke();
       } else {
-        oval(c, x, y, 7, 8, '#fffdf5', '#20536d', 1.6);
-        oval(c, x + 1.6, y + 1, 3, 4, '#1b4966');
+        const wide = mood === 'surprised';
+        oval(c, x, y, wide ? 8 : 7, wide ? 10 : 8, '#fffdf5', '#20536d', 1.6);
+        const glance = mood === 'curious' ? 2.5 : 1.3;
+        oval(c, x + glance, y + 1, wide ? 2.3 : 3, wide ? 3 : 4, '#1b4966');
         oval(c, x + .5, y - 1, 1.3, 1.6, '#fff');
       }
+      if (mood === 'grumpy') {
+        c.strokeStyle = '#594663'; c.lineWidth = 2.5;
+        c.beginPath(); c.moveTo(x - 6, y - 13 + (x === left ? -2 : 2));
+        c.lineTo(x + 6, y - 12 + (x === left ? 2 : -2)); c.stroke();
+      }
+    }
+  }
+  function mouth(c, mood, y, colour) {
+    c.strokeStyle = colour; c.lineWidth = 2.3;
+    if (mood === 'surprised') {
+      oval(c, 0, y + 1, 4, 5.5, '#6f486a', colour, 1.4);
+    } else if (mood === 'grumpy') {
+      c.beginPath(); c.moveTo(-5, y + 2); c.quadraticCurveTo(0, y - 2, 5, y + 2); c.stroke();
+    } else {
+      c.beginPath(); c.arc(0, y, mood === 'cheeky' ? 6 : 4.5, 0, Math.PI); c.stroke();
+      if (mood === 'cheeky') oval(c, 1, y + 3, 2.3, 1.7, '#ed829b');
     }
   }
 
@@ -161,6 +180,7 @@
     const phase = e.bob || 0;
     const sway = Math.sin(now * .004 + phase);
     const blink = Math.sin(now * .0011 + phase * 3) > .995;
+    const mood = e.mood || 'curious';
     c.save(); c.globalAlpha *= opacity; c.translate(e.x, e.y);
     // Anchor and shadow stay stationary for precise angle/distance measurement.
     oval(c, 0, 22, 24, 8, 'rgba(17,100,125,.15)');
@@ -181,9 +201,8 @@
       c.quadraticCurveTo(15, 16, 4, 10); c.quadraticCurveTo(-12, 17, -27, 9);
       c.closePath(); c.fillStyle = fill; c.fill(); c.strokeStyle = '#6c548f'; c.lineWidth = 3.5; c.stroke();
       oval(c, -12, -17, 8, 4, 'rgba(255,255,255,.39)');
-      eyes(c, -10, 10, -2, blink);
-      c.strokeStyle = '#6c3f72'; c.lineWidth = 2;
-      c.beginPath(); c.arc(0, 8, 4, 0, Math.PI); c.stroke();
+      eyes(c, -10, 10, -2, blink, mood);
+      mouth(c, mood, 8, '#6c3f72');
       oval(c, -17, 8, 4, 2.7, 'rgba(255,118,171,.4)');
       oval(c, 17, 8, 4, 2.7, 'rgba(255,118,171,.4)');
     } else if (id === 1) {
@@ -200,8 +219,8 @@
       fill.addColorStop(0, '#fff9b4'); fill.addColorStop(.68, '#ffda79'); fill.addColorStop(1, '#f1a75c');
       oval(c, 0, 0, 26, 24, fill, '#a9674d', 3.5);
       oval(c, 0, 11, 16, 8, '#ffe8a5');
-      eyes(c, -10, 10, -5, blink);
-      oval(c, 0, 7, 3.5, 3.6, '#bc6b55');
+      eyes(c, -10, 10, -5, blink, mood);
+      mouth(c, mood, 7, '#bc6b55');
       c.fillStyle = '#e48d66'; oval(c, -19, 4, 4, 3, '#f4ac75');
     } else {
       // Clancy the crab: twitching raised claws and long cartoon eye stalks.
@@ -223,8 +242,8 @@
       oval(c, 0, 3, 26, 19, fill, '#99506a', 3.7);
       c.strokeStyle = '#99506a'; c.lineWidth = 3;
       for (const x of [-11, 11]) { c.beginPath(); c.moveTo(x, -7); c.lineTo(x, -20); c.stroke(); }
-      eyes(c, -11, 11, -20, blink);
-      c.beginPath(); c.arc(0, 8, 5, 0, Math.PI); c.stroke();
+      eyes(c, -11, 11, -20, blink, mood);
+      mouth(c, mood, 8, '#99506a');
       oval(c, -16, 10, 3, 2.5, '#ee607e'); oval(c, 16, 10, 3, 2.5, '#ee607e');
     }
     c.restore();
