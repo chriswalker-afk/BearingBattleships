@@ -273,6 +273,34 @@ test('reaching a portal without defeating guards leaves the maze level locked',(
   assert.match(g.node('log').textContent,/Portal locked/);
   assert.ok(g.probe.guards().length>0);
 });
+test('defeating a guardian and entering the unlocked portal preserves score and hearts',()=>{
+  const g=harness();g.click('mazeModeBtn');
+  g.probe.setGuards([{x:300,y:350,progress:150}]);
+  g.order('090',3);
+  assert.equal(g.node('score').textContent,1,'A successful pop awards one point');
+  assert.equal(g.probe.guards().length,0,'Portal unlocked');
+  g.probe.setShip(800,150);
+  g.probe.forceMove();
+  g.order('090',1);
+  assert.equal(g.probe.level(),2);
+  assert.equal(g.node('score').textContent,1,'Points persist through the whirlpool');
+  assert.equal(g.node('hearts').textContent,'♥♥♥','Hearts persist into the lagoon');
+  assert.equal(g.probe.map().theme,'lagoon');
+});
+test('animated portal crossing waits until the sailing animation has finished',()=>{
+  const g=harness({reduced:false});g.click('mazeModeBtn');
+  g.probe.clearGuards();
+  g.probe.setShip(800,150);
+  g.probe.forceMove();
+  g.order('090',1);
+  assert.equal(g.probe.level(),1,'Old scene remains until the boat reaches the portal');
+  g.tick(1000);
+  assert.equal(g.probe.level(),1,'Do not replace the environment during sailing');
+  g.tick(1800);
+  assert.equal(g.probe.level(),2);
+  assert.equal(g.probe.map().theme,'lagoon');
+  assert.match(g.node('phaseHeading').textContent,/FIRE/);
+});
 test('all eight mazes can be traversed in whole-unit MOVE turns; final portal wins in space',()=>{
   const g=harness();g.click('mazeModeBtn');
   const M=g.win.BloopMaze;
