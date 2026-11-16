@@ -77,6 +77,9 @@ function harness({shortVoyage=false}={}){
   vm.runInContext(art,ctx);
   vm.runInContext(juice,ctx);
   vm.runInContext(difficulty,ctx);
+  // In the browser window IS global; this VM harness uses a separate window stub.
+  sandbox.BloopArt=win.BloopArt;
+  sandbox.BloopJuice=win.BloopJuice;
   if(shortVoyage){
     const plan=win.BloopDifficulty;
     win.BloopDifficulty={...plan,maxLevel:1};
