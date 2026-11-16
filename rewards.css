@@ -1,0 +1,17 @@
+/* Extra points from star-buoys without widening the one-screen bridge. */
+.lootCount{
+ display:block;margin-top:1px;
+ color:#91622c;font-size:.64rem;font-weight:850;
+ line-height:1.12;white-space:nowrap;
+}
+.lootCount b{font-variant-numeric:tabular-nums}
+#scoreStat{position:relative}
+#log[data-feedback="pickup"]{
+  background:#fff7da;border-left-color:#e8b44f;color:#7a5a23;
+}
+@media (max-width:620px) {
+ .lootCount{font-size:.59rem}
+}
+@media (prefers-reduced-motion:reduce){
+ .lootCount{transition:none}
+}
