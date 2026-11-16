@@ -177,14 +177,14 @@ Pop-ins are non-interactive overlays; they fade without blocking the protractor/
 
 ### Manual QA
 
-1. Restart: confirm **FIRE PHASE** appears and the fire button is the available action. Fire/Move labels cannot be clicked to skip a phase.
-2. Enter \`45\`, then \`360\`: each should produce a distinct red explanation, stay on FIRE and not advance the turn counter. Then try \`045\` as a valid bearing.
+1. Restart: confirm **FIRE PHASE** appears and the **Launch bubble!** action is available. Fire/Move labels cannot be clicked to skip a phase.
+2. Enter `45`, then `360`: each should produce a distinct red explanation, stay on FIRE and not advance the turn counter. Then try `045` as a valid bearing.
 3. Fire a valid shot, including a **miss**: once the action animation ends, the **MOVE PHASE** pop-in and green-highlighted step should appear.
 4. Enter a MOVE distance of 6 or a course that goes off the board: warning shown, no turn used. Enter a valid move: after the sailing animation, **FIRE PHASE** returns.
 5. Check alternating phases across a level transition and after cracking a two-hit helmet (helmet contact still uses a turn).
 6. Test reduced motion, screen readers, touch/keyboard input, tutorial and Maths Help. The game board must retain full manual measurement and no pre-shot guide.
 
-Regression command (Node 20+): \`node --test tests/*.test.cjs\`.
+Regression command (Node 20+): `node --test tests/*.test.cjs`. The `.github/workflows/regression.yml` GitHub Actions workflow runs these tests on pull requests and pushes to `main`.
 
 ## Future ideas
 
