@@ -106,7 +106,7 @@
 <script>
 (()=>{'use strict';
 const canvas=document.getElementById('board'),ctx=canvas.getContext('2d'),$=id=>document.getElementById(id),W=1000,H=650,U=50;
-let ship,enemies,pickups,pops,moveCount,pickupSerial,turn,score,hearts,mode='fire',finished=false,won=false,showP=true,showR=true,drag=null;
+let ship,enemies,pickups,collectedPickupGhosts,pops,moveCount,pickupSerial,turn,score,hearts,mode='fire',finished=false,won=false,showP=true,showR=true,drag=null;
 let shipMotion=null,shotMotion=null,impactMotion=null,waveMotion=null,hitGhost=null;
 let collisionGhosts=[],animating=false,animEnd=0,pendingEnd=false,pendingPhase=null;
 let streak=0,bestStreak=0,waveNo=1,cues=[],speechCue=null,celebrationCue=null,damageUntil=0;
@@ -143,7 +143,7 @@ function spawnLevel(level,at=0){
   }
 }
 function start(){
-  ship={x:500,y:325,heading:0};enemies=[];pickups=[];pops=0;moveCount=0;pickupSerial=0;turn=1;score=0;hearts=3;finished=false;won=false;
+  ship={x:500,y:325,heading:0};enemies=[];pickups=[];collectedPickupGhosts=[];pops=0;moveCount=0;pickupSerial=0;turn=1;score=0;hearts=3;finished=false;won=false;
   shipMotion=null;shotMotion=null;impactMotion=null;waveMotion=null;hitGhost=null;
   collisionGhosts=[];pendingEnd=false;pendingPhase=null;animating=false;animEnd=0;
   streak=0;bestStreak=0;waveNo=1;cues=[];speechCue=null;celebrationCue=null;damageUntil=0;
@@ -162,8 +162,8 @@ function showEnding(){
   $('end').dataset.outcome=won?'victory':'loss';
   $('endTitle').textContent=won?'🏆 Sea-sational victory!':'Bloop! Shipwreck!';
   $('endText').textContent=won
-    ? 'All '+window.BloopDifficulty.maxLevel+' levels completed! You popped '+pops+' sea sillies and earned '+score+' points. What a captain!'
-    : 'You reached Level '+waveNo+', popped '+pops+' sea sillies and earned '+score+' points. Try another voyage!';
+    ? 'All '+window.BloopDifficulty.maxLevel+' levels completed! You popped '+pops+' sea '+(pops===1?'silly':'sillies')+' and earned '+score+' points. What a captain!'
+    : 'You reached Level '+waveNo+', popped '+pops+' sea '+(pops===1?'silly':'sillies')+' and earned '+score+' points. Try another voyage!';
   $('end').classList.add('show');
 }
 
@@ -305,7 +305,7 @@ function order(){
   const oldEnemyPositions=new Map(enemies.map(e=>[e,{x:e.x,y:e.y}]));
   let result='';
   shipMotion=null;shotMotion=null;impactMotion=null;waveMotion=null;
-  hitGhost=null;collisionGhosts=[];
+  hitGhost=null;collisionGhosts=[];collectedPickupGhosts=[];
   if(mode==='move'){
     const oldHeading=oldShip.heading||0;
     const requested=Number(bearing)*Math.PI/180;
@@ -318,6 +318,9 @@ function order(){
     moveCount++;
     const rewards=window.BloopRewards.collectOnMove(pickups,oldShip,ship,moveCount);
     pickups=rewards.remaining;
+    collectedPickupGhosts=rewards.collected.map(p=>({
+      ...p,collectAt:now+sailDuration*window.BloopRewards.routeFraction(p,oldShip,ship)
+    }));
     if(rewards.collected.length){
       score+=rewards.bonus;
       result+='⭐ Collected '+rewards.collected.length+' bonus '+
@@ -325,7 +328,8 @@ function order(){
       feedback='pickup';
       queueCue('pickup','⭐ BONUS +'+rewards.bonus+'!',now+sailDuration);
       if(!reducedMotion){
-        celebrationCue={x:ship.x,y:ship.y,start:now+sailDuration,duration:800,pinpoint:false,streak:0};
+        celebrationCue={x:ship.x,y:ship.y,start:now+sailDuration,duration:800,
+          pinpoint:false,streak:0,label:'⭐ BONUS +'+rewards.bonus+'!'};
       }
     }
   }else{
@@ -512,6 +516,9 @@ function draw(now=performance.now()){
   const artNow=reducedMotion?0:now;
   BloopArt.drawSea(ctx,artNow,W,H,U);
   for(const pickup of pickups)window.BloopRewards.drawPickup(ctx,pickup,now,reducedMotion);
+  for(const pickup of collectedPickupGhosts){
+    if(now<pickup.collectAt)window.BloopRewards.drawPickup(ctx,pickup,now,reducedMotion);
+  }
   // Enemies, and their targetable centres, use the same unmodified board coordinates.
   for(const e of enemies){
     if(now<(e.bornAt||0))continue;
