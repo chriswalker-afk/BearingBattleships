@@ -2,8 +2,11 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#103b63"><title>Bloop! Bearing Battles</title>
 <style>
 :root{font-family:system-ui,"Trebuchet MS",sans-serif;color:#163554;background:#e8f7fa}*{box-sizing:border-box}body{margin:0}button,input{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:11px 15px;font-weight:800;background:#fff;color:#16466c;box-shadow:0 3px 0 #c2d4db}button:hover{filter:brightness(.95)}button:focus-visible,input:focus-visible{outline:3px solid #ffb830;outline-offset:2px}.shell{max-width:1500px;margin:auto;padding:15px}header{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}h1{margin:0;font-size:clamp(1.6rem,3vw,2.6rem);letter-spacing:-1px;color:#10476c}header p{margin:2px 0 0}.pill{background:#ffe38a;border-radius:99px;padding:6px 12px;font-weight:850}.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:16px;margin-top:14px}.seaWrap{min-width:0}.sea{position:relative;background:#91ddeb;border:8px solid #fff;border-radius:22px;box-shadow:0 8px 0 #c1d6dc;overflow:hidden;touch-action:none}canvas{display:block;width:100%;height:auto;aspect-ratio:1000/650;touch-action:none}.seafooter{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 4px}.compass{display:flex;align-items:center;gap:9px;font-weight:850;color:#16466c}.compass svg{width:72px;height:72px;flex:none}.panel{background:#fff;border-radius:20px;padding:18px;box-shadow:0 6px 0 #c9dfe1}.stack{display:flex;flex-direction:column;gap:14px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{border-radius:13px;background:#e8f6fa;padding:10px 4px;text-align:center;font-size:.8rem}.stat strong{display:block;font-size:1.45rem}.bar{display:flex;gap:8px;flex-wrap:wrap}.bar button{flex:1;padding:10px 6px}.active{background:#ffda79!important;color:#163554!important}.fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.fields label{display:grid;gap:5px;font-size:.88rem;font-weight:750}.fields input{min-width:0;border:2px solid #a8d4e0;border-radius:10px;padding:10px;background:#f6fcfe}h2{margin:0 0 9px;font-size:1.2rem}h3{margin:0 0 8px}p{line-height:1.5}.small{font-size:.85rem}.hint{background:#fff5cf;border-radius:12px;padding:11px;font-size:.9rem}.primary{background:#ffab59;color:#522c17}.secondary{background:#18618a;color:#fff}.muted{color:#5c7886}.log{min-height:77px;background:#eaf6f9;border-radius:12px;padding:12px;font-size:.93rem;font-weight:650}dialog{border:0;border-radius:20px;box-shadow:0 20px 100px #123b5e73;max-width:min(700px,94vw);max-height:90vh;padding:0;color:#183e57}dialog::backdrop{background:#0b2746a9}.modal{padding:22px}.modal h2{font-size:1.7rem}.modal .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.tutorialStep{padding:13px;background:#e8f6fa;border-radius:12px;min-height:135px}.badge{display:inline-block;padding:4px 9px;border-radius:25px;background:#ffdb82;font-size:.8rem;font-weight:bold}details{border-top:1px solid #c2dde3;padding:11px 0}summary{cursor:pointer;font-weight:800}ol,ul{line-height:1.65;padding-left:23px}.gameover{position:absolute;inset:0;background:#092a4fba;color:#fff;display:none;align-items:center;justify-content:center;text-align:center;flex-direction:column;padding:24px}.gameover.show{display:flex}.gameover h2{font-size:clamp(2rem,5vw,3.8rem)}.wide{width:100%}@media(max-width:950px){.layout{grid-template-columns:1fr}.panel{padding:13px}.stack{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.stack>.panel:last-child{grid-column:1/-1}}@media(max-width:570px){.stack{grid-template-columns:1fr}.shell{padding:8px}.sea{border-width:4px}.panel{padding:13px}.compass svg{width:58px;height:58px}.seafooter{font-size:.83rem}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
-</style><link rel="stylesheet" href="pass-a.css"><link rel="stylesheet" href="pass-b.css"><link rel="stylesheet" href="single-screen.css"><link rel="stylesheet" href="difficulty.css"><link rel="stylesheet" href="phase-toasts.css"><link rel="stylesheet" href="boat-studio.css"><link rel="stylesheet" href="rewards.css"><link rel="stylesheet" href="squid-strike.css"><link rel="stylesheet" href="scene-zoom.css"></head><body><main class="shell">
-<header><div><h1>🐙 Bloop! Bearing Battles</h1><p>Steer the <span id="playerBoatName">S.S. Wobble</span>. Outsmart the approaching sea sillies!</p></div><div class="bar"><button id="boatStudioBtn" title="Personalise your boat">🎨 Boat Studio</button><button id="tutorialBtn" title="Open step-by-step tutorial">📖 Tutorial</button><button id="mathBtn" title="Learn about bearings and measuring">📐 Maths help</button><button id="resetBtn" title="Start a fresh voyage">↻ New game</button></div></header>
+</style><link rel="stylesheet" href="pass-a.css"><link rel="stylesheet" href="pass-b.css"><link rel="stylesheet" href="single-screen.css"><link rel="stylesheet" href="difficulty.css"><link rel="stylesheet" href="phase-toasts.css"><link rel="stylesheet" href="boat-studio.css"><link rel="stylesheet" href="rewards.css"><link rel="stylesheet" href="squid-strike.css"><link rel="stylesheet" href="scene-zoom.css"><link rel="stylesheet" href="maze-voyage.css"></head><body><main class="shell">
+<header><div><h1>🐙 Bloop! Bearing Battles</h1><p>Steer the <span id="playerBoatName">S.S. Wobble</span>. Outsmart the approaching sea sillies!</p></div><div class="gameModeSwitch" role="group" aria-label="Choose game mode; switching starts a new voyage">
+<button id="openSeaModeBtn" type="button" class="selected" aria-pressed="true" title="Classic twelve-level open sea battle">🌊 Open Sea</button>
+<button id="mazeModeBtn" type="button" aria-pressed="false" title="Eight maze levels, ending in space">🌀 Maze Voyage</button>
+</div><div class="bar"><button id="boatStudioBtn" title="Personalise your boat">🎨 Boat Studio</button><button id="tutorialBtn" title="Open step-by-step tutorial">📖 Tutorial</button><button id="mathBtn" title="Learn about bearings and measuring">📐 Maths help</button><button id="resetBtn" title="Start a fresh voyage">↻ New game</button></div></header>
 <div class="layout"><div class="seaWrap"><div class="sea" id="sea"><div id="phaseRibbon" class="phaseRibbon" data-phase="ready" aria-hidden="true">🧭 Captain’s turn</div><div id="waveNotice" class="waveNotice" aria-hidden="true"><strong id="waveTitle">🏝️ Level 2!</strong><span id="waveSubtitle">One new challenge!</span></div><div id="phasePop" class="noticePop noticePop--phase" role="status" aria-live="polite" aria-atomic="true">
   <strong id="phasePopTitle"></strong><span id="phasePopDetail"></span>
 </div>
@@ -25,10 +28,11 @@
     <div class="stat" id="heartStat">Hearts<strong id="hearts">♥♥♥</strong></div>
   </div>
   <div class="statusStrip">
-    <span>🏝️ Level <strong id="waveNo">1</strong>/<strong id="levelMax">12</strong></span>
+    <span><span id="levelIcon">🏝️</span> Level <strong id="waveNo">1</strong>/<strong id="levelMax">12</strong></span>
     <span>⭐ Streak <strong id="streak">0</strong></span>
     <span>Best <strong id="bestStreak">0</strong></span>
   </div>
+  <p id="mazeObjective" class="mazeObjective" role="status" aria-live="polite" hidden></p>
   <div class="log" id="log" aria-live="polite">Ahoy! Measure an angle, then choose your order.</div>
 </section>
 <section class="panel ordersPanel" id="ordersPanel" data-phase="fire" aria-label="Current captain's order">
@@ -110,13 +114,14 @@
   </div>
 </dialog>
 <div id="boatStudioStatusLive" class="srOnly" role="status" aria-live="polite" aria-atomic="true"></div>
-<script src="boat-style.js"></script><script src="rewards.js"></script><script src="squid-strike.js"></script><script src="scene-zoom.js"></script><script src="pass-a-art.js"></script><script src="pass-b-juice.js"></script><script src="difficulty.js"></script>
+<script src="boat-style.js"></script><script src="rewards.js"></script><script src="squid-strike.js"></script><script src="scene-zoom.js"></script><script src="maze-voyage.js"></script><script src="pass-a-art.js"></script><script src="pass-b-juice.js"></script><script src="difficulty.js"></script>
 <script>
 (()=>{'use strict';
 const canvas=document.getElementById('board'),ctx=canvas.getContext('2d'),$=id=>document.getElementById(id),W=1000,H=650,U=50;
 let ship,enemies,pickups,collectedPickupGhosts,pops,moveCount,pickupSerial,turn,score,hearts,mode='fire',finished=false,won=false,showP=true,showR=true,drag=null;
 let squidZone=null,squidStrike=null,squidSeen=false,squidCooldown=0;
 let sceneZoom=1,sceneCamera={x:W/2,y:H/2};
+let gameMode='sea',mazeMap=null,pendingMazeLevel=null;
 let shipMotion=null,shotMotion=null,impactMotion=null,waveMotion=null,hitGhost=null;
 let collisionGhosts=[],animating=false,animEnd=0,pendingEnd=false,pendingPhase=null;
 let streak=0,bestStreak=0,waveNo=1,cues=[],speechCue=null,celebrationCue=null,damageUntil=0;
@@ -144,9 +149,19 @@ function safe(v,min,max){return Math.max(min,Math.min(max,v))}
 function pos(e,b,d){const a=b*Math.PI/180;return{x:e.x+Math.sin(a)*d*U,y:e.y-Math.cos(a)*d*U}}
 function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
 function spawnLevel(level,at=0){
+  if(gameMode==='maze'){
+    // Each enemy patrols on the route itself. The first guard is visible in
+    // firing range, later guards are spread along the progressively harder maze.
+    const locations=window.BloopMaze.enemySpawns(mazeMap);
+    for(let i=0;i<locations.length;i++){
+      const p=locations[i];
+      enemies.push({x:p.x,y:p.y,pathProgress:p.progress,
+        type:i%3,bob:Math.random()*6.28,bornAt:at,
+        mood:['cheeky','curious','grumpy'][i%3],hp:p.hp,maxHp:p.hp});
+    }
+    return;
+  }
   const spec=window.BloopDifficulty.get(level);
-  // Every enemy is deliberately placed within the ship's eight-unit range.
-  // Keep level counts, speeds, and helmet totals exactly as defined in difficulty.js.
   const locations=window.BloopRewards.spawnPositions(ship,spec.count,Math.random);
   for(let i=0;i<spec.count;i++){
     const p=locations[i],hp=i<spec.armoured?2:1;
@@ -173,18 +188,32 @@ function setZoom(next){
   draw();
 }
 function start(){
-  ship={x:500,y:325,heading:0};enemies=[];pickups=[];collectedPickupGhosts=[];pops=0;moveCount=0;pickupSerial=0;turn=1;score=0;hearts=3;finished=false;won=false;
+  pendingMazeLevel=null;
+  mazeMap=gameMode==='maze'?window.BloopMaze.get(1):null;
+  ship=mazeMap?{...mazeMap.start,heading:0}:{x:500,y:325,heading:0};enemies=[];pickups=[];collectedPickupGhosts=[];pops=0;moveCount=0;pickupSerial=0;turn=1;score=0;hearts=3;finished=false;won=false;
   shipMotion=null;shotMotion=null;impactMotion=null;waveMotion=null;hitGhost=null;
   collisionGhosts=[];pendingEnd=false;pendingPhase=null;animating=false;animEnd=0;
   streak=0;bestStreak=0;waveNo=1;cues=[];speechCue=null;celebrationCue=null;damageUntil=0;
   squidZone=null;squidStrike=null;squidSeen=false;squidCooldown=0;
   sceneZoom=1;sceneCamera={x:W/2,y:H/2};updateZoomControls();
-  clearCelebrations();$('waveNo').textContent='1';$('levelMax').textContent=window.BloopDifficulty.maxLevel;$('levelRule').textContent=window.BloopDifficulty.summary(1);
-  pro={x:500,y:325,a:0};ruler={x:320,y:560,a:0};
+  clearCelebrations();$('waveNo').textContent='1';
+  $('levelMax').textContent=mazeMap?window.BloopMaze.maxLevel:window.BloopDifficulty.maxLevel;
+  $('levelRule').textContent=mazeMap?mazeMap.name:window.BloopDifficulty.summary(1);
+  $('levelIcon').textContent=mazeMap?mazeMap.palette.icon:'🏝️';
+  $('mazeObjective').hidden=!mazeMap;
+  $('openSeaModeBtn').classList.toggle('selected',!mazeMap);
+  $('mazeModeBtn').classList.toggle('selected',!!mazeMap);
+  $('openSeaModeBtn').setAttribute('aria-pressed',String(!mazeMap));
+  $('mazeModeBtn').setAttribute('aria-pressed',String(!!mazeMap));
+  pro={x:ship.x,y:ship.y,a:0};
+  ruler=mazeMap?{x:ship.x,y:Math.min(615,ship.y+135),a:0}:{x:320,y:560,a:0};
   spawnLevel(1);$('end').classList.remove('show');$('end').dataset.outcome='';
   mode='fire';updateMode('fire');clearInputError();
   setLocked(false);announcePhase();
-  $('log').textContent='Level 1: Calm waters. Your first turn is FIRE. Measure a three-figure bearing and range.';
+  $('log').textContent=mazeMap?
+    '🌀 Maze 1 — '+mazeMap.name+'. '+mazeMap.description+
+    ' Fire at the guards, follow the water channel on MOVE, and unlock the whirlpool exit.':
+    'Level 1: Calm waters. Your first turn is FIRE. Measure a three-figure bearing and range.';
   refresh();draw();
 }
 function setLocked(locked){
@@ -192,10 +221,11 @@ function setLocked(locked){
 }
 function showEnding(){
   $('end').dataset.outcome=won?'victory':'loss';
-  $('endTitle').textContent=won?'🏆 Sea-sational victory!':'Bloop! Shipwreck!';
+  $('endTitle').textContent=won?(mazeMap?'🚀 Astral maze escape!':'🏆 Sea-sational victory!'):'Bloop! Shipwreck!';
   $('endText').textContent=won
-    ? 'All '+window.BloopDifficulty.maxLevel+' levels completed! You popped '+pops+' sea '+(pops===1?'silly':'sillies')+' and earned '+score+' points. What a captain!'
-    : 'You reached Level '+waveNo+', popped '+pops+' sea '+(pops===1?'silly':'sillies')+' and earned '+score+' points. Try another voyage!';
+    ? (mazeMap?'All '+window.BloopMaze.maxLevel+' maze portals reached! You defeated '+pops+' sea sillies and earned '+score+' points. The starfield is yours!':
+       'All '+window.BloopDifficulty.maxLevel+' levels completed! You popped '+pops+' sea '+(pops===1?'silly':'sillies')+' and earned '+score+' points. What a captain!')
+    : 'You reached Level '+waveNo+' of '+(mazeMap?'Maze Voyage':'Open Sea')+', popped '+pops+' sea '+(pops===1?'silly':'sillies')+' and earned '+score+' points. Try another voyage!';
   $('end').classList.add('show');
 }
 
@@ -206,6 +236,13 @@ function refresh(){
   $('hearts').textContent='♥'.repeat(hearts)+'♡'.repeat(3-hearts);
   $('streak').textContent=streak;
   $('bestStreak').textContent=bestStreak;
+  if(mazeMap){
+    const remaining=enemies.length;
+    $('mazeObjective').hidden=false;
+    $('mazeObjective').textContent=remaining?
+      '🔒 '+remaining+' guardian'+(remaining===1?'':'s')+' left · Defeat them to unlock the '+(mazeMap.theme==='space'?'warp portal':'whirlpool')+'.':
+      '🌀 EXIT UNLOCKED! Sail within the glowing portal during MOVE.';
+  }
 }
 function message(s,kind='neutral'){$('log').textContent=s;$('log').dataset.feedback=kind}
 function showPhase(s,kind){$('phaseRibbon').textContent=s;$('phaseRibbon').dataset.phase=kind}
@@ -254,7 +291,7 @@ function updateMode(next){
   }
   $('ordersPanel').dataset.phase=mode;
   $('phaseHeading').textContent=mode==='fire'?'🫧 FIRE PHASE':'⛵ MOVE PHASE';
-  if(mode==='move'&&!finished){
+  if(mode==='move'&&!finished&&gameMode==='sea'){
     // A threat is drawn only once the MOVE phase becomes playable. Students
     // always see the warning before selecting their next sailing bearing.
     const scheduled=window.BloopSquid.planMove({
@@ -270,8 +307,11 @@ function updateMode(next){
   $('squidStatus').textContent=squidZone?
     '🦑 RED ZONE! Sail OUTSIDE the circle or lose 1 heart.':'';
   $('ordersPanel').dataset.squid=squidZone?'warning':'none';
-  $('modeInfo').textContent=mode==='fire'?
-    'Fire now. Move on the next turn.':
+  $('modeInfo').textContent=mazeMap?
+    (mode==='fire'?'🫧 Fire at guardians in the same open channel.':
+     enemies.length?'⛵ Sail through the channel. Solid terrain blocks the route.':
+     '🌀 Guardians defeated — sail towards the unlocked portal!'):
+    mode==='fire'?'Fire now. Move on the next turn.':
     squidZone?'⚠️ SQUID WARNING: Finish OUTSIDE the red circle.':
     'Move now. Fire on the next turn.';
   $('actionBtn').textContent=mode==='fire'?'Launch bubble!':'Sail away!';
