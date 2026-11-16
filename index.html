@@ -445,7 +445,9 @@ function order(){
   const sailDuration=reducedMotion?0:750;
   const advanceDelay=(mode==='fire'?shotDuration:sailDuration)+(reducedMotion?0:120);
   const advanceDuration=reducedMotion?0:570;
-  const oldEnemyPositions=new Map(enemies.map(e=>[e,{x:e.x,y:e.y}]));
+  const oldEnemyPositions=new Map(enemies.map(e=>[e,{
+    x:e.x,y:e.y,pathProgress:e.pathProgress
+  }]));
   let result='';
   shipMotion=null;shotMotion=null;impactMotion=null;waveMotion=null;
   hitGhost=null;collisionGhosts=[];collectedPickupGhosts=[];
@@ -573,7 +575,10 @@ function order(){
         enemy.y+=(ship.y-enemy.y)/dd*Math.min(speed,dd);
       }
     }
-    enemy.motion={from:old,to:{x:enemy.x,y:enemy.y},start:now+advanceDelay,duration:advanceDuration};
+    enemy.motion={from:old,to:{x:enemy.x,y:enemy.y},
+      mazeFrom:mazeMap?old.pathProgress:null,
+      mazeTo:mazeMap?enemy.pathProgress:null,
+      start:now+advanceDelay,duration:advanceDuration};
     enemy.mood=dist(enemy,ship)<170?'surprised':['curious','cheeky','grumpy'][(turn+enemy.type)%3];
     if(dist(enemy,ship)<45){
       // Keep a temporary visual ghost so the creature can reach the ship visibly.
@@ -588,8 +593,8 @@ function order(){
         const retreat=own<d?Math.max(0,d-170):Math.min(mazeMap.length,d+170);
         const back=window.BloopMaze.pointAt(mazeMap,retreat);
         enemy.x=back.x;enemy.y=back.y;enemy.pathProgress=retreat;
-        enemy.motion={from:old,to:back,start:now+advanceDelay,
-          duration:advanceDuration};
+        enemy.motion={from:old,to:back,mazeFrom:old.pathProgress,
+          mazeTo:retreat,start:now+advanceDelay,duration:advanceDuration};
         if(!bumps)hearts=Math.max(0,hearts-1);
       }else{
         enemies.splice(i,1);hearts=Math.max(0,hearts-1);
@@ -767,7 +772,14 @@ function draw(now=performance.now()){
   // Enemies, and their targetable centres, use the same unmodified board coordinates.
   for(const e of enemies){
     if(now<(e.bornAt||0))continue;
-    const p=e.motion?lerpPoint(e.motion,now):e;
+    const p=e.motion&&mazeMap&&Number.isFinite(e.motion.mazeFrom)&&
+      Number.isFinite(e.motion.mazeTo)?
+      window.BloopMaze.pointAt(mazeMap,
+        e.motion.mazeFrom+
+        (e.motion.mazeTo-e.motion.mazeFrom)*
+        BloopArt.ease(e.motion.duration?
+          BloopArt.clamp((now-e.motion.start)/e.motion.duration,0,1):1)):
+      e.motion?lerpPoint(e.motion,now):e;
     const moving=e.motion&&now>e.motion.start&&now<e.motion.start+e.motion.duration;
     if(moving){
       const t=(now-e.motion.start)/e.motion.duration;
