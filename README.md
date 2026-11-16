@@ -49,6 +49,35 @@ The game provides no automatic aiming guide or target-bearing solution. A bubble
 5. Trigger hits and misses to review the distinct pop/splash effects, then check loss of hearts, wave spawns and restart.
 6. Verify small screens and reduced-motion settings. Check that no animated artwork or decoration is mistaken for a target or measurement guide.
 
+## Visual/animation Pass B
+
+- **Status polish:** Wave, pop streak, best streak, and a compact phase label. Hit/miss/impact feedback is colour-coded.
+- **Wave introductions:** animated, short-lived Wave N banner when a fresh set of silly creatures appears.
+- **Damage:** hearts pulse and the board nudges briefly on a collision, with accurate loss messaging even when multiple creatures arrive at once.
+- **Personalities:** jellyfish, pufferfish and crabs show cheeky, curious, surprised and grumpy faces. Brief comic speech appears after actions, not during measurement.
+- **Rewards:** post-shot star bursts and special *Pinpoint pop!* feedback for particularly central hits; never automatic aim, bearings, distance lines or before-shot clues.
+- **Streak:** consecutive successful bubble shots are counted, moves preserve the streak and missed shots reset it. Each hit remains worth exactly one point.
+- **Accessibility:** reduced-motion mode retains gameplay and logs without decorative effects, speech animations or large wave banners.
+
+### Repeatable smoke tests
+
+From the repository root with Node 20+:
+
+```bash
+node --test tests/smoke.test.cjs
+```
+
+Covers bearing validation, shots/streaks, waves, damage, reset, reduced-motion controls and renderer calls. This is **not** a replacement for browser visual QA.
+
+### Manual Pass B checklist
+
+1. Score a few hits, then miss: inspect the score pulse, star rewards, active streak and best streak.
+2. Eliminate a wave: check Wave 2 announcement and correct wave count.
+3. Allow enemies to collide with the ship: hearts should pulse, frame should bump briefly and log the correct number of hearts lost.
+4. Check one short silly speech bubble after an action; it must reveal no target bearing or distance.
+5. Move the protractor/ruler and inspect the compass/grid during and after these effects; all measuring remains manual.
+6. Check narrow screens, reduced-motion mode and reset during an animation. The mathematical game rules must not change.
+
 ## Future ideas
 
 - Difficulty progression and curated levels.
