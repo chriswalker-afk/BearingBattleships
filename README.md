@@ -12,7 +12,42 @@ Production hostname: https://bearings.mrwalkermaths.com/
 
 ## Play
 
-Open `index.html` in a modern browser. Keep the accompanying `pass-a.css`, `pass-a-art.js`, `pass-b.css`, `pass-b-juice.js`, `single-screen.css`, `single-screen.js`, `difficulty.css`, `difficulty.js` and `phase-toasts.css` files beside it: they provide the illustrated theme, animations and responsive layout. No installation, server, build step or external dependencies are required. Once the feature branch is merged, enable **GitHub Pages → Deploy from a branch → main / (root)** in the repository settings to publish it.
+Play at **https://bearings.mrwalkermaths.com/**. For offline/local use, open `index.html` in a modern browser and keep the accompanying `.css` and `.js` files in the same folder, including `boat-style.js`, `boat-studio.js`, and `boat-studio.css`. There are no external dependencies or build steps. Merges to `main` publish automatically through GitHub Pages Actions.
+
+## Boat Studio customisation (PR #8)
+
+Choose **🎨 Boat Studio** in the top bar to customise the player's S.S. Wobble. The game stays on one screen; the customiser is a separate, closeable dialog with a full-size preview and grouped, accessible controls.
+
+| Category | Choices |
+| --- | --- |
+| Hull colours | Coral, Lagoon, Sea mint, Violet, Sunshine, Midnight |
+| Cabins | Classic, Portholes, Lookout |
+| Flags | Sunshine, Ocean, Checker, Starry, Rainbow |
+| Expressions | Happy, Wink, Brave, Surprised |
+| Decorations | None, Lifebuoy, Star badge, Heart, Racing stripes |
+| Boat name | Up to 18 characters |
+
+There are **1,800 visual combinations** before choosing a name. All are available immediately: no unlocks, point costs or advantage in the game.
+
+- **Preview:** making selections changes the illustrated boat in the Boat Studio preview, not the live player's ship until **Save boat** is pressed.
+- **Save:** applies the design immediately and saves it to this browser's `localStorage`. The same design returns on the next visit or refresh. If browser storage is blocked, the design still applies for the current visit and the dialog explains the limitation.
+- **Cancel / close:** leave the previously saved design untouched.
+- **Surprise me:** randomise the five cosmetic categories while keeping the draft boat name.
+- **Reset design:** preview the classic S.S. Wobble appearance; press **Save boat** to apply the reset.
+
+**Maths safeguard:** all styles use the same ship centre, heading, hull outline and collision tolerance. A different colour, flag, expression or accessory does not change bearings, distances, speed, hitboxes, enemy behaviour or any score.
+
+**Accessibility and privacy:** Boat Studio is keyboard accessible, uses button press states and descriptive labels, and draws on the existing vector artwork (no external assets). Only the design JSON is stored in the student's browser; it is not uploaded, shared or collected.
+
+### QA and regression checks
+
+```sh
+node --test tests/*.test.cjs
+```
+
+The new `tests/boat-studio.test.cjs` checks all preset categories, invalid style input, preview vs save, cancelling, resetting, randomising, storage persistence and browser-storage failures. Existing bearing, ruler, difficulty, responsive layout and phase-warning tests remain.
+
+For manual QA, check the Boat Studio at laptop/tablet/mobile sizes; change options, save and reload; cancel mid-edit; try a randomly generated design; check that a renamed ship shows in the header; verify the boat stays centered on the ruler/protractor during Fire and Move; and confirm keyboard focus and scroll behaviour inside the modal.
 
 ## Learning goals
 
@@ -29,9 +64,9 @@ Open `index.html` in a modern browser. Keep the accompanying `pass-a.css`, `pass
 3. Type a three-digit bearing from `000` to `359` and a whole-number range/distance.
 4. **FIRE:** range 1–8 units, bubble follows a ray; a hit requires passing through a creature. **MOVE:** distance 1–5 units, must remain on the board. A valid order consumes one turn and moves the enemies, even if the bubble misses or only cracks a helmet.
 5. After every valid order, enemies approach at their **current level's fixed speed**. Each creature that gets close costs a heart. Lose three hearts to end the game. Clear a level to reach the next; defeat Level 12 to complete the voyage.
-6. Use **Tutorial** for a guided nine-step explanation and **Maths help** for optional conceptual guidance.
+6. Use **Tutorial** for a guided ten-step explanation and **Maths help** for optional conceptual guidance.
 
-All rendering is on one scalable canvas; the interface adapts to narrow screens. No player data is collected or sent.
+The game uses a scalable play canvas and a responsive layout. Boat designs are saved only in the student's current browser; no accounts or boat data are transmitted to a server.
 
 ## Teacher notes
 
@@ -181,7 +216,7 @@ node --test tests/*.test.cjs
 
 On an **invalid bearing**, the game shows a large red pop-in with the specific reason: missing three figures, invalid characters, or **360° should be 000°**. A correctly formatted shot that simply **misses** also produces a post-shot pop-in asking the student to check their bearing and range; that shot **does consume a turn** and never reveals the correct bearing. Invalid distances and off-board moves use the same style. The affected input is highlighted and remains editable. Errors also appear in the ship's log for accessibility. **Invalid orders do not consume a turn, move enemies or switch phase.** Correct the entry and retry.
 
-Pop-ins are non-interactive overlays; they fade without blocking the protractor/ruler or the single-screen controls. Reduced-motion mode shows the notice without sliding. The full nine-step tutorial and Maths Help sections now cover phase alternation, invalid bearings and how to correct them.
+Pop-ins are non-interactive overlays; they fade without blocking the protractor/ruler or the single-screen controls. Reduced-motion mode shows the notice without sliding. The tutorial and Maths Help sections cover phase alternation, invalid bearings and how to correct them.
 
 ### Manual QA
 
