@@ -32,6 +32,9 @@ test('eight unique environments run from water to lagoon to an actual space fina
   assert.ok(M.get(8).count>M.get(1).count);
   assert.ok(M.get(8).route.length>M.get(1).route.length);
   assert.ok(M.get(8).width<M.get(1).width);
+  assert.equal(M.get(1).branches.length,0,'First maze has no dead ends');
+  assert.ok(M.get(2).branches.length>=1,'Lagoon introduces a wrong turn');
+  assert.ok(M.get(8).branches.length>=2,'Space maze has multiple dead ends');
   assert.throws(()=>M.get(9),/Unknown maze level/);
 });
 test('each maze has a complete route composed of legal whole-unit moves',()=>{
@@ -56,13 +59,27 @@ test('each maze has a complete route composed of legal whole-unit moves',()=>{
     assert.equal(M.isExit(map,p),true);
   }
 });
+test('dead-end side channels are navigable but not portals',()=>{
+  const M=pure();
+  for(const map of M.levels.slice(1)){
+    for(const branch of map.branches){
+      const a=branch[0],b=branch.at(-1);
+      assert.equal(M.moveClear(map,a,b),true,map.name+' dead-end route blocked');
+      assert.equal(M.isExit(map,b),false,map.name+' false path should not be an exit');
+    }
+  }
+});
 test('crossing solid banks, reefs and asteroids is blocked, including shots',()=>{
   const M=pure(),map=M.get(1),a=map.start;
   assert.equal(M.moveClear(map,a,{x:150,y:500}),false);
   assert.equal(M.moveClear(map,a,{x:300,y:350}),true);
+  assert.equal(M.moveClear(map,{x:300,y:350},{x:450,y:200}),false,
+    'A diagonal shortcut across the inside of a bend is illegal');
   assert.equal(M.visibleRay(map,a,{x:150,y:150}).blocked,true);
   assert.ok(M.visibleRay(map,a,{x:150,y:150}).length<200);
   assert.equal(M.visibleRay(map,a,{x:300,y:350}).blocked,false);
+  assert.equal(M.hasTarget(map,a,[{x:300,y:350}]),true);
+  assert.equal(M.hasTarget(map,a,[{x:850,y:150}]),false);
   const space=M.get(8);
   assert.equal(M.moveClear(space,space.start,{x:150,y:250}),false);
 });
@@ -157,7 +174,8 @@ function harness({reduced=true}={}){
     "clearGuards(){enemies=[];refresh();},"+
     "setShip(x,y){ship={...ship,x,y};draw();},"+
     "forceMove(){updateMode('move');announcePhase();},"+
-    "startLevel(n){enterMazeLevel(n);updateMode('fire');announcePhase();}"+
+    "startLevel(n){enterMazeLevel(n);updateMode('fire');announcePhase();},"+
+    "tutorialTitles(){return tutorialEntries().map(t=>t[0]);}"+
     "};";
   vm.runInContext(main[1].replace(anchor,hook+anchor),box);
   function click(id){
@@ -219,6 +237,31 @@ test('bubbles hit a guardian in clear water but cannot pass through solid terrai
   assert.equal(h.probe.guards().length,0);
   assert.match(h.node('mazeObjective').textContent,/EXIT UNLOCKED/);
   assert.match(h.node('phaseHeading').textContent,/MOVE/);
+});
+test('maze movement continues until a guardian is in clear firing sight',()=>{
+  const g=harness();g.click('mazeModeBtn');
+  g.probe.setGuards([{x:300,y:350,progress:150},{x:600,y:150,progress:650}]);
+  g.order('090',3);
+  assert.equal(g.node('score').textContent,1);
+  assert.match(g.node('phaseHeading').textContent,/MOVE/);
+  g.order('090',1);
+  assert.match(g.node('phaseHeading').textContent,/MOVE/,
+    'No wasted fire when remaining guard is beyond the corner');
+  g.probe.setGuards([{x:350,y:350,progress:200}]);
+  g.order('090',1);
+  assert.match(g.node('phaseHeading').textContent,/FIRE/,
+    'A visible guardian restores the next firing phase');
+});
+test('the tutorial uses the rules for the chosen mode',()=>{
+  const g=harness();
+  assert.ok(g.probe.tutorialTitles().includes('Dodge the giant squid'));
+  assert.ok(!g.probe.tutorialTitles().includes('Follow the maze channels'));
+  g.click('mazeModeBtn');
+  const titles=g.probe.tutorialTitles();
+  assert.ok(titles.includes('Follow the maze channels'));
+  assert.ok(titles.includes('Eight different environments'));
+  assert.ok(!titles.includes('Dodge the giant squid'));
+  assert.ok(!titles.includes('Progress through 12 gentle levels'));
 });
 test('reaching a portal without defeating guards leaves the maze level locked',()=>{
   const g=harness();g.click('mazeModeBtn');
