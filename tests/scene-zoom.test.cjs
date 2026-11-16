@@ -14,7 +14,8 @@ const files={
   juice:fs.readFileSync(path.join(root,'pass-b-juice.js'),'utf8'),
   difficulty:fs.readFileSync(path.join(root,'difficulty.js'),'utf8'),
   rewards:fs.readFileSync(path.join(root,'rewards.js'),'utf8'),
-  squid:fs.readFileSync(path.join(root,'squid-strike.js'),'utf8')
+  squid:fs.readFileSync(path.join(root,'squid-strike.js'),'utf8'),
+  maze:fs.readFileSync(path.join(root,'maze-voyage.js'),'utf8')
 };
 const close=(a,b,description)=>assert.ok(Math.abs(a-b)<.03,description+': '+a+' vs '+b);
 
@@ -108,7 +109,7 @@ function harness({rect={left:0,top:0,width:1000,height:650},reduced=true}={}){
     window:win,document:{getElementById:el},Math:m,
     performance:{now:()=>clock},requestAnimationFrame:fn=>{frame=fn;}
   });
-  for(const type of ['zoom','art','juice','difficulty','rewards','squid'])
+  for(const type of ['zoom','art','juice','difficulty','rewards','squid','maze'])
     vm.runInContext(files[type],box);
   box.BloopArt=win.BloopArt;box.BloopJuice=win.BloopJuice;
   const anchor='start();if(!reducedMotion)requestAnimationFrame(frame);})();';

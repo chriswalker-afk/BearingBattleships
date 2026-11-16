@@ -2,8 +2,11 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#103b63"><title>Bloop! Bearing Battles</title>
 <style>
 :root{font-family:system-ui,"Trebuchet MS",sans-serif;color:#163554;background:#e8f7fa}*{box-sizing:border-box}body{margin:0}button,input{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:11px 15px;font-weight:800;background:#fff;color:#16466c;box-shadow:0 3px 0 #c2d4db}button:hover{filter:brightness(.95)}button:focus-visible,input:focus-visible{outline:3px solid #ffb830;outline-offset:2px}.shell{max-width:1500px;margin:auto;padding:15px}header{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}h1{margin:0;font-size:clamp(1.6rem,3vw,2.6rem);letter-spacing:-1px;color:#10476c}header p{margin:2px 0 0}.pill{background:#ffe38a;border-radius:99px;padding:6px 12px;font-weight:850}.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:16px;margin-top:14px}.seaWrap{min-width:0}.sea{position:relative;background:#91ddeb;border:8px solid #fff;border-radius:22px;box-shadow:0 8px 0 #c1d6dc;overflow:hidden;touch-action:none}canvas{display:block;width:100%;height:auto;aspect-ratio:1000/650;touch-action:none}.seafooter{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 4px}.compass{display:flex;align-items:center;gap:9px;font-weight:850;color:#16466c}.compass svg{width:72px;height:72px;flex:none}.panel{background:#fff;border-radius:20px;padding:18px;box-shadow:0 6px 0 #c9dfe1}.stack{display:flex;flex-direction:column;gap:14px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{border-radius:13px;background:#e8f6fa;padding:10px 4px;text-align:center;font-size:.8rem}.stat strong{display:block;font-size:1.45rem}.bar{display:flex;gap:8px;flex-wrap:wrap}.bar button{flex:1;padding:10px 6px}.active{background:#ffda79!important;color:#163554!important}.fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.fields label{display:grid;gap:5px;font-size:.88rem;font-weight:750}.fields input{min-width:0;border:2px solid #a8d4e0;border-radius:10px;padding:10px;background:#f6fcfe}h2{margin:0 0 9px;font-size:1.2rem}h3{margin:0 0 8px}p{line-height:1.5}.small{font-size:.85rem}.hint{background:#fff5cf;border-radius:12px;padding:11px;font-size:.9rem}.primary{background:#ffab59;color:#522c17}.secondary{background:#18618a;color:#fff}.muted{color:#5c7886}.log{min-height:77px;background:#eaf6f9;border-radius:12px;padding:12px;font-size:.93rem;font-weight:650}dialog{border:0;border-radius:20px;box-shadow:0 20px 100px #123b5e73;max-width:min(700px,94vw);max-height:90vh;padding:0;color:#183e57}dialog::backdrop{background:#0b2746a9}.modal{padding:22px}.modal h2{font-size:1.7rem}.modal .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.tutorialStep{padding:13px;background:#e8f6fa;border-radius:12px;min-height:135px}.badge{display:inline-block;padding:4px 9px;border-radius:25px;background:#ffdb82;font-size:.8rem;font-weight:bold}details{border-top:1px solid #c2dde3;padding:11px 0}summary{cursor:pointer;font-weight:800}ol,ul{line-height:1.65;padding-left:23px}.gameover{position:absolute;inset:0;background:#092a4fba;color:#fff;display:none;align-items:center;justify-content:center;text-align:center;flex-direction:column;padding:24px}.gameover.show{display:flex}.gameover h2{font-size:clamp(2rem,5vw,3.8rem)}.wide{width:100%}@media(max-width:950px){.layout{grid-template-columns:1fr}.panel{padding:13px}.stack{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.stack>.panel:last-child{grid-column:1/-1}}@media(max-width:570px){.stack{grid-template-columns:1fr}.shell{padding:8px}.sea{border-width:4px}.panel{padding:13px}.compass svg{width:58px;height:58px}.seafooter{font-size:.83rem}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
-</style><link rel="stylesheet" href="pass-a.css"><link rel="stylesheet" href="pass-b.css"><link rel="stylesheet" href="single-screen.css"><link rel="stylesheet" href="difficulty.css"><link rel="stylesheet" href="phase-toasts.css"><link rel="stylesheet" href="boat-studio.css"><link rel="stylesheet" href="rewards.css"><link rel="stylesheet" href="squid-strike.css"><link rel="stylesheet" href="scene-zoom.css"></head><body><main class="shell">
-<header><div><h1>🐙 Bloop! Bearing Battles</h1><p>Steer the <span id="playerBoatName">S.S. Wobble</span>. Outsmart the approaching sea sillies!</p></div><div class="bar"><button id="boatStudioBtn" title="Personalise your boat">🎨 Boat Studio</button><button id="tutorialBtn" title="Open step-by-step tutorial">📖 Tutorial</button><button id="mathBtn" title="Learn about bearings and measuring">📐 Maths help</button><button id="resetBtn" title="Start a fresh voyage">↻ New game</button></div></header>
+</style><link rel="stylesheet" href="pass-a.css"><link rel="stylesheet" href="pass-b.css"><link rel="stylesheet" href="single-screen.css"><link rel="stylesheet" href="difficulty.css"><link rel="stylesheet" href="phase-toasts.css"><link rel="stylesheet" href="boat-studio.css"><link rel="stylesheet" href="rewards.css"><link rel="stylesheet" href="squid-strike.css"><link rel="stylesheet" href="scene-zoom.css"><link rel="stylesheet" href="maze-voyage.css"></head><body><main class="shell">
+<header><div><h1>🐙 Bloop! Bearing Battles</h1><p>Steer the <span id="playerBoatName">S.S. Wobble</span>. Outsmart the approaching sea sillies!</p></div><div class="gameModeSwitch" role="group" aria-label="Choose game mode; switching starts a new voyage">
+<button id="openSeaModeBtn" type="button" class="selected" aria-pressed="true" title="Classic twelve-level open sea battle">🌊 Open Sea</button>
+<button id="mazeModeBtn" type="button" aria-pressed="false" title="Eight maze levels, ending in space">🌀 Maze Voyage</button>
+</div><div class="bar"><button id="boatStudioBtn" title="Personalise your boat">🎨 Boat Studio</button><button id="tutorialBtn" title="Open step-by-step tutorial">📖 Tutorial</button><button id="mathBtn" title="Learn about bearings and measuring">📐 Maths help</button><button id="resetBtn" title="Start a fresh voyage">↻ New game</button></div></header>
 <div class="layout"><div class="seaWrap"><div class="sea" id="sea"><div id="phaseRibbon" class="phaseRibbon" data-phase="ready" aria-hidden="true">🧭 Captain’s turn</div><div id="waveNotice" class="waveNotice" aria-hidden="true"><strong id="waveTitle">🏝️ Level 2!</strong><span id="waveSubtitle">One new challenge!</span></div><div id="phasePop" class="noticePop noticePop--phase" role="status" aria-live="polite" aria-atomic="true">
   <strong id="phasePopTitle"></strong><span id="phasePopDetail"></span>
 </div>
@@ -25,10 +28,11 @@
     <div class="stat" id="heartStat">Hearts<strong id="hearts">♥♥♥</strong></div>
   </div>
   <div class="statusStrip">
-    <span>🏝️ Level <strong id="waveNo">1</strong>/<strong id="levelMax">12</strong></span>
+    <span><span id="levelIcon">🏝️</span> Level <strong id="waveNo">1</strong>/<strong id="levelMax">12</strong></span>
     <span>⭐ Streak <strong id="streak">0</strong></span>
     <span>Best <strong id="bestStreak">0</strong></span>
   </div>
+  <p id="mazeObjective" class="mazeObjective" role="status" aria-live="polite" hidden></p>
   <div class="log" id="log" aria-live="polite">Ahoy! Measure an angle, then choose your order.</div>
 </section>
 <section class="panel ordersPanel" id="ordersPanel" data-phase="fire" aria-label="Current captain's order">
@@ -59,7 +63,7 @@
   <p class="toolHint"><strong>Ruler:</strong> place blue <strong>0 pivot</strong> on your ship; drag the orange far-end handle to rotate. Drag its body to move.</p>
 </section>
 </aside></div></main>
-<dialog id="tutorial"><div class="modal"><span class="badge" id="stepNo">Step 1 of 13</span><h2 id="stepTitle"></h2><div class="tutorialStep" id="stepBody"></div><div class="actions"><button id="prevStep">← Back</button><button id="nextStep" class="secondary">Next →</button><button id="closeTutorial">Close</button></div></div></dialog>
+<dialog id="tutorial"><div class="modal"><span class="badge" id="stepNo">Step 1 of 14</span><h2 id="stepTitle"></h2><div class="tutorialStep" id="stepBody"></div><div class="actions"><button id="prevStep">← Back</button><button id="nextStep" class="secondary">Next →</button><button id="closeTutorial">Close</button></div></div></dialog>
 <dialog id="maths"><div class="modal"><h2>📐 Bearings maths help</h2><p>These examples explain the skill without giving away where any creature is.</p>
 <details open><summary>What is a bearing?</summary><p>A bearing is an angle measured <b>clockwise from north</b>, written using <b>three figures</b>. For example, east is 090°, south is 180°, west is 270° and north is 000°.</p></details>
 <details><summary>How do I use the protractor?</summary><ol><li>Drag its centre onto your ship.</li><li>Rotate it so its 0° / N direction points upwards (north).</li><li>Read clockwise from north to the creature, using its position on the circular scale.</li><li>Type a three-figure bearing in Captain's orders.</li></ol><p>Think of 045° as halfway between north and east, while 315° is northwest.</p></details>
@@ -71,7 +75,8 @@
 <details><summary>What if I measure an angle anticlockwise?</summary><p>Bearings still go clockwise. If a direction is 40° anticlockwise from north, its bearing is 360° − 40° = <b>320°</b>.</p></details>
 <details><summary>Worked example: firing northeast</summary><p>A target is 3 squares east and 3 squares north of your ship. It is halfway between north and east: the bearing is <b>045°</b>. Its distance is about 4.2 units, so a bubble with range 5 units reaches it. This is a generic example, not a game hint.</p></details>
 <details><summary>What changes as I reach higher levels?</summary><p>There are <b>12 levels</b>. Each new level adds <b>only one</b> challenge: one extra creature, a small increase in how far they swim per turn, or one additional creature wearing a bubble helmet. Other rules remain the same.</p><p>From Level 4, some sea sillies have <b>two-hit helmets</b>. Their blue ring and small number show how many hits remain. Aim at the <b>centre of the creature</b>, not the number badge. One hit cracks the helmet without scoring a point; the next accurate hit pops the creature. Your pop streak is not lost when you hit a helmet.</p></details>
-<details><summary>What is the giant squid danger zone?</summary><p>Starting in <b>Level 10</b>, a red danger circle can appear when a <b>MOVE PHASE</b> begins. The game warns you <b>before</b> you move. If the centre of your ship is still inside the red circle <b>at the end of a valid Move</b>, a giant squid tentacle strikes and costs <b>one heart</b>. If you finish outside it, the squid misses—even if your sailing path crossed the red circle.</p><p>Use your manual ruler and protractor to select a bearing and distance (1–5 units) that finishes safely outside the circle. The first Level 10 warning is guaranteed so you can learn the rule; later strikes are occasional, with at least two hazard-free MOVE turns between them. Invalid orders do not trigger the squid or cost a turn. The warning never appears in Levels 1–9.</p></details>
+<details><summary>How does Maze Voyage work?</summary><p>Choose <b>🌀 Maze Voyage</b> at the top to play eight handcrafted navigation levels. The first is a wide, simple waterway with a swirling whirlpool exit; Level 2 is a turquoise lagoon; later maps use mangroves, coral, islands, ice and storms before a final level among the stars. The coloured channels are navigable; the scenery outside them is <b>solid</b>. A Move must stay inside the open channel for the whole straight course, and bubbles cannot pass through banks or asteroids. Later maps include dead-end side channels. Measure the correct <b>three-figure bearing and whole-number distance</b> to make progress. The portal remains <b>locked</b> until you pop every guardian, then sail into it on MOVE to advance. If no guardian is visible within the 8-unit shot range, you can keep using MOVE rather than wasting a shot. Once every guardian has been defeated, MOVE turns continue until you reach the exit. You can switch back to Open Sea at any time; switching starts a new game.</p></details>
+<details><summary>What is the giant squid danger zone in Open Sea mode?</summary><p>Starting in <b>Level 10</b>, a red danger circle can appear when a <b>MOVE PHASE</b> begins. The game warns you <b>before</b> you move. If the centre of your ship is still inside the red circle <b>at the end of a valid Move</b>, a giant squid tentacle strikes and costs <b>one heart</b>. If you finish outside it, the squid misses—even if your sailing path crossed the red circle.</p><p>Use your manual ruler and protractor to select a bearing and distance (1–5 units) that finishes safely outside the circle. The first Level 10 warning is guaranteed so you can learn the rule; later strikes are occasional, with at least two hazard-free MOVE turns between them. Invalid orders do not trigger the squid or cost a turn. The warning never appears in Levels 1–9.</p></details>
 <details><summary>How do I collect bonus stars?</summary><p>When you <b>pop</b> a sea silly, it releases a glowing ⭐ bonus star. It floats closer to your ship so you can normally reach it on your next <b>MOVE PHASE</b>. Sail <b>through or close to</b> the star to collect <b>2 extra points</b>. Your ruler and protractor are still needed to choose the bearing and distance. Stars remain available for four moving opportunities, then drift away. A first hit on a two-hit helmet is not a pop, so it does not drop a star.</p><p>All enemies begin within your eight-unit firing range. If sailing would leave every enemy too far away, the nearest silly catches a current and swims back into range before your next firing turn.</p></details>
 <details><summary>Why might a shot miss?</summary><p>Check that your protractor is centred on the ship, 0° points north, you have measured clockwise, and your range is long enough. A bubble travels in a straight line along the bearing you enter.</p></details>
 <details><summary>Challenge: reverse bearings</summary><p>The bearing from A to B is 070°. From B to A, turn 180°: the reverse bearing is <b>250°</b>. If the original bearing is over 180°, subtract 180° instead.</p></details>
@@ -110,13 +115,14 @@
   </div>
 </dialog>
 <div id="boatStudioStatusLive" class="srOnly" role="status" aria-live="polite" aria-atomic="true"></div>
-<script src="boat-style.js"></script><script src="rewards.js"></script><script src="squid-strike.js"></script><script src="scene-zoom.js"></script><script src="pass-a-art.js"></script><script src="pass-b-juice.js"></script><script src="difficulty.js"></script>
+<script src="boat-style.js"></script><script src="rewards.js"></script><script src="squid-strike.js"></script><script src="scene-zoom.js"></script><script src="maze-voyage.js"></script><script src="pass-a-art.js"></script><script src="pass-b-juice.js"></script><script src="difficulty.js"></script>
 <script>
 (()=>{'use strict';
 const canvas=document.getElementById('board'),ctx=canvas.getContext('2d'),$=id=>document.getElementById(id),W=1000,H=650,U=50;
 let ship,enemies,pickups,collectedPickupGhosts,pops,moveCount,pickupSerial,turn,score,hearts,mode='fire',finished=false,won=false,showP=true,showR=true,drag=null;
 let squidZone=null,squidStrike=null,squidSeen=false,squidCooldown=0;
 let sceneZoom=1,sceneCamera={x:W/2,y:H/2};
+let gameMode='sea',mazeMap=null,pendingMazeLevel=null;
 let shipMotion=null,shotMotion=null,impactMotion=null,waveMotion=null,hitGhost=null;
 let collisionGhosts=[],animating=false,animEnd=0,pendingEnd=false,pendingPhase=null;
 let streak=0,bestStreak=0,waveNo=1,cues=[],speechCue=null,celebrationCue=null,damageUntil=0;
@@ -127,26 +133,45 @@ const RULER_NEAR_GRIP={x:65,y:-38};
 let pro={x:400,y:355,a:0},ruler={x:320,y:560,a:0};
 const tutorials=[
 ['Welcome aboard!','You are captain of a very brave (and extremely squeaky) ship. Silly sea creatures are swimming closer. Your job is to pop them with bubbles or sail out of danger.'],
+['Choose your voyage','At the top, choose <b>🌊 Open Sea</b> for the original 12-level creature battle or <b>🌀 Maze Voyage</b> for eight themed mazes with a portal at the end. Both use the same three-figure bearings. Switching modes starts a fresh voyage.'],
 ['Make your ship your own!','Before you start, open <b>🎨 Boat Studio</b> at the top of the game. Choose a hull colour, cabin, flag, face and decoration, and even give your boat a name. Preview your design before saving. Everything is free and purely cosmetic: the ship’s position, bearing, speed and hitbox never change. Your boat is saved only in this browser.'],
 ['Your maths mission','Bearings are angles measured <b>clockwise from north</b>. North is up, and the compass below the board always shows it. You must enter bearings using three figures, such as 045°, 090° or 275°.'],
 ['Measure with the protractor','Use the <b>Protractor</b> button to show it. Drag the transparent disk by its body until the centre is on your ship. Drag the orange circle on its rim to rotate it; keep the N/0° line pointing north. Read the angle clockwise towards a creature. There is no auto-aim.'],
 ['Measure with the ruler','<b>The small blue circle at 0 is the pivot.</b> Drag the ruler body until the blue 0 circle sits at the centre of your ship. Now drag the orange handle at the far end: the ruler rotates while its 0 end stays fixed. Read distance in grid units (one square = one unit). Bubbles can travel 1–8 units.'],
 ['Zoom the sea scene','Use the <b>− and + buttons</b> under the sea to zoom from <b>100% (full map)</b> up to <b>200%</b>. The percentage button resets the view to 100%. The camera follows your ship while you sail. If the ruler’s far orange handle goes off-screen, use its <b>small orange rotation grip near the zero end</b>. <b>Bearings, grid units, shot range, ship movement and enemy hitboxes never change.</b> Zoom back to 100% to see every enemy.'],
-['Firing phase','Your first turn is a <b>FIRE PHASE</b>. You cannot choose the phase: the game alternates automatically. Use your protractor and ruler to measure a target, enter a three-figure bearing and a whole-number range of 1–8 units, then press <b>Launch bubble!</b>. A bubble travels in a straight line. Hitting a creature pops it, except for the first hit on a two-hit helmet.'],
-['Moving phase','After a valid firing turn, a clear pop-in announces <b>MOVE PHASE</b>. You must now sail. Measure the bearing you want to travel, then enter a three-figure bearing and a whole-number distance of 1–5 units. A move cannot leave the map. After a valid move, the game switches back to <b>FIRE PHASE</b>. Enemies move closer after either kind of turn.'],
+['Firing phase','Your first turn is a <b>FIRE PHASE</b>. In Open Sea the game alternates Fire and Move automatically. In Maze Voyage you fire when a guardian has a clear line of sight; otherwise you keep moving until one is reachable. Use your protractor and ruler to measure a target, enter a three-figure bearing and a whole-number range of 1–8 units, then press <b>Launch bubble!</b>. A bubble travels in a straight line; in Maze Voyage, banks and rocks <b>block shots</b>. Hitting a creature pops it, except for the first hit on a two-hit helmet.'],
+['Moving phase','After a valid firing turn, a clear pop-in announces <b>MOVE PHASE</b>. You must now sail. Measure the bearing you want to travel, then enter a three-figure bearing and a whole-number distance of 1–5 units. A move cannot leave the map. After a valid move, Open Sea switches back to <b>FIRE PHASE</b>. In Maze Voyage you may make consecutive MOVE orders while no guardian is within clear firing range, and after all guardians are defeated you continue sailing until the portal. Enemies move closer after either kind of turn.'],
+['Follow the maze channels','In <b>Maze Voyage</b>, sail only inside the coloured water channel. The solid banks, rocks, ice or asteroids form the maze walls, so even a straight route that <b>cuts across a corner</b> is blocked. A warning appears and the turn is not used. Later mazes have <b>dead ends</b>: explore carefully, but every level has a route to the exit.','maze'],
+['Defeat guards and unlock the portal','The glowing portal is initially <b>locked</b>. Pop all the guardians with measured bubble shots, then sail your ship to the portal on a <b>MOVE PHASE</b>. When a guardian is not within clear firing range, MOVE remains active so you never have to waste an empty shot. After the final guardian is defeated, you may make consecutive MOVE orders to reach the exit. A portal takes you to the next environment.','maze'],
+['Eight different environments','Start with a simple <b>waterway and whirlpool exit</b>, then visit a <b>lagoon, mangroves, coral maze, rocky islands, frozen fjords and stormy water</b>. The final maze is set <b>in space</b> with a warp portal. Corridors narrow, routes get longer and there are more guards.','maze'],
 ['Mistakes and pop-in warnings','Incorrect bearings trigger a clear red warning. Bearings are always <b>three figures</b>, measured clockwise from north: write <b>045°</b>, not 45°. North is <b>000°</b>, not 360°. Invalid bearings, distances and off-map moves do <b>not</b> use a turn, move enemies or change the current phase. Correct your input and try again.'],
-['Dodge the giant squid','From <b>Level 10</b> onwards, a <b>red circle</b> sometimes appears before your <b>MOVE PHASE</b>. The giant squid strikes that circle <b>after your move</b>. If your ship <b>finishes inside</b> it, you lose one heart. Use your ruler and protractor to steer outside the red area; crossing it while sailing is allowed if you finish safely. The first warning is guaranteed, then strikes appear occasionally. Invalid moves do not trigger the strike.'],
-['Collect bonus stars','When a silly is <b>popped</b>, a glowing ⭐ bonus star drifts closer to the ship. During your <b>next MOVE PHASE</b>, sail through or near the star to earn <b>+2 extra points</b>. You do not have to collect it to progress. Uncollected stars float away after four movement chances. Helmet cracks do not drop rewards.'],
-['Progress through 12 gentle levels','Clear all the creatures in a level to move on. Every new level changes <b>just one thing</b>: there may be one more sea silly, slightly faster swimmers, or one extra creature with a <b>two-hit helmet</b>. A helmet hit still uses a turn, but does not earn a point until the creature is popped. Aim at the centre of the creature, not the helmet number.'],
-['Survive the sillies!','After each valid order, surviving creatures swim closer. If one touches your ship, you lose a heart. Lose all three hearts and the voyage ends. Clear all <b>12 levels</b> to win! Your protractor and ruler stay manual. Use <b>Maths help</b> whenever you need a refresher. Ready, captain?']
+['Dodge the giant squid','From <b>Level 10</b> onwards, a <b>red circle</b> sometimes appears before your <b>MOVE PHASE</b>. The giant squid strikes that circle <b>after your move</b>. If your ship <b>finishes inside</b> it, you lose one heart. Use your ruler and protractor to steer outside the red area; crossing it while sailing is allowed if you finish safely. The first warning is guaranteed, then strikes appear occasionally. Invalid moves do not trigger the strike.','sea'],
+['Collect bonus stars','When a silly is <b>popped</b>, a glowing ⭐ bonus star drifts closer to the ship. During your <b>next MOVE PHASE</b>, sail through or near the star to earn <b>+2 extra points</b>. You do not have to collect it to progress. Uncollected stars float away after four movement chances. Helmet cracks do not drop rewards.','sea'],
+['Collect bonus stars in the maze','Guardians drop ⭐ bonus stars when popped. In Maze Voyage the stars stay where the guardians fell, safely inside the channel, instead of floating through banks. Sail through a star on a MOVE phase to earn <b>+2 points</b>; uncollected stars last for several movement turns.','maze'],
+['Progress through 12 gentle levels','Clear all the creatures in a level to move on. Every new level changes <b>just one thing</b>: there may be one more sea silly, slightly faster swimmers, or one extra creature with a <b>two-hit helmet</b>. A helmet hit still uses a turn, but does not earn a point until the creature is popped. Aim at the centre of the creature, not the helmet number.','sea'],
+['Survive the sillies!','After each valid order, surviving creatures swim closer. If one touches your ship, you lose a heart. Lose all three hearts and the voyage ends. Clear all <b>12 levels</b> to win! Your protractor and ruler stay manual. Use <b>Maths help</b> whenever you need a refresher. Ready, captain?','sea'],
+['Reach the warp portal!','In Maze Voyage, guardians patrol the channel and may damage you if they reach your ship. You have <b>three hearts</b>. Defeat them to unlock the portal, then sail through it to progress. Reach the <b>space warp portal</b> on Level 8 to win! Your bearings and ruler remain manual.','maze']
 ];let step=0;
+function tutorialEntries(){
+  return tutorials.filter(entry=>!entry[2]||entry[2]===gameMode);
+}
 function safe(v,min,max){return Math.max(min,Math.min(max,v))}
 function pos(e,b,d){const a=b*Math.PI/180;return{x:e.x+Math.sin(a)*d*U,y:e.y-Math.cos(a)*d*U}}
 function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
 function spawnLevel(level,at=0){
+  if(gameMode==='maze'){
+    // Each enemy patrols on the route itself. The first guard is visible in
+    // firing range, later guards are spread along the progressively harder maze.
+    const locations=window.BloopMaze.enemySpawns(mazeMap);
+    for(let i=0;i<locations.length;i++){
+      const p=locations[i];
+      enemies.push({x:p.x,y:p.y,pathProgress:p.progress,
+        type:i%3,bob:Math.random()*6.28,bornAt:at,
+        mood:['cheeky','curious','grumpy'][i%3],hp:p.hp,maxHp:p.hp});
+    }
+    return;
+  }
   const spec=window.BloopDifficulty.get(level);
-  // Every enemy is deliberately placed within the ship's eight-unit range.
-  // Keep level counts, speeds, and helmet totals exactly as defined in difficulty.js.
   const locations=window.BloopRewards.spawnPositions(ship,spec.count,Math.random);
   for(let i=0;i<spec.count;i++){
     const p=locations[i],hp=i<spec.armoured?2:1;
@@ -172,19 +197,62 @@ function setZoom(next){
   updateZoomControls();
   draw();
 }
+function enterMazeLevel(level){
+  // A warp portal creates the next curated map only AFTER the preceding
+  // sailing animation finishes, so the scenery never jumps mid-turn.
+  waveNo=level;mazeMap=window.BloopMaze.get(level);
+  ship={...mazeMap.start,heading:0};
+  enemies=[];pickups=[];collectedPickupGhosts=[];moveCount=0;
+  spawnLevel(level);
+  pro={x:ship.x,y:ship.y,a:0};
+  ruler={x:ship.x,y:Math.min(615,ship.y+135),a:0};
+  shipMotion=null;shotMotion=null;impactMotion=null;hitGhost=null;
+  collisionGhosts=[];waveMotion=null;pendingPhase=null;
+  squidZone=null;squidStrike=null;
+  sceneZoom=1;sceneCamera={x:W/2,y:H/2};updateZoomControls();
+  $('waveNo').textContent=level;
+  $('levelRule').textContent=mazeMap.name;
+  $('levelIcon').textContent=mazeMap.palette.icon;
+  $('waveTitle').textContent=mazeMap.palette.icon+' Level '+level+' — '+mazeMap.name;
+  $('waveSubtitle').textContent=mazeMap.description;
+  if(!reducedMotion)$('waveNotice').classList.add('show');
+  message('🌀 '+mazeMap.name+'. '+mazeMap.description+
+    ' Defeat the guards and sail to the portal.','wave');
+  refresh();
+}
+function switchGameMode(next){
+  if(next!==gameMode){
+    gameMode=next;
+    start(); // Switching modes deliberately starts a fresh, independent voyage.
+  }
+}
 function start(){
-  ship={x:500,y:325,heading:0};enemies=[];pickups=[];collectedPickupGhosts=[];pops=0;moveCount=0;pickupSerial=0;turn=1;score=0;hearts=3;finished=false;won=false;
+  pendingMazeLevel=null;
+  mazeMap=gameMode==='maze'?window.BloopMaze.get(1):null;
+  ship=mazeMap?{...mazeMap.start,heading:0}:{x:500,y:325,heading:0};enemies=[];pickups=[];collectedPickupGhosts=[];pops=0;moveCount=0;pickupSerial=0;turn=1;score=0;hearts=3;finished=false;won=false;
   shipMotion=null;shotMotion=null;impactMotion=null;waveMotion=null;hitGhost=null;
   collisionGhosts=[];pendingEnd=false;pendingPhase=null;animating=false;animEnd=0;
   streak=0;bestStreak=0;waveNo=1;cues=[];speechCue=null;celebrationCue=null;damageUntil=0;
   squidZone=null;squidStrike=null;squidSeen=false;squidCooldown=0;
   sceneZoom=1;sceneCamera={x:W/2,y:H/2};updateZoomControls();
-  clearCelebrations();$('waveNo').textContent='1';$('levelMax').textContent=window.BloopDifficulty.maxLevel;$('levelRule').textContent=window.BloopDifficulty.summary(1);
-  pro={x:500,y:325,a:0};ruler={x:320,y:560,a:0};
+  clearCelebrations();$('waveNo').textContent='1';
+  $('levelMax').textContent=mazeMap?window.BloopMaze.maxLevel:window.BloopDifficulty.maxLevel;
+  $('levelRule').textContent=mazeMap?mazeMap.name:window.BloopDifficulty.summary(1);
+  $('levelIcon').textContent=mazeMap?mazeMap.palette.icon:'🏝️';
+  $('mazeObjective').hidden=!mazeMap;
+  $('openSeaModeBtn').classList.toggle('selected',!mazeMap);
+  $('mazeModeBtn').classList.toggle('selected',!!mazeMap);
+  $('openSeaModeBtn').setAttribute('aria-pressed',String(!mazeMap));
+  $('mazeModeBtn').setAttribute('aria-pressed',String(!!mazeMap));
+  pro={x:ship.x,y:ship.y,a:0};
+  ruler=mazeMap?{x:ship.x,y:Math.min(615,ship.y+135),a:0}:{x:320,y:560,a:0};
   spawnLevel(1);$('end').classList.remove('show');$('end').dataset.outcome='';
   mode='fire';updateMode('fire');clearInputError();
   setLocked(false);announcePhase();
-  $('log').textContent='Level 1: Calm waters. Your first turn is FIRE. Measure a three-figure bearing and range.';
+  $('log').textContent=mazeMap?
+    '🌀 Maze 1 — '+mazeMap.name+'. '+mazeMap.description+
+    ' Fire at the guards, follow the water channel on MOVE, and unlock the whirlpool exit.':
+    'Level 1: Calm waters. Your first turn is FIRE. Measure a three-figure bearing and range.';
   refresh();draw();
 }
 function setLocked(locked){
@@ -192,10 +260,11 @@ function setLocked(locked){
 }
 function showEnding(){
   $('end').dataset.outcome=won?'victory':'loss';
-  $('endTitle').textContent=won?'🏆 Sea-sational victory!':'Bloop! Shipwreck!';
+  $('endTitle').textContent=won?(mazeMap?'🚀 Astral maze escape!':'🏆 Sea-sational victory!'):'Bloop! Shipwreck!';
   $('endText').textContent=won
-    ? 'All '+window.BloopDifficulty.maxLevel+' levels completed! You popped '+pops+' sea '+(pops===1?'silly':'sillies')+' and earned '+score+' points. What a captain!'
-    : 'You reached Level '+waveNo+', popped '+pops+' sea '+(pops===1?'silly':'sillies')+' and earned '+score+' points. Try another voyage!';
+    ? (mazeMap?'All '+window.BloopMaze.maxLevel+' maze portals reached! You defeated '+pops+' sea sillies and earned '+score+' points. The starfield is yours!':
+       'All '+window.BloopDifficulty.maxLevel+' levels completed! You popped '+pops+' sea '+(pops===1?'silly':'sillies')+' and earned '+score+' points. What a captain!')
+    : 'You reached Level '+waveNo+' of '+(mazeMap?'Maze Voyage':'Open Sea')+', popped '+pops+' sea '+(pops===1?'silly':'sillies')+' and earned '+score+' points. Try another voyage!';
   $('end').classList.add('show');
 }
 
@@ -206,6 +275,13 @@ function refresh(){
   $('hearts').textContent='♥'.repeat(hearts)+'♡'.repeat(3-hearts);
   $('streak').textContent=streak;
   $('bestStreak').textContent=bestStreak;
+  if(mazeMap){
+    const remaining=enemies.length;
+    $('mazeObjective').hidden=false;
+    $('mazeObjective').textContent=remaining?
+      '🔒 '+remaining+' guardian'+(remaining===1?'':'s')+' left · Defeat them to unlock the '+(mazeMap.theme==='space'?'warp portal':'whirlpool')+'.':
+      '🌀 EXIT UNLOCKED! Sail within the glowing portal during MOVE.';
+  }
 }
 function message(s,kind='neutral'){$('log').textContent=s;$('log').dataset.feedback=kind}
 function showPhase(s,kind){$('phaseRibbon').textContent=s;$('phaseRibbon').dataset.phase=kind}
@@ -254,7 +330,7 @@ function updateMode(next){
   }
   $('ordersPanel').dataset.phase=mode;
   $('phaseHeading').textContent=mode==='fire'?'🫧 FIRE PHASE':'⛵ MOVE PHASE';
-  if(mode==='move'&&!finished){
+  if(mode==='move'&&!finished&&gameMode==='sea'){
     // A threat is drawn only once the MOVE phase becomes playable. Students
     // always see the warning before selecting their next sailing bearing.
     const scheduled=window.BloopSquid.planMove({
@@ -270,8 +346,13 @@ function updateMode(next){
   $('squidStatus').textContent=squidZone?
     '🦑 RED ZONE! Sail OUTSIDE the circle or lose 1 heart.':'';
   $('ordersPanel').dataset.squid=squidZone?'warning':'none';
-  $('modeInfo').textContent=mode==='fire'?
-    'Fire now. Move on the next turn.':
+  $('modeInfo').textContent=mazeMap?
+    (mode==='fire'?'🫧 Fire at guardians in the same open channel.':
+     !enemies.length?'🌀 Guardians defeated — sail towards the unlocked portal!':
+     !window.BloopMaze.hasTarget(mazeMap,ship,enemies)?
+       '⛵ No guardian in firing sight yet. Keep navigating the channel.':
+       '⛵ Sail through the channel. Solid terrain blocks the route.'):
+    mode==='fire'?'Fire now. Move on the next turn.':
     squidZone?'⚠️ SQUID WARNING: Finish OUTSIDE the red circle.':
     'Move now. Fire on the next turn.';
   $('actionBtn').textContent=mode==='fire'?'Launch bubble!':'Sail away!';
@@ -349,6 +430,12 @@ function order(){
       'distance','That course would leave the map. No turn used; MOVE PHASE continues.');
     return;
   }
+  if(mode==='move'&&mazeMap&&!window.BloopMaze.moveClear(mazeMap,ship,dest)){
+    warn('🪨 Channel blocked!',
+      'A bank, reef, island or asteroid blocks this straight route. Measure a bearing that stays in the open channel.',
+      'bearing','That course crosses solid terrain. No turn used: MOVE PHASE continues.');
+    return;
+  }
   $('phasePop').classList.remove('show');
   const now=performance.now(),oldShip={...ship};
   cues=[];speechCue=null;celebrationCue=null;damageUntil=0;clearCelebrations();
@@ -358,7 +445,9 @@ function order(){
   const sailDuration=reducedMotion?0:750;
   const advanceDelay=(mode==='fire'?shotDuration:sailDuration)+(reducedMotion?0:120);
   const advanceDuration=reducedMotion?0:570;
-  const oldEnemyPositions=new Map(enemies.map(e=>[e,{x:e.x,y:e.y}]));
+  const oldEnemyPositions=new Map(enemies.map(e=>[e,{
+    x:e.x,y:e.y,pathProgress:e.pathProgress
+  }]));
   let result='';
   shipMotion=null;shotMotion=null;impactMotion=null;waveMotion=null;
   hitGhost=null;collisionGhosts=[];collectedPickupGhosts=[];
@@ -414,13 +503,17 @@ function order(){
   }else{
     const dx=dest.x-ship.x,dy=dest.y-ship.y,length=Math.hypot(dx,dy);
     const ux=dx/length,uy=dy/length;
+    const ray=mazeMap?window.BloopMaze.visibleRay(mazeMap,ship,dest):
+      {length,blocked:false};
     let best=null,bestT=Infinity,bestMiss=Infinity;
     for(const enemy of enemies){
       const vx=enemy.x-ship.x,vy=enemy.y-ship.y,t=vx*ux+vy*uy;
       const miss=Math.abs(vx*uy-vy*ux);
-      if(t>=0&&t<=length+16&&miss<=22&&t<bestT){best=enemy;bestT=t;bestMiss=miss;}
+      if(t>=0&&t<=length+16&&t<=ray.length+(ray.blocked?0:16)&&miss<=22&&t<bestT){
+        best=enemy;bestT=t;bestMiss=miss;
+      }
     }
-    const endpoint={x:ship.x+ux*(best?bestT:length),y:ship.y+uy*(best?bestT:length)};
+    const endpoint={x:ship.x+ux*(best?bestT:ray.length),y:ship.y+uy*(best?bestT:ray.length)};
     const helmetHit=!!best&&best.hp>1;
     shotMotion={from:oldShip,to:endpoint,start:now,duration:shotDuration,hit:!!best};
     impactMotion={x:endpoint.x,y:endpoint.y,start:now+shotDuration,
@@ -440,8 +533,10 @@ function order(){
     }else if(best){
       hitGhost={...best};
       enemies.splice(enemies.indexOf(best),1);score++;pops++;
-      pickups.push(window.BloopRewards.pickupFromPop(
-        ship,best,now+shotDuration,moveCount,++pickupSerial));
+      pickups.push(mazeMap?
+        window.BloopMaze.pickup(best,now+shotDuration,moveCount,++pickupSerial):
+        window.BloopRewards.pickupFromPop(
+          ship,best,now+shotDuration,moveCount,++pickupSerial));
       // Keep the board readable if students choose not to collect salvage.
       if(pickups.length>10)pickups.shift();
       streak++;bestStreak=Math.max(streak,bestStreak);
@@ -457,7 +552,9 @@ function order(){
     }else{
       streak=0;feedback='miss';
       queueCue('miss','💦 Splash! Check your measurement.',now+shotDuration);
-      result='Sploosh! Your bubble missed. Recheck your bearing and range. ';
+      result=ray.blocked?
+        'SPLASH! The bubble struck a solid bank or asteroid. Sail along the channel to get a clear shot. ':
+        'Sploosh! Your bubble missed. Recheck your bearing and range. ';
     }
   }
 
@@ -469,26 +566,47 @@ function order(){
   // This preserves the exact collision and bearing rules from Pass 1.
   for(let i=enemies.length-1;i>=0;i--){
     const enemy=enemies[i],old=oldEnemyPositions.get(enemy);
-    const dd=dist(enemy,ship),speed=window.BloopDifficulty.get(waveNo).speed;
-    if(dd>0){
-      enemy.x+=(ship.x-enemy.x)/dd*Math.min(speed,dd);
-      enemy.y+=(ship.y-enemy.y)/dd*Math.min(speed,dd);
+    if(mazeMap){
+      window.BloopMaze.advanceEnemy(mazeMap,enemy,ship);
+    }else{
+      const dd=dist(enemy,ship),speed=window.BloopDifficulty.get(waveNo).speed;
+      if(dd>0){
+        enemy.x+=(ship.x-enemy.x)/dd*Math.min(speed,dd);
+        enemy.y+=(ship.y-enemy.y)/dd*Math.min(speed,dd);
+      }
     }
-    enemy.motion={from:old,to:{x:enemy.x,y:enemy.y},start:now+advanceDelay,duration:advanceDuration};
+    enemy.motion={from:old,to:{x:enemy.x,y:enemy.y},
+      mazeFrom:mazeMap?old.pathProgress:null,
+      mazeTo:mazeMap?enemy.pathProgress:null,
+      start:now+advanceDelay,duration:advanceDuration};
     enemy.mood=dist(enemy,ship)<170?'surprised':['curious','cheeky','grumpy'][(turn+enemy.type)%3];
     if(dist(enemy,ship)<45){
       // Keep a temporary visual ghost so the creature can reach the ship visibly.
       collisionGhosts.push({creature:{...enemy},motion:enemy.motion,impact:{
         x:ship.x,y:ship.y,start:now+advanceDelay+advanceDuration,duration:reducedMotion?0:450
       }});
-      enemies.splice(i,1);hearts=Math.max(0,hearts-1);bumps++;
+      if(mazeMap){
+        // A guard that bonks the ship retreats along the CHANNEL but remains
+        // alive. It cannot unlock the portal without being bubbled.
+        const d=window.BloopMaze.progressAt(mazeMap,ship);
+        const own=enemy.pathProgress;
+        const retreat=own<d?Math.max(0,d-170):Math.min(mazeMap.length,d+170);
+        const back=window.BloopMaze.pointAt(mazeMap,retreat);
+        enemy.x=back.x;enemy.y=back.y;enemy.pathProgress=retreat;
+        enemy.motion={from:old,to:back,mazeFrom:old.pathProgress,
+          mazeTo:retreat,start:now+advanceDelay,duration:advanceDuration};
+        if(!bumps)hearts=Math.max(0,hearts-1);
+      }else{
+        enemies.splice(i,1);hearts=Math.max(0,hearts-1);
+      }
+      bumps++;
     }
   }
   // Before the next FIRE phase, at least one creature must be within range.
   // A gentle catch-up current is animated as part of the existing enemy step.
   // This applies equally on all 12 levels and never changes the shot range.
   const upcomingMode=mode==='fire'?'move':'fire';
-  if(upcomingMode==='fire'&&enemies.length){
+  if(!mazeMap&&upcomingMode==='fire'&&enemies.length){
     const surfer=window.BloopRewards.bringNearestIntoRange(ship,enemies,oldEnemyPositions);
     if(surfer)result+='🌊 A sea silly caught the current and swam into range! ';
   }
@@ -500,7 +618,26 @@ function order(){
     speechCue={x:ship.x,y:ship.y,text:'Ow, my biscuits!',
       start:now+advanceDelay+advanceDuration,duration:1050};
   }
-  if(enemies.length===0&&hearts>0){
+  if(mazeMap&&hearts>0){
+    if(!enemies.length&&mode==='fire'){
+      result+='🌀 EXIT UNLOCKED! Follow the maze channel and sail into the whirlpool portal. ';
+      queueCue('celebrate','🌀 Exit portal unlocked!',now+shotDuration);
+    }
+    if(mode==='move'&&window.BloopMaze.isExit(mazeMap,ship)){
+      if(enemies.length){
+        result+='🔒 Portal locked! Defeat '+enemies.length+
+          ' remaining guardian'+(enemies.length===1?'':'s')+' first. ';
+      }else if(waveNo===window.BloopMaze.maxLevel){
+        won=true;finished=true;pendingEnd=true;
+        result+='🚀 The space warp opens! You escaped the final maze. ';
+      }else{
+        pendingMazeLevel=waveNo+1;
+        result+='🌀 Into the portal! Next: '+
+          window.BloopMaze.get(pendingMazeLevel).name+'. ';
+      }
+    }
+  }
+  if(!mazeMap&&enemies.length===0&&hearts>0){
     if(waveNo===window.BloopDifficulty.maxLevel){
       if(mode==='fire'){
         // Give students a final MOVE to claim the last enemy's dropped star.
@@ -535,7 +672,12 @@ function order(){
   if(hearts<=0){finished=true;pendingEnd=true;}
   // A completed order always spends one turn, whether the shot hit, missed,
   // cracked armour or the ship sailed. Switch only if the voyage continues.
-  const nextMode=mode==='fire'?'move':'fire';
+  // With all maze guardians defeated, keep MOVE active until the exit;
+  // students do not waste empty firing turns on the way to the portal.
+  const nextMode=pendingMazeLevel?'fire':
+    mazeMap?(mode==='fire'?'move':
+      window.BloopMaze.hasTarget(mazeMap,ship,enemies)?'fire':'move'):
+    mode==='fire'?'move':'fire';
   animEnd=now+advanceDelay+advanceDuration+(reducedMotion?0:560);
   if(!reducedMotion&&!finished)queueCue('ready',
     nextMode==='fire'?'🫧 FIRE PHASE':'⛵ MOVE PHASE',animEnd);
@@ -545,8 +687,13 @@ function order(){
     showEnding();pendingEnd=false;
     showPhase(won?'🏆 Voyage complete!':'💔 Shipwreck',won?'celebrate':'damage');
   }else if(!finished){
-    if(reducedMotion){updateMode(nextMode);announcePhase();}
-    else pendingPhase=nextMode;
+    if(reducedMotion){
+      if(pendingMazeLevel){
+        const level=pendingMazeLevel;pendingMazeLevel=null;
+        enterMazeLevel(level);
+      }
+      updateMode(nextMode);announcePhase();
+    }else pendingPhase=nextMode;
   }
   message(result+' Turn '+turn+'.',feedback);refresh();tickCues(now);draw(now);
 }
@@ -609,7 +756,12 @@ function draw(now=performance.now()){
   sceneCamera=window.BloopZoom.cameraFor(cameraTarget,sceneZoom,W,H);
   ctx.save();
   window.BloopZoom.apply(ctx,sceneCamera,sceneZoom,W,H);
-  BloopArt.drawSea(ctx,artNow,W,H,U);
+  if(mazeMap){
+    window.BloopMaze.draw(ctx,mazeMap,artNow);
+    window.BloopMaze.drawPortal(ctx,mazeMap,enemies.length===0,artNow);
+  }else{
+    BloopArt.drawSea(ctx,artNow,W,H,U);
+  }
   if(squidZone)window.BloopSquid.drawWarning(ctx,squidZone,now,reducedMotion);
   if(squidStrike&&now<squidStrike.at)
     window.BloopSquid.drawWarning(ctx,squidStrike.zone,now,reducedMotion);
@@ -620,7 +772,14 @@ function draw(now=performance.now()){
   // Enemies, and their targetable centres, use the same unmodified board coordinates.
   for(const e of enemies){
     if(now<(e.bornAt||0))continue;
-    const p=e.motion?lerpPoint(e.motion,now):e;
+    const p=e.motion&&mazeMap&&Number.isFinite(e.motion.mazeFrom)&&
+      Number.isFinite(e.motion.mazeTo)?
+      window.BloopMaze.pointAt(mazeMap,
+        e.motion.mazeFrom+
+        (e.motion.mazeTo-e.motion.mazeFrom)*
+        BloopArt.ease(e.motion.duration?
+          BloopArt.clamp((now-e.motion.start)/e.motion.duration,0,1):1)):
+      e.motion?lerpPoint(e.motion,now):e;
     const moving=e.motion&&now>e.motion.start&&now<e.motion.start+e.motion.duration;
     if(moving){
       const t=(now-e.motion.start)/e.motion.duration;
@@ -652,6 +811,8 @@ function draw(now=performance.now()){
       (now-shipMotion.start)/shipMotion.duration,'ship');
   }
   BloopArt.drawBoat(ctx,renderedShip,artNow,shipUnderway,window.BloopBoat?.getCurrent?.());
+  if(mazeMap&&mazeMap.theme==='space')
+    window.BloopMaze.drawSpaceAura(ctx,renderedShip,artNow);
   if(squidStrike)window.BloopSquid.drawTentacle(ctx,squidStrike,now,reducedMotion);
   BloopArt.drawProjectile(ctx,shotMotion,now);
   BloopArt.drawImpact(ctx,impactMotion,now);
@@ -668,7 +829,11 @@ function frame(now){
   tickCues(now);
   if(animating&&now>=animEnd){
     animating=false;setLocked(false);
-    if(pendingEnd){
+    if(pendingMazeLevel&&!pendingEnd){
+      const level=pendingMazeLevel;pendingMazeLevel=null;
+      enterMazeLevel(level);
+      updateMode('fire');announcePhase();
+    }else if(pendingEnd){
       showEnding();pendingEnd=false;
       showPhase(won?'🏆 Voyage complete!':'💔 Shipwreck',won?'celebrate':'damage');
     }else if(pendingPhase){
@@ -707,6 +872,8 @@ function endDrag(){drag=null}canvas.addEventListener('pointerup',endDrag);canvas
 $('zoomOutBtn').addEventListener('click',()=>setZoom(sceneZoom-window.BloopZoom.STEP));
 $('zoomInBtn').addEventListener('click',()=>setZoom(sceneZoom+window.BloopZoom.STEP));
 $('zoomResetBtn').addEventListener('click',()=>setZoom(1));
+$('openSeaModeBtn').addEventListener('click',()=>switchGameMode('sea'));
+$('mazeModeBtn').addEventListener('click',()=>switchGameMode('maze'));
 $('actionBtn').addEventListener('click',order);
 for(const id of ['bearing','distance']){
   $(id).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();order();}});
@@ -714,7 +881,7 @@ for(const id of ['bearing','distance']){
 }
 $('resetBtn').addEventListener('click',start);$('againBtn').addEventListener('click',start);
 $('protractorBtn').addEventListener('click',()=>{showP=!showP;$('protractorBtn').classList.toggle('active',showP);$('protractorBtn').setAttribute('aria-pressed',String(showP));draw()});$('rulerBtn').addEventListener('click',()=>{showR=!showR;$('rulerBtn').classList.toggle('active',showR);$('rulerBtn').setAttribute('aria-pressed',String(showR));draw()});
-function tutorialStep(){const s=tutorials[step];$('stepNo').textContent='Step '+(step+1)+' of '+tutorials.length;$('stepTitle').textContent=s[0];$('stepBody').innerHTML='<p>'+s[1]+'</p>';$('prevStep').disabled=step===0;$('nextStep').textContent=step===tutorials.length-1?'Start playing!':'Next →'}
-$('tutorialBtn').onclick=()=>{step=0;tutorialStep();$('tutorial').showModal()};$('prevStep').onclick=()=>{step=Math.max(0,step-1);tutorialStep()};$('nextStep').onclick=()=>{if(step===tutorials.length-1)$('tutorial').close();else{step++;tutorialStep()}};$('closeTutorial').onclick=()=>$('tutorial').close();$('mathBtn').onclick=()=>$('maths').showModal();$('closeMath').onclick=()=>$('maths').close();for(const d of [$('tutorial'),$('maths')])d.addEventListener('click',e=>{if(e.target===d)d.close()});
+function tutorialStep(){const entries=tutorialEntries(),s=entries[step];$('stepNo').textContent='Step '+(step+1)+' of '+entries.length;$('stepTitle').textContent=s[0];$('stepBody').innerHTML='<p>'+s[1]+'</p>';$('prevStep').disabled=step===0;$('nextStep').textContent=step===entries.length-1?'Start playing!':'Next →'}
+$('tutorialBtn').onclick=()=>{step=0;tutorialStep();$('tutorial').showModal()};$('prevStep').onclick=()=>{step=Math.max(0,step-1);tutorialStep()};$('nextStep').onclick=()=>{if(step===tutorialEntries().length-1)$('tutorial').close();else{step++;tutorialStep()}};$('closeTutorial').onclick=()=>$('tutorial').close();$('mathBtn').onclick=()=>$('maths').showModal();$('closeMath').onclick=()=>$('maths').close();for(const d of [$('tutorial'),$('maths')])d.addEventListener('click',e=>{if(e.target===d)d.close()});
 start();if(!reducedMotion)requestAnimationFrame(frame);})();
 </script><script src="boat-studio.js"></script><script src="single-screen.js"></script></body></html>

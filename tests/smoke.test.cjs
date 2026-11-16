@@ -13,6 +13,7 @@ const juice = fs.readFileSync(path.join(root, 'pass-b-juice.js'), 'utf8');
 const rewards = fs.readFileSync(path.join(root, 'rewards.js'), 'utf8');
 const squid = fs.readFileSync(path.join(root, 'squid-strike.js'), 'utf8');
 const sceneZoom = fs.readFileSync(path.join(root, 'scene-zoom.js'), 'utf8');
+const mazeVoyage = fs.readFileSync(path.join(root, 'maze-voyage.js'), 'utf8');
 const difficulty = fs.readFileSync(path.join(root, 'difficulty.js'), 'utf8');
 
 function harness(reducedMotion = false) {
@@ -68,6 +69,7 @@ function harness(reducedMotion = false) {
   vm.runInContext(rewards, context, { filename: 'rewards.js' });
   vm.runInContext(squid, context, { filename: 'squid-strike.js' });
   vm.runInContext(sceneZoom, context, { filename: 'scene-zoom.js' });
+  vm.runInContext(mazeVoyage, context, { filename: 'maze-voyage.js' });
   // In the browser window IS global; this VM harness uses a separate window stub.
   sandbox.BloopArt=win.BloopArt;
   sandbox.BloopJuice=win.BloopJuice;

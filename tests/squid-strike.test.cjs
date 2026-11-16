@@ -13,7 +13,8 @@ const sources={
   rewards:fs.readFileSync(path.join(root,'rewards.js'),'utf8'),
   difficulty:fs.readFileSync(path.join(root,'difficulty.js'),'utf8'),
   squid:fs.readFileSync(path.join(root,'squid-strike.js'),'utf8'),
-  zoom:fs.readFileSync(path.join(root,'scene-zoom.js'),'utf8')
+  zoom:fs.readFileSync(path.join(root,'scene-zoom.js'),'utf8'),
+  maze:fs.readFileSync(path.join(root,'maze-voyage.js'),'utf8')
 };
 function pure(){
   const box={window:{}};vm.runInNewContext(sources.squid,box);
@@ -101,7 +102,7 @@ function harness(reduced=true){
   m.random=()=>rng[seed++%rng.length];
   const box=vm.createContext({window:win,document:{getElementById:el},Math:m,
     performance:{now:()=>now},requestAnimationFrame:fn=>{raf=fn;}});
-  for(const k of ['art','juice','difficulty','rewards','squid','zoom'])
+  for(const k of ['art','juice','difficulty','rewards','squid','zoom','maze'])
     vm.runInContext(sources[k],box);
   box.BloopArt=win.BloopArt;box.BloopJuice=win.BloopJuice;
   const anchor='start();if(!reducedMotion)requestAnimationFrame(frame);})();';

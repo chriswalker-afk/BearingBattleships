@@ -9,6 +9,7 @@ const root = path.resolve(__dirname,'..');
 const rewardsCode = fs.readFileSync(path.join(root,'rewards.js'),'utf8');
 const squidCode = fs.readFileSync(path.join(root,'squid-strike.js'),'utf8');
 const sceneZoomCode=fs.readFileSync(path.join(root,'scene-zoom.js'),'utf8');
+const mazeVoyageCode=fs.readFileSync(path.join(root,'maze-voyage.js'),'utf8');
 const artCode = fs.readFileSync(path.join(root,'pass-a-art.js'),'utf8');
 const juiceCode = fs.readFileSync(path.join(root,'pass-b-juice.js'),'utf8');
 const difficultyCode = fs.readFileSync(path.join(root,'difficulty.js'),'utf8');
@@ -117,6 +118,7 @@ function harness({lastLevel=false}={}){
   vm.runInContext(rewardsCode,sandbox);
   vm.runInContext(squidCode,sandbox);
   vm.runInContext(sceneZoomCode,sandbox);
+  vm.runInContext(mazeVoyageCode,sandbox);
   sandbox.BloopArt=win.BloopArt;
   sandbox.BloopJuice=win.BloopJuice;
   if(lastLevel)win.BloopDifficulty={...win.BloopDifficulty,maxLevel:1};

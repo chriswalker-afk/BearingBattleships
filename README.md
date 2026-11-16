@@ -12,7 +12,47 @@ Production hostname: https://bearings.mrwalkermaths.com/
 
 ## Play
 
-Play at **https://bearings.mrwalkermaths.com/**. For offline/local use, open `index.html` in a modern browser and keep the accompanying `.css` and `.js` files in the same folder, including `boat-style.js`, `boat-studio.js`, `boat-studio.css`, `rewards.js`, `rewards.css`, `scene-zoom.js` and `scene-zoom.css`. There are no external dependencies or build steps. Merges to `main` publish automatically through GitHub Pages Actions.
+Play at **https://bearings.mrwalkermaths.com/**. The header offers two independent modes: **🌊 Open Sea** (the original 12-level game) and **🌀 Maze Voyage** (eight themed navigation mazes ending in space). Changing modes starts a fresh voyage. For offline/local use, open `index.html` in a modern browser and keep the accompanying `.css` and `.js` files in the same folder, including `boat-style.js`, `boat-studio.js`, `boat-studio.css`, `rewards.js`, `rewards.css`, `scene-zoom.js`, `scene-zoom.css`, `maze-voyage.js` and `maze-voyage.css`. There are no external dependencies or build steps. Merges to `main` publish automatically through GitHub Pages Actions.
+
+## Maze Voyage — alternate navigation mode (PR #12)
+
+**Maze Voyage** is a separate game mode proposed by a student. Select **🌀 Maze Voyage** in the game header to begin an eight-level journey. The original **🌊 Open Sea** mode remains the default and retains its own 12-level difficulty progression, squid strikes, open-sea creature spawning, and victory rules.
+
+Students still measure **three-figure clockwise bearings from north**, using the same draggable protractor and ruler, and enter whole-number distances: FIRE 1–8 units, MOVE 1–5 units. The two modes share the same Boat Studio, compass, scoring, hearts, ship controls and optional +2 pickups.
+
+### How the mazes work
+
+- The **coloured channels** are the navigable route. Sandbars, banks, mangroves, coral, rocky islands, glaciers and asteroid fields outside them form **solid walls**.
+- **Movement checks the entire straight sailing line**, not merely its destination. Trying to cross land, cut across a tight corner, sail through an island, or leave the map causes a warning, **without spending a turn**.
+- **Bubble shots stop at the first solid obstacle**, and cannot defeat enemies through scenery. Students find a place in the channel with a clear line of sight before firing.
+- Enemy guardians patrol **along the channel centreline**, following bends rather than passing through walls. A guardian that bumps the ship takes a heart, but **retreats instead of disappearing**: only defeating guardians by bubbling them unlocks the portal.
+- **Fair phases:** start on FIRE with a reachable first guardian. After firing, students MOVE. If no guardian is within the maximum eight-unit firing range **and** visible through an unobstructed channel, consecutive MOVE turns are allowed automatically; the next FIRE phase appears only once a guardian can be engaged. The game does not reveal a bearing or auto-aim.
+- An animated **whirlpool exit** (a **warp portal** in space) appears at the far end of each level. It stays **locked until all guardians are bubbled**. Sail into the glowing portal during MOVE to load the next level. Once all guardians are defeated, MOVE remains available until the exit rather than demanding empty shots.
+- **Bonus stars** appear where a maze guardian was popped, safely on the channel, with nine MOVE opportunities to collect them for **+2 points**. The original open-sea floating-star behaviour is unchanged.
+- At the portal, the next map loads after the sailing animation; score, hearts, turn count and cosmetic boat design are preserved. The camera resets to the 100% whole-map view to introduce each environment.
+
+### Curated environment progression
+
+| Level | Environment | Route legs | Dead ends | Guardians | Two-hit helmets | What changes |
+| --- | --- | ---: | ---: | ---: | ---: | --- |
+| 1 | Gentle Waterway | 3 | 0 | 2 | 0 | Simple water maze; whirlpool exit |
+| 2 | Shimmering Lagoon | 5 | 1 | 2 | 0 | Sandbars and a first wrong turn |
+| 3 | Mangrove Delta | 5 | 1 | 3 | 0 | Longer route and roots |
+| 4 | Coral Labyrinth | 7 | 1 | 3 | 1 | More turns and first helmet |
+| 5 | Rocky Archipelago | 7 | 1 | 4 | 1 | Islands and more guardians |
+| 6 | Frozen Fjords | 7 | 1 | 4 | 1 | Narrow icy passages |
+| 7 | Stormy Strait | 7 | 2 | 4 | 2 | More false routes and helmets |
+| 8 | Astral Escape | 7 | 2 | 5 | 2 | Asteroid field, narrow starlane and warp portal |
+
+Every route is **hand-authored** and validated by maze-voyage.js at startup. Main routes and every false branch contain straight axis-aligned segments in whole 50-pixel grid units, and a programmatic feasibility test confirms each main route can be traversed with legal **1–5-unit** MOVE orders. The first guard on every level starts along an unobstructed 1–3-unit firing bearing. Later mazes add distance, guards, turns, narrow passages and misleading branches. The final mode has a dark starfield, asteroid scenery, violet hyperspace channels and a spacecraft-like glow around the customised boat.
+
+### Scope and verification
+
+- Original Open Sea gameplay remains unchanged; the two modes have independent new-voyage resets. Neither changes the underlying bearings, ruler pivot, hitboxes or score rules.
+- Maths Help explains maze navigation; tutorials are **filtered by active mode** so Maze Voyage learners do not receive the late-game open-sea squid instructions.
+- The optional view-only 100–200% zoom works in either mode, preserving world coordinates and pointer dragging.
+- The maze-voyage.test.cjs suite checks unique biomes, complete viable routes, side branches, blocked moves and shots, guardian patrols, locked exits, post-pop unlocking, automatic skip of empty firing phases, classroom warnings, mode switches, tutorial filtering, and travelling through all eight portals to the space victory.
+- Check in a real browser before merging: first-level visual clarity, difference between solid scenery and navigable channels, placement of locked/unlocked whirlpool, mobile and zoom, readability of a guard behind walls, and the space transition. On-screen navigation remains a measurement task; no automatic path guide is shown.
 
 ## Ship-centred sea zoom
 
