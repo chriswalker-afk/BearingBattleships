@@ -53,7 +53,7 @@
   <p class="toolHint"><strong>Ruler:</strong> place blue <strong>0 pivot</strong> on your ship; drag the orange far-end handle to rotate. Drag its body to move.</p>
 </section>
 </aside></div></main>
-<dialog id="tutorial"><div class="modal"><span class="badge" id="stepNo">Step 1 of 9</span><h2 id="stepTitle"></h2><div class="tutorialStep" id="stepBody"></div><div class="actions"><button id="prevStep">← Back</button><button id="nextStep" class="secondary">Next →</button><button id="closeTutorial">Close</button></div></div></dialog>
+<dialog id="tutorial"><div class="modal"><span class="badge" id="stepNo">Step 1 of 10</span><h2 id="stepTitle"></h2><div class="tutorialStep" id="stepBody"></div><div class="actions"><button id="prevStep">← Back</button><button id="nextStep" class="secondary">Next →</button><button id="closeTutorial">Close</button></div></div></dialog>
 <dialog id="maths"><div class="modal"><h2>📐 Bearings maths help</h2><p>These examples explain the skill without giving away where any creature is.</p>
 <details open><summary>What is a bearing?</summary><p>A bearing is an angle measured <b>clockwise from north</b>, written using <b>three figures</b>. For example, east is 090°, south is 180°, west is 270° and north is 000°.</p></details>
 <details><summary>How do I use the protractor?</summary><ol><li>Drag its centre onto your ship.</li><li>Rotate it so its 0° / N direction points upwards (north).</li><li>Read clockwise from north to the creature, using its position on the circular scale.</li><li>Type a three-figure bearing in Captain's orders.</li></ol><p>Think of 045° as halfway between north and east, while 315° is northwest.</p></details>
@@ -114,7 +114,8 @@ const RULER_LENGTH=8*U, RULER_HALF_WIDTH=20, RULER_HANDLE_X=RULER_LENGTH+18;
 // ruler.x/y are the centre of the short (0-unit) end, not the midpoint.
 let pro={x:400,y:355,a:0},ruler={x:320,y:560,a:0};
 const tutorials=[
-['Welcome aboard!','You are captain of the S.S. Wobble, a very brave (and extremely squeaky) ship. Silly sea creatures are swimming closer. Your job is to pop them with bubbles or sail out of danger.'],
+['Welcome aboard!','You are captain of a very brave (and extremely squeaky) ship. Silly sea creatures are swimming closer. Your job is to pop them with bubbles or sail out of danger.'],
+['Make your ship your own!','Before you start, open <b>🎨 Boat Studio</b> at the top of the game. Choose a hull colour, cabin, flag, face and decoration, and even give your boat a name. Preview your design before saving. Everything is free and purely cosmetic: the ship’s position, bearing, speed and hitbox never change. Your boat is saved only in this browser.'],
 ['Your maths mission','Bearings are angles measured <b>clockwise from north</b>. North is up, and the compass below the board always shows it. You must enter bearings using three figures, such as 045°, 090° or 275°.'],
 ['Measure with the protractor','Use the <b>Protractor</b> button to show it. Drag the transparent disk by its body until the centre is on your ship. Drag the orange circle on its rim to rotate it; keep the N/0° line pointing north. Read the angle clockwise towards a creature. There is no auto-aim.'],
 ['Measure with the ruler','<b>The small blue circle at 0 is the pivot.</b> Drag the ruler body until the blue 0 circle sits at the centre of your ship. Now drag the orange handle at the far end: the ruler rotates while its 0 end stays fixed. Read distance in grid units (one square = one unit). Bubbles can travel 1–8 units.'],
