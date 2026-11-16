@@ -4,7 +4,7 @@ A colourful, standalone browser game for Foundation Edexcel International GCSE M
 
 ## Play
 
-Open `index.html` in a modern browser. Keep `pass-a.css` and `pass-a-art.js` beside it: they provide the illustrated theme and canvas animations. No installation, server, build step or external dependencies are required. Once the feature branch is merged, enable **GitHub Pages → Deploy from a branch → main / (root)** in the repository settings to publish it.
+Open `index.html` in a modern browser. Keep the accompanying `pass-a.css`, `pass-a-art.js`, `pass-b.css`, `pass-b-juice.js`, `single-screen.css` and `single-screen.js` files beside it: they provide the illustrated theme, animations and responsive layout. No installation, server, build step or external dependencies are required. Once the feature branch is merged, enable **GitHub Pages → Deploy from a branch → main / (root)** in the repository settings to publish it.
 
 ## Learning goals
 
@@ -77,6 +77,34 @@ Covers bearing validation, shots/streaks, waves, damage, reset, reduced-motion c
 4. Check one short silly speech bubble after an action; it must reveal no target bearing or distance.
 5. Move the protractor/ruler and inspect the compass/grid during and after these effects; all measuring remains manual.
 6. Check narrow screens, reduced-motion mode and reset during an animation. The mathematical game rules must not change.
+
+## Single-screen Captain's Bridge (PR #4)
+
+The game now uses a compact **Captain's Bridge** alongside the sea:
+
+- **Mission status:** turn, score, hearts, wave, current/best streak and a scrollable recent-message log.
+- **Captain's orders:** Fire / Move, three-figure bearing, range/distance and the main action button.
+- **Measuring tools:** one-tap protractor/ruler toggles with a short reminder to drag and rotate manually.
+- **Compass and scale:** always shown immediately beneath the board. Tutorial, detailed maths help and restart remain in the compact top bar.
+- Press **Enter** from either numeric field to take an order, as an alternative to clicking the action button.
+
+### Screen-fitting behaviour
+
+On typical laptops and landscape tablets (at least **960 CSS pixels wide and 600 pixels high**), the page uses the available viewport height for its game board and control column without requiring page scrolling. The canvas is fitted with its original **1000 × 650** aspect ratio: *angles, distances and hit detection are unchanged*. The board is never stretched to fill an arbitrary rectangle.
+
+On portrait/narrow screens, or when the viewport is shorter than 600 pixels, the controls stack and **normal page scrolling is allowed**. This is deliberate: hiding a measurement tool or shrinking its markings to force an artificial one-screen fit would hurt the teaching objective.
+
+### Verification
+
+Run all zero-dependency tests from the repository root using Node 20+:
+
+\`\`\`sh
+node --test tests/*.test.cjs
+\`\`\`
+
+The new \`tests/single-screen.test.cjs\` covers required controls, responsive CSS rules and the board-fitting calculations. The existing \`tests/smoke.test.cjs\` continues to cover bearings, turns, creatures, waves, hearts and reduced motion.
+
+Review in Chrome/Edge at 1366×768, 1280×720 and 1024×600; confirm that the compass, status, instructions, Fire/Move buttons, both inputs, main action and tool toggles are simultaneously visible. At 390px mobile width and larger text/zoom, verify that **scrolling remains possible** and no buttons are clipped. Check that the protractor/ruler still drag and rotate correctly.
 
 ## Future ideas
 
