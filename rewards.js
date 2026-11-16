@@ -95,6 +95,10 @@
     const t=len?clamp(((p.x-a.x)*dx+(p.y-a.y)*dy)/len,0,1):0;
     return Math.hypot(p.x-(a.x+t*dx),p.y-(a.y+t*dy));
   }
+  function routeFraction(p,a,b){
+    const dx=b.x-a.x,dy=b.y-a.y,len=dx*dx+dy*dy;
+    return len?clamp(((p.x-a.x)*dx+(p.y-a.y)*dy)/len,0,1):0;
+  }
   // Pickup checks apply on MOVE only. Sailing through counts, not just parking
   // exactly on top of a star. Keep uncollected stars for four MOVE chances.
   function collectOnMove(pickups,from,to,moveNumber){
@@ -134,6 +138,6 @@
   window.BloopRewards=Object.freeze({
     SCALE,MAX_SHOT,MAX_MOVE,PICKUP_BONUS,PICKUP_RADIUS,PICKUP_LIFETIME_MOVES,
     spawnPositions,bringNearestIntoRange,pickupFromPop,collectOnMove,
-    distanceToSegment,drawPickup
+    distanceToSegment,routeFraction,drawPickup
   });
 })();
