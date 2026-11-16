@@ -154,6 +154,7 @@ function queueCue(kind,s,at,extra={}){
 function playCue(c,now){
   showPhase(c.text,c.kind);
   if(c.kind==='celebrate'&&!reducedMotion)$('scoreStat').classList.add('scorePulse');
+  if(c.kind==='miss')announceMiss();
   if(c.kind==='armour')$('phaseRibbon').dataset.phase='armour';
   if(c.kind==='damage'&&!reducedMotion){
     $('sea').classList.add('hurt');$('heartStat').classList.add('hit');damageUntil=now+650;
@@ -216,6 +217,12 @@ function warn(title,detail,field,logText){
     if(typeof $(field).focus==='function')$(field).focus({preventScroll:true});
   }
   message(logText||title+' '+detail,'error');
+}
+function announceMiss(){
+  $('phasePop').classList.remove('show');
+  $('errorPopTitle').textContent='💦 Bubble missed!';
+  $('errorPopDetail').textContent='Recheck the bearing and range. The turn still counts.';
+  restartNotice('errorPop');
 }
 function announcePhase(){
   $('errorPop').classList.remove('show');
