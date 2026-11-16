@@ -13,6 +13,7 @@ const juice=fs.readFileSync(path.join(root,'pass-b-juice.js'),'utf8');
 const rewards=fs.readFileSync(path.join(root,'rewards.js'),'utf8');
 const squid=fs.readFileSync(path.join(root,'squid-strike.js'),'utf8');
 const sceneZoom=fs.readFileSync(path.join(root,'scene-zoom.js'),'utf8');
+const mazeVoyage=fs.readFileSync(path.join(root,'maze-voyage.js'),'utf8');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const game=html.match(/<script>\s*([\s\S]*?)<\/script>/);
 assert.ok(game,'Inline gameplay script must exist');
@@ -87,6 +88,7 @@ function harness({shortVoyage=false}={}){
   vm.runInContext(rewards,ctx);
   vm.runInContext(squid,ctx);
   vm.runInContext(sceneZoom,ctx);
+  vm.runInContext(mazeVoyage,ctx);
   // In the browser window IS global; this VM harness uses a separate window stub.
   sandbox.BloopArt=win.BloopArt;
   sandbox.BloopJuice=win.BloopJuice;
