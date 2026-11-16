@@ -30,7 +30,7 @@ jobs:
       - name: Prepare static game assets
         run: |
           mkdir -p _site
-          cp index.html *.css *.js _site/
+          cp index.html *.css *.js CNAME _site/
           touch _site/.nojekyll
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
