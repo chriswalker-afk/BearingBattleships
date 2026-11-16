@@ -107,7 +107,7 @@ function harness(reduced=true){
   assert.ok(game[1].includes(anchor));
   const hook="window.__testSquid={"+
     "enter(level,num=2){waveNo=level;enemies=Array.from({length:num},(_,i)=>({"+
-    "x:720+i*20,y:205+i*60,hp:1,maxHp:1,type:0,bob:0,mood:'curious',bornAt:0"+
+    "x:260+i*20,y:170+i*25,hp:1,maxHp:1,type:0,bob:0,mood:'curious',bornAt:0"+
     "}));squidZone=null;squidStrike=null;squidSeen=false;squidCooldown=0;updateMode('fire');refresh();},"+
     "zone(){return squidZone?{...squidZone}:null;},"+
     "strike(){return squidStrike?{...squidStrike}:null;},"+
