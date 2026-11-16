@@ -1,0 +1,41 @@
+/* Late-game giant squid strike: a warning, never an aim solution. */
+.squidStatus {
+  margin: 5px 0 9px;
+  padding: 8px 9px;
+  border: 2px solid #dc4964;
+  border-radius: 10px;
+  background: #ffe6e8;
+  color: #8f2741;
+  font-size: .75rem;
+  font-weight: 900;
+  line-height: 1.32;
+  box-shadow: inset 0 -2px 0 #fbc5cb;
+}
+.squidStatus[hidden]{display:none!important}
+.ordersPanel[data-squid="warning"] .phaseStep.active{
+  background:#ffe1e5;
+  color:#962848;
+  border-color:#e76882;
+  box-shadow:inset 0 -2px 0 #f0a6b4;
+}
+.noticePop--phase[data-phase="squid"]{
+  background:linear-gradient(160deg,#ffe4e7,#f6a6bb);
+  color:#8b2445;
+  border-color:#fff3e8;
+  box-shadow:0 9px 0 #8b3b6470,0 14px 29px #59234370;
+}
+.phaseRibbon[data-phase="squid-dodge"]{
+  background:#e0faeb;color:#2c805c;
+}
+#log[data-feedback="damage"]{
+  background:#ffe9e8;border-left-color:#d64d67;color:#86314e;
+}
+.sea.squidDodged{
+  box-shadow:0 8px 0 #c1d6dc,0 0 0 5px #abedd178;
+}
+@media(max-width:620px){
+  .squidStatus{font-size:.67rem;padding:6px;margin:4px 0 7px}
+}
+@media(prefers-reduced-motion:reduce){
+  .squidStatus{animation:none}
+}

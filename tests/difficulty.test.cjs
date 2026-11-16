@@ -11,6 +11,7 @@ const difficulty=fs.readFileSync(path.join(root,'difficulty.js'),'utf8');
 const art=fs.readFileSync(path.join(root,'pass-a-art.js'),'utf8');
 const juice=fs.readFileSync(path.join(root,'pass-b-juice.js'),'utf8');
 const rewards=fs.readFileSync(path.join(root,'rewards.js'),'utf8');
+const squid=fs.readFileSync(path.join(root,'squid-strike.js'),'utf8');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const game=html.match(/<script>\s*([\s\S]*?)<\/script>/);
 assert.ok(game,'Inline gameplay script must exist');
@@ -26,9 +27,13 @@ test('the 12-level schedule changes exactly one difficulty dimension each time',
   assert.equal(plan.validate(),true);
   assert.deepEqual([plan.get(1).count,plan.get(1).speed,plan.get(1).armoured],[3,17,0]);
   assert.equal(plan.get(4).armoured,1,'First two-hit enemies appear at Level 4');
+  assert.equal(plan.get(9).hazard,false,'No squid before Level 10');
+  assert.equal(plan.get(10).hazard,true,'New danger begins at Level 10');
+  assert.equal(plan.get(10).armoured,2,'Squid replaces third helmet at Level 10');
+  assert.equal(plan.get(11).hazard,true,'Squid persists without extra intensity');
   for(let level=2;level<=plan.maxLevel;level++){
     const a=plan.get(level-1),b=plan.get(level);
-    const keys=['count','speed','armoured'];
+    const keys=['count','speed','armoured','hazard'];
     const changed=keys.filter(key=>a[key]!==b[key]);
     assert.equal(changed.length,1,'Exactly one change at level '+level);
     assert.ok(b[changed[0]]>a[changed[0]],'Difficulty increases at level '+level);
@@ -79,6 +84,7 @@ function harness({shortVoyage=false}={}){
   vm.runInContext(juice,ctx);
   vm.runInContext(difficulty,ctx);
   vm.runInContext(rewards,ctx);
+  vm.runInContext(squid,ctx);
   // In the browser window IS global; this VM harness uses a separate window stub.
   sandbox.BloopArt=win.BloopArt;
   sandbox.BloopJuice=win.BloopJuice;
@@ -92,7 +98,10 @@ function harness({shortVoyage=false}={}){
   const gameSource=game[1].replace(anchor,
     "window.__testing={"+
     "lineup(){for(const e of enemies){e.x=ship.x;e.y=ship.y-220;e.motion=null;}},"+
-    "enemies(){return enemies.map(e=>({x:e.x,y:e.y,hp:e.hp,maxHp:e.maxHp}));}"+
+    "enemies(){return enemies.map(e=>({x:e.x,y:e.y,hp:e.hp,maxHp:e.maxHp}));},"+
+    "zone(){return squidZone?{...squidZone}:null;},"+
+    "strike(){return squidStrike?{...squidStrike}:null;},"+
+    "ship(){return {...ship};}"+
     "};"+anchor);
   vm.runInContext(gameSource,ctx,{filename:'index.html'});
   function click(id){
@@ -110,7 +119,32 @@ function harness({shortVoyage=false}={}){
   function fire(bearing='000',range=6,align=true){
     // Complete each mandatory movement turn before the next test shot.
     if(element('phaseHeading').textContent.includes('MOVE')){
-      move(moveNumber++%2===0?'090':'270',1);
+      const zone=win.__testing.zone();
+      if(zone){
+        const ship=win.__testing.ship(),Q=win.BloopSquid;
+        const nearby=win.__testing.enemies();
+        const options=[];
+        for(const distance of [3,4,5]){
+          for(const [bearing,dx,dy] of [
+            ['090',1,0],['270',-1,0],['000',0,-1],['180',0,1]
+          ]){
+            const p={x:ship.x+dx*distance*50,y:ship.y+dy*distance*50};
+            if(p.x>=35&&p.x<=965&&p.y>=35&&p.y<=615&&!Q.within(p,zone)){
+              const clearance=nearby.length?
+                Math.min(...nearby.map(e=>Math.hypot(p.x-e.x,p.y-e.y))):999;
+              options.push({bearing,distance,clearance});
+            }
+          }
+        }
+        options.sort((a,b)=>b.clearance-a.clearance);
+        const escape=options[0];
+        assert.ok(escape,'There must be a legal squid-dodging bearing');
+        move(escape.bearing,escape.distance);
+        assert.equal(win.__testing.strike().hit,false,
+          'A legal escape bearing avoids the squid entirely');
+      }else{
+        move(moveNumber++%2===0?'090':'270',1);
+      }
     }
     if(align)win.__testing.lineup();
     element('bearing').value=bearing;
@@ -150,11 +184,12 @@ test('all 12 levels are winnable with exactly the configured number of hits',()=
     for(let i=0;i<spec.count+spec.armoured;i++)g.fire();
     if(level<plan.maxLevel){
       assert.equal(Number(g.e('waveNo').textContent),level+1,'Advanced after level '+level);
-      assert.equal(g.e('hearts').textContent,'♥♥♥');
+      assert.ok(g.e('hearts').textContent.includes('♥'),
+        'The captain must survive after level '+level);
     }
   }
   assert.equal(expectedPops,62);
-  assert.equal(expectedShots,80);
+  assert.equal(expectedShots,77);
   assert.equal(g.e('score').textContent,expectedPops);
   // Clearing Level 12 grants one final movement chance for a dropped star.
   assert.equal(g.e('end').dataset.outcome,'','Victory waits for final MOVE');

@@ -80,6 +80,24 @@ node --test tests/*.test.cjs
 
 Check in a real browser that golden stars float from defeated enemies and then remain visible until the ship reaches them; bonus scores are readable in the ship's log and on-screen; the final level allows the bonus move; and every firing phase offers a reachable target. Confirm that students still measure every bearing and distance manually.
 
+## Giant squid danger zones (PR #10)
+
+**Purpose:** Add one readable late-game challenge without violating the existing **one new difficulty element per level** progression.
+
+- **Level 10 introduces squid strikes instead of a third two-hit enemy.** Level 11 still adds one enemy, and Level 12 still increases enemy speed. The squid mechanic is unchanged at Levels 10–12: its size and strike frequency do not increase.
+- The first eligible **MOVE** at Level 10 always displays a red circular **SQUID STRIKE** warning, so the new rule is explained before it can hurt the student. Subsequent eligible MOVE phases have a **36%** strike chance after at least **two hazard-free MOVE turns**.
+- A translucent **red danger circle**, warning pop-in and persistent red text under the MOVE controls appear **before the student enters a bearing**. The zone never appears on a FIRE phase or in Levels 1–9.
+- The squid tests only the **ship's final centre position after a valid MOVE**. If the ship stops inside or on the red circle, a large purple **tentacle strikes at the end of the sailing animation** and costs **one heart**. If the ship finishes outside, the attack misses—even when the sailing path passes through the red zone.
+- A valid 1–5-unit move that ends **outside the red circle** always exists, including near corners. Students still need to watch for sea sillies and choose a sensible destination. They must work out the bearing and distance with the draggable protractor/ruler; the game never gives an automatic dodge route or correct bearing.
+- Invalid bearings, distances and off-map moves never trigger an attack or use a turn. The danger remains visible so students can correct their entry.
+- A final reward-only MOVE after the last sea silly is popped **does not** spawn a new danger zone. Losing all hearts still ends the voyage as before.
+
+### QA / testing
+
+Run the Node regression suite: node --test tests/*.test.cjs. The new squid-strike tests cover first-level introduction, cooldowns, corner escape geometry, final-position-only damage, invalid input, warning timing, canvas painting and exclusion from early levels and the final reward move. The difficulty regression checks that each level still changes precisely **one** factor.
+
+For a real-browser check, reach Level 10 and verify the first warning is obvious **before the MOVE**; test a 1-unit move finishing inside the red area (one heart lost), then a route that ends outside (no squid damage). Check tentacle visibility and warning contrast with the manual measuring tools switched on, including narrow screens and reduced-motion mode.
+
 ## Learning goals
 
 - Measure three-figure bearings clockwise from north.
@@ -96,7 +114,8 @@ Check in a real browser that golden stars float from defeated enemies and then r
 4. **FIRE:** range 1–8 units, bubble follows a ray; a hit requires passing through a creature. **MOVE:** distance 1–5 units, must remain on the board. A valid order consumes one turn and moves the enemies, even if the bubble misses or only cracks a helmet.
 5. After every valid order, enemies approach at their **current level's fixed speed**. Each creature that gets close costs a heart. Lose three hearts to end the game. Clear a level to reach the next; defeat Level 12 to complete the voyage.
 6. Defeated creatures release glowing ⭐ bonus buoys. **Sail through** them on a MOVE phase to earn **+2 points**. Your sailing course can pass near the star; the ship need not stop exactly on it.
-7. Use **Tutorial** for a guided eleven-step explanation and **Maths help** for optional conceptual guidance.
+7. Starting in **Level 10**, look for a red squid-strike zone before MOVE. Finish the move outside it to avoid losing a heart.
+8. Use **Tutorial** for a guided twelve-step explanation and **Maths help** for optional conceptual guidance.
 
 The game uses a scalable play canvas and a responsive layout. Boat designs are saved only in the student's current browser; no accounts or boat data are transmitted to a server.
 
@@ -211,22 +230,22 @@ node --test tests/*.test.cjs
 
 The game advances **one level when all creatures on the current level have been cleared**. An on-screen Level N/12 indicator and a short arrival banner explain the new challenge without solving any bearings. The student starts with the same manual protractor, ruler and north compass on every level.
 
-A central, immutable level table in `difficulty.js` enforces the rule: **each transition changes exactly one factor** — enemy **count**, swim **speed**, or the number of **armoured two-hit enemies**. There is no longer any hidden turn-based speed increase or score-based wave sizing.
+A central, immutable level table in `difficulty.js` enforces the rule: **each transition changes exactly one factor** — enemy **count**, swim **speed**, the number of **armoured two-hit enemies**, or the new **squid hazard** introduced at Level 10. There is no longer any hidden turn-based speed increase or score-based wave sizing.
 
-| Level | Enemies | Swim speed (px/turn) | Two-hit helmets | Only new difficulty |
-| --- | ---: | ---: | ---: | --- |
-| 1 | 3 | 17 | 0 | Gentle introduction |
-| 2 | 4 | 17 | 0 | +1 enemy |
-| 3 | 4 | 21 | 0 | +4 px/turn |
-| 4 | 4 | 21 | 1 | +1 helmet |
-| 5 | 5 | 21 | 1 | +1 enemy |
-| 6 | 5 | 25 | 1 | +4 px/turn |
-| 7 | 5 | 25 | 2 | +1 helmet |
-| 8 | 6 | 25 | 2 | +1 enemy |
-| 9 | 6 | 29 | 2 | +4 px/turn |
-| 10 | 6 | 29 | 3 | +1 helmet |
-| 11 | 7 | 29 | 3 | +1 enemy |
-| 12 | 7 | 33 | 3 | +4 px/turn |
+| Level | Enemies | Swim speed (px/turn) | Two-hit helmets | Squid zones | Only new difficulty |
+| --- | ---: | ---: | ---: | :---: | --- |
+| 1 | 3 | 17 | 0 | No | Gentle introduction |
+| 2 | 4 | 17 | 0 | No | +1 enemy |
+| 3 | 4 | 21 | 0 | No | +4 px/turn |
+| 4 | 4 | 21 | 1 | No | +1 helmet |
+| 5 | 5 | 21 | 1 | No | +1 enemy |
+| 6 | 5 | 25 | 1 | No | +4 px/turn |
+| 7 | 5 | 25 | 2 | No | +1 helmet |
+| 8 | 6 | 25 | 2 | No | +1 enemy |
+| 9 | 6 | 29 | 2 | No | +4 px/turn |
+| 10 | 6 | 29 | 2 | Yes | Squid strike introduced |
+| 11 | 7 | 29 | 2 | Yes | +1 enemy |
+| 12 | 7 | 33 | 2 | Yes | +4 px/turn |
 
 **Helmet behaviour:** a creature with a bubble helmet is visibly outlined with a blue ring and a **2** hit counter. One correct shot cracks its helmet and changes the counter to **1**. The creature remains alive, takes its normal advance that turn and needs one more accurate shot to pop. The first hit **does not award a point**, does not count as a pop, and does **not** break the player's existing pop streak. The final hit pops it for one point. Missing a shot still resets the current pop streak.
 
@@ -240,7 +259,7 @@ Teachers can rebalance the game by editing the twelve explicit entries in `diffi
 node --test tests/*.test.cjs
 ```
 
-`tests/difficulty.test.cjs` verifies every scheduled transition, the first armour hit not awarding a point, the second hit removing a creature, level advancement, and the 12-level victory path. Existing smoke, ruler and viewport tests remain. Manual browser QA is still recommended, especially for helmet visibility with the protractor over the board, mobile sizing, and the learning pace at Levels 4, 7 and 10.
+`tests/difficulty.test.cjs` verifies every scheduled transition, the first armour hit not awarding a point, the second hit removing a creature, level advancement, and the 12-level victory path. Existing smoke, ruler and viewport tests remain. Manual browser QA is still recommended, especially for helmet visibility with the protractor over the board, mobile sizing, and the learning pace at Levels 4, 7 and 10 (first squid warning).
 
 ## Alternating phases and clear pop-in warnings (PR #7)
 
