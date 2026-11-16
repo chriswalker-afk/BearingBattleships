@@ -253,7 +253,7 @@ test('all eight mazes can be traversed in whole-unit MOVE turns; final portal wi
     }
     if(stage<8){
       assert.equal(g.probe.level(),stage+1,'Whirlpool must load the next maze');
-      assert.equal(g.node('waveNo').textContent,String(stage+1));
+      assert.equal(String(g.node('waveNo').textContent),String(stage+1));
       assert.match(g.node('phaseHeading').textContent,/FIRE/);
       assert.equal(g.node('hearts').textContent,'♥♥♥');
     }else{
@@ -266,7 +266,7 @@ test('all eight mazes can be traversed in whole-unit MOVE turns; final portal wi
 });
 test('maze guardians stay alive after bumping the ship: only popping unlocks the exit',()=>{
   const g=harness();g.click('mazeModeBtn');
-  g.probe.setGuards([{x:165,y:350,progress:15}]);
+  g.probe.setGuards([{x:185,y:350,progress:35}]);
   g.order('180',1);
   assert.equal(g.node('hearts').textContent,'♥♥♡');
   assert.equal(g.probe.guards().length,1,'The bumped guard retreats rather than unlocking the exit');
