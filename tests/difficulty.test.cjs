@@ -156,6 +156,10 @@ test('all 12 levels are winnable with exactly the configured number of hits',()=
   assert.equal(expectedPops,62);
   assert.equal(expectedShots,80);
   assert.equal(g.e('score').textContent,expectedPops);
+  // Clearing Level 12 grants one final movement chance for a dropped star.
+  assert.equal(g.e('end').dataset.outcome,'','Victory waits for final MOVE');
+  assert.match(g.e('phaseHeading').textContent,/MOVE/);
+  g.move('180',1);
   assert.equal(g.e('waveNo').textContent,plan.maxLevel);
   assert.equal(g.e('end').dataset.outcome,'victory');
   assert.ok(g.e('end').classList.contains('show'));
@@ -206,6 +210,8 @@ test('ending the final level does not incorrectly award Level 13',()=>{
   const g=harness({shortVoyage:true});
   for(let i=0;i<3;i++)g.fire();
   assert.equal(g.e('waveNo').textContent,'1');
+  assert.equal(g.e('end').dataset.outcome,'','Final reward MOVE comes before victory');
+  g.move('180',1);
   assert.equal(g.e('end').dataset.outcome,'victory');
   assert.match(g.e('endText').textContent,/All 1 levels completed/);
 });
