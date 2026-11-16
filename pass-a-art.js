@@ -246,6 +246,27 @@
       mouth(c, mood, 8, '#99506a');
       oval(c, -16, 10, 3, 2.5, '#ee607e'); oval(c, 16, 10, 3, 2.5, '#ee607e');
     }
+    // Helmet overlay: visible hit count, anchored on the creature's true centre.
+    // Does not alter target coordinates or the game's hit tolerance.
+    if (e.maxHp > 1) {
+      const cracked = e.hp < e.maxHp;
+      c.save();
+      c.lineWidth = 5;
+      c.strokeStyle = cracked ? '#f4c56d' : '#6ad2eb';
+      c.beginPath(); c.arc(0, 0, 34, -.7, Math.PI * 1.72); c.stroke();
+      c.lineWidth = 2; c.strokeStyle = '#ffffff';
+      c.beginPath(); c.arc(0, 0, 39, -1.1, .45); c.stroke();
+      if (cracked) {
+        c.strokeStyle = '#865880'; c.lineWidth = 2.5;
+        c.beginPath(); c.moveTo(-12, -31); c.lineTo(-6, -37);
+        c.lineTo(-4, -29); c.lineTo(2, -35); c.stroke();
+      }
+      oval(c, 28, -29, 13, 13, cracked ? '#ffdb86' : '#e6fbff', '#215b7f', 2.8);
+      c.font = '900 15px system-ui'; c.fillStyle = '#1b5876';
+      c.textAlign='center';c.textBaseline='middle';
+      c.fillText(String(e.hp),28,-28);
+      c.restore();
+    }
     c.restore();
   }
 
@@ -295,7 +316,17 @@
     if (t > 1) return;
     c.save(); c.translate(impact.x, impact.y);
     c.globalAlpha = 1 - ease(t);
-    if (impact.hit) {
+    if (impact.armour) {
+      // A helmet hit cracks rather than popping the sea silly.
+      oval(c, 0, 0, 15 + t * 22, 15 + t * 22, null, '#e9fcff', 4 - 2 * t);
+      for(let i=0;i<6;i++){
+        const a = i * TAU / 6;
+        const inner = 6 + 9 * t, outer = 20 + 18 * t;
+        c.lineWidth=3; c.strokeStyle=i%2?'#f7cf7b':'#72d4ec';
+        c.beginPath();c.moveTo(Math.cos(a)*inner,Math.sin(a)*inner);
+        c.lineTo(Math.cos(a)*outer,Math.sin(a)*outer);c.stroke();
+      }
+    } else if (impact.hit) {
       oval(c, 0, 0, 10 + t * 34, 10 + t * 34, null, '#fff8c9', 5 - 3 * t);
       oval(c, 0, 0, 6 + t * 18, 6 + t * 18, null, '#fb91d8', 4 - 2 * t);
       for (let i = 0; i < 9; i++) {

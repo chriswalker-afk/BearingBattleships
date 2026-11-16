@@ -10,11 +10,12 @@ const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const inline = html.match(/<script>\s*([\s\S]*?)<\/script>/);
 const art = fs.readFileSync(path.join(root, 'pass-a-art.js'), 'utf8');
 const juice = fs.readFileSync(path.join(root, 'pass-b-juice.js'), 'utf8');
+const difficulty = fs.readFileSync(path.join(root, 'difficulty.js'), 'utf8');
 
 function harness(reducedMotion = false) {
   assert.ok(inline, 'Expected inline gameplay script');
   let clock = 20000, frame = null, frames = 0, randomIndex = 0, paints = 0;
-  // Predictable three identical northern targets; this makes hits testable.
+  // Deterministic spawns; shooting tests align targets through a test-only hook.
   const randomValues = [.6, .5, 0, 0];
   const fakeMath = Object.create(Math);
   fakeMath.random = () => randomValues[(randomIndex++) % randomValues.length];
@@ -60,20 +61,35 @@ function harness(reducedMotion = false) {
   const context = vm.createContext(sandbox);
   vm.runInContext(art, context, { filename: 'pass-a-art.js' });
   vm.runInContext(juice, context, { filename: 'pass-b-juice.js' });
-  vm.runInContext(inline[1], context, { filename: 'index.html' });
+  vm.runInContext(difficulty, context, { filename: 'difficulty.js' });
+  // In the browser window IS global; this VM harness uses a separate window stub.
+  sandbox.BloopArt=win.BloopArt;
+  sandbox.BloopJuice=win.BloopJuice;
+  // Test-only source injection: no production debug hook is shipped.
+  const anchor = 'start();if(!reducedMotion)requestAnimationFrame(frame);})();';
+  assert.ok(inline[1].includes(anchor), 'Expected game entrypoint');
+  const source = inline[1].replace(anchor, `
+    window.__testLineup = () => {
+      for (const e of enemies) {
+        e.x=ship.x;e.y=ship.y-220;e.motion=null;
+      }
+    };
+    ${anchor}`);
+  vm.runInContext(source, context, { filename: 'index.html' });
   function click(id) {
     const e = element(id), fn = listeners.get(id + ':click') || e.onclick;
     assert.equal(typeof fn, 'function', 'Missing click handler: ' + id);
     fn();
   }
   function fire(bearing = '000', distance = 6) {
+    if (bearing === '000' && Number(distance) === 6) win.__testLineup();
     element('bearing').value = bearing;
     element('distance').value = distance;
     click('actionBtn');
   }
   function advance(ms = 2500) { clock += ms; if (frame) frame(clock); }
   return { e: element, click, fire, advance, frameCount: () => frames,
-    ctx, win, paints: () => paints, dialogs };
+    ctx, win, paints: () => paints, dialogs, lineUp: () => win.__testLineup() };
 }
 
 test('manual bearing entry remains strictly three figures', () => {
@@ -88,7 +104,7 @@ test('manual bearing entry remains strictly three figures', () => {
   assert.equal(g.e('score').textContent, 1);
 });
 
-test('three pops earn streak, start new wave and reset streak after a miss', () => {
+test('three pops earn streak, start level 2 and reset streak after a miss', () => {
   const g = harness();
   for (let i = 1; i <= 3; i++) {
     g.fire(); assert.equal(g.e('score').textContent, i);
@@ -112,6 +128,7 @@ test('three pops earn streak, start new wave and reset streak after a miss', () 
 
 test('three simultaneous enemy bumps lose exactly three hearts', () => {
   const g = harness();
+  g.lineUp(); // All three approach from the same place to exercise one-turn damage clamping.
   for (let i = 0; i < 25 && g.e('hearts').textContent.includes('♥'); i++) {
     g.fire('180', 1);
     g.advance();

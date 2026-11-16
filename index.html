@@ -2,19 +2,19 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#103b63"><title>Bloop! Bearing Battles</title>
 <style>
 :root{font-family:system-ui,"Trebuchet MS",sans-serif;color:#163554;background:#e8f7fa}*{box-sizing:border-box}body{margin:0}button,input{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:11px 15px;font-weight:800;background:#fff;color:#16466c;box-shadow:0 3px 0 #c2d4db}button:hover{filter:brightness(.95)}button:focus-visible,input:focus-visible{outline:3px solid #ffb830;outline-offset:2px}.shell{max-width:1500px;margin:auto;padding:15px}header{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}h1{margin:0;font-size:clamp(1.6rem,3vw,2.6rem);letter-spacing:-1px;color:#10476c}header p{margin:2px 0 0}.pill{background:#ffe38a;border-radius:99px;padding:6px 12px;font-weight:850}.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:16px;margin-top:14px}.seaWrap{min-width:0}.sea{position:relative;background:#91ddeb;border:8px solid #fff;border-radius:22px;box-shadow:0 8px 0 #c1d6dc;overflow:hidden;touch-action:none}canvas{display:block;width:100%;height:auto;aspect-ratio:1000/650;touch-action:none}.seafooter{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 4px}.compass{display:flex;align-items:center;gap:9px;font-weight:850;color:#16466c}.compass svg{width:72px;height:72px;flex:none}.panel{background:#fff;border-radius:20px;padding:18px;box-shadow:0 6px 0 #c9dfe1}.stack{display:flex;flex-direction:column;gap:14px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{border-radius:13px;background:#e8f6fa;padding:10px 4px;text-align:center;font-size:.8rem}.stat strong{display:block;font-size:1.45rem}.bar{display:flex;gap:8px;flex-wrap:wrap}.bar button{flex:1;padding:10px 6px}.active{background:#ffda79!important;color:#163554!important}.fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.fields label{display:grid;gap:5px;font-size:.88rem;font-weight:750}.fields input{min-width:0;border:2px solid #a8d4e0;border-radius:10px;padding:10px;background:#f6fcfe}h2{margin:0 0 9px;font-size:1.2rem}h3{margin:0 0 8px}p{line-height:1.5}.small{font-size:.85rem}.hint{background:#fff5cf;border-radius:12px;padding:11px;font-size:.9rem}.primary{background:#ffab59;color:#522c17}.secondary{background:#18618a;color:#fff}.muted{color:#5c7886}.log{min-height:77px;background:#eaf6f9;border-radius:12px;padding:12px;font-size:.93rem;font-weight:650}dialog{border:0;border-radius:20px;box-shadow:0 20px 100px #123b5e73;max-width:min(700px,94vw);max-height:90vh;padding:0;color:#183e57}dialog::backdrop{background:#0b2746a9}.modal{padding:22px}.modal h2{font-size:1.7rem}.modal .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.tutorialStep{padding:13px;background:#e8f6fa;border-radius:12px;min-height:135px}.badge{display:inline-block;padding:4px 9px;border-radius:25px;background:#ffdb82;font-size:.8rem;font-weight:bold}details{border-top:1px solid #c2dde3;padding:11px 0}summary{cursor:pointer;font-weight:800}ol,ul{line-height:1.65;padding-left:23px}.gameover{position:absolute;inset:0;background:#092a4fba;color:#fff;display:none;align-items:center;justify-content:center;text-align:center;flex-direction:column;padding:24px}.gameover.show{display:flex}.gameover h2{font-size:clamp(2rem,5vw,3.8rem)}.wide{width:100%}@media(max-width:950px){.layout{grid-template-columns:1fr}.panel{padding:13px}.stack{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.stack>.panel:last-child{grid-column:1/-1}}@media(max-width:570px){.stack{grid-template-columns:1fr}.shell{padding:8px}.sea{border-width:4px}.panel{padding:13px}.compass svg{width:58px;height:58px}.seafooter{font-size:.83rem}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
-</style><link rel="stylesheet" href="pass-a.css"><link rel="stylesheet" href="pass-b.css"><link rel="stylesheet" href="single-screen.css"></head><body><main class="shell">
+</style><link rel="stylesheet" href="pass-a.css"><link rel="stylesheet" href="pass-b.css"><link rel="stylesheet" href="single-screen.css"><link rel="stylesheet" href="difficulty.css"></head><body><main class="shell">
 <header><div><h1>🐙 Bloop! Bearing Battles</h1><p>Steer the S.S. Wobble. Outsmart the approaching sea sillies!</p></div><div class="bar"><button id="tutorialBtn" title="Open step-by-step tutorial">📖 Tutorial</button><button id="mathBtn" title="Learn about bearings and measuring">📐 Maths help</button><button id="resetBtn" title="Start a fresh voyage">↻ New game</button></div></header>
-<div class="layout"><div class="seaWrap"><div class="sea" id="sea"><div id="phaseRibbon" class="phaseRibbon" data-phase="ready" aria-hidden="true">🧭 Captain’s turn</div><div id="waveNotice" class="waveNotice" aria-hidden="true"><strong id="waveTitle">🌊 Wave 2!</strong><span id="waveSubtitle">More sillies incoming!</span></div><canvas id="board" width="1000" height="650" aria-label="Play area with your ship and approaching enemies. North is at the top. Use the draggable ruler and protractor to measure."></canvas><div id="end" class="gameover" role="status"><h2 id="endTitle"></h2><p id="endText"></p><button id="againBtn" class="primary">Try again!</button></div></div><div class="seafooter"><div class="compass"><svg viewBox="0 0 100 100" role="img" aria-label="North is up; east right, south down, west left"><circle cx="50" cy="50" r="45" fill="#fff" stroke="#115b85" stroke-width="4"/><path d="M50 9L61 52L50 44L39 52Z" fill="#ef7564"/><path d="M50 91L61 52L50 59L39 52Z" fill="#269bba"/><text x="50" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">N</text><text x="84" y="54" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">E</text><text x="50" y="90" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">S</text><text x="16" y="54" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">W</text></svg><span>North is up</span></div><span class="small muted">1 grid square = 1 unit · Bearings clockwise from N</span></div></div>
+<div class="layout"><div class="seaWrap"><div class="sea" id="sea"><div id="phaseRibbon" class="phaseRibbon" data-phase="ready" aria-hidden="true">🧭 Captain’s turn</div><div id="waveNotice" class="waveNotice" aria-hidden="true"><strong id="waveTitle">🏝️ Level 2!</strong><span id="waveSubtitle">One new challenge!</span></div><canvas id="board" width="1000" height="650" aria-label="Play area with your ship and approaching enemies. North is at the top. Use the draggable ruler and protractor to measure."></canvas><div id="end" class="gameover" role="status"><h2 id="endTitle"></h2><p id="endText"></p><button id="againBtn" class="primary">Try again!</button></div></div><div class="seafooter"><div class="compass"><svg viewBox="0 0 100 100" role="img" aria-label="North is up; east right, south down, west left"><circle cx="50" cy="50" r="45" fill="#fff" stroke="#115b85" stroke-width="4"/><path d="M50 9L61 52L50 44L39 52Z" fill="#ef7564"/><path d="M50 91L61 52L50 59L39 52Z" fill="#269bba"/><text x="50" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">N</text><text x="84" y="54" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">E</text><text x="50" y="90" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">S</text><text x="16" y="54" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">W</text></svg><span>North is up</span></div><span class="small muted">1 grid square = 1 unit · Bearings clockwise from N</span></div></div>
 <aside class="stack" aria-label="Captain's bridge controls and status">
 <section class="panel missionPanel" aria-label="Mission status">
-  <div class="panelHeading"><h2>⚓ Ship's log</h2><span class="micro">Every order = one turn</span></div>
+  <div class="panelHeading"><h2>⚓ Ship's log</h2><span class="micro" id="levelRule" title="This level’s new challenge">Gentle start</span></div>
   <div class="stats">
     <div class="stat">Turn<strong id="turn">1</strong></div>
     <div class="stat" id="scoreStat">Score<strong id="score">0</strong></div>
     <div class="stat" id="heartStat">Hearts<strong id="hearts">♥♥♥</strong></div>
   </div>
   <div class="statusStrip">
-    <span>🌊 Wave <strong id="waveNo">1</strong></span>
+    <span>🏝️ Level <strong id="waveNo">1</strong>/<strong id="levelMax">12</strong></span>
     <span>⭐ Streak <strong id="streak">0</strong></span>
     <span>Best <strong id="bestStreak">0</strong></span>
   </div>
@@ -47,7 +47,7 @@
   <p class="toolHint"><strong>Ruler:</strong> place blue <strong>0 pivot</strong> on your ship; drag the orange far-end handle to rotate. Drag its body to move.</p>
 </section>
 </aside></div></main>
-<dialog id="tutorial"><div class="modal"><span class="badge" id="stepNo">Step 1 of 7</span><h2 id="stepTitle"></h2><div class="tutorialStep" id="stepBody"></div><div class="actions"><button id="prevStep">← Back</button><button id="nextStep" class="secondary">Next →</button><button id="closeTutorial">Close</button></div></div></dialog>
+<dialog id="tutorial"><div class="modal"><span class="badge" id="stepNo">Step 1 of 8</span><h2 id="stepTitle"></h2><div class="tutorialStep" id="stepBody"></div><div class="actions"><button id="prevStep">← Back</button><button id="nextStep" class="secondary">Next →</button><button id="closeTutorial">Close</button></div></div></dialog>
 <dialog id="maths"><div class="modal"><h2>📐 Bearings maths help</h2><p>These examples explain the skill without giving away where any creature is.</p>
 <details open><summary>What is a bearing?</summary><p>A bearing is an angle measured <b>clockwise from north</b>, written using <b>three figures</b>. For example, east is 090°, south is 180°, west is 270° and north is 000°.</p></details>
 <details><summary>How do I use the protractor?</summary><ol><li>Drag its centre onto your ship.</li><li>Rotate it so its 0° / N direction points upwards (north).</li><li>Read clockwise from north to the creature, using its position on the circular scale.</li><li>Type a three-figure bearing in Captain's orders.</li></ol><p>Think of 045° as halfway between north and east, while 315° is northwest.</p></details>
@@ -55,14 +55,15 @@
 <details><summary>How do three-figure bearings work?</summary><p>Always write three digits: 5° is <b>005°</b>, 45° is <b>045°</b>, and 120° remains <b>120°</b>. 360° points north too, but this game uses 000°.</p></details>
 <details><summary>What if I measure an angle anticlockwise?</summary><p>Bearings still go clockwise. If a direction is 40° anticlockwise from north, its bearing is 360° − 40° = <b>320°</b>.</p></details>
 <details><summary>Worked example: firing northeast</summary><p>A target is 3 squares east and 3 squares north of your ship. It is halfway between north and east: the bearing is <b>045°</b>. Its distance is about 4.2 units, so a bubble with range 5 units reaches it. This is a generic example, not a game hint.</p></details>
+<details><summary>What changes as I reach higher levels?</summary><p>There are <b>12 levels</b>. Each new level adds <b>only one</b> challenge: one extra creature, a small increase in how far they swim per turn, or one additional creature wearing a bubble helmet. Other rules remain the same.</p><p>From Level 4, some sea sillies have <b>two-hit helmets</b>. Their blue ring and small number show how many hits remain. Aim at the <b>centre of the creature</b>, not the number badge. One hit cracks the helmet without scoring a point; the next accurate hit pops the creature. Your pop streak is not lost when you hit a helmet.</p></details>
 <details><summary>Why might a shot miss?</summary><p>Check that your protractor is centred on the ship, 0° points north, you have measured clockwise, and your range is long enough. A bubble travels in a straight line along the bearing you enter.</p></details>
 <details><summary>Challenge: reverse bearings</summary><p>The bearing from A to B is 070°. From B to A, turn 180°: the reverse bearing is <b>250°</b>. If the original bearing is over 180°, subtract 180° instead.</p></details>
 <div class="actions"><button class="secondary" id="closeMath">Back to game</button></div></div></dialog>
-<script src="pass-a-art.js"></script><script src="pass-b-juice.js"></script>
+<script src="pass-a-art.js"></script><script src="pass-b-juice.js"></script><script src="difficulty.js"></script>
 <script>
 (()=>{'use strict';
 const canvas=document.getElementById('board'),ctx=canvas.getContext('2d'),$=id=>document.getElementById(id),W=1000,H=650,U=50;
-let ship,enemies,turn,score,hearts,mode='fire',finished=false,showP=true,showR=true,drag=null;
+let ship,enemies,turn,score,hearts,mode='fire',finished=false,won=false,showP=true,showR=true,drag=null;
 let shipMotion=null,shotMotion=null,impactMotion=null,waveMotion=null,hitGhost=null;
 let collisionGhosts=[],animating=false,animEnd=0,pendingEnd=false;
 let streak=0,bestStreak=0,waveNo=1,cues=[],speechCue=null,celebrationCue=null,damageUntil=0;
@@ -77,29 +78,48 @@ const tutorials=[
 ['Measure with the ruler','<b>The small blue circle at 0 is the pivot.</b> Drag the ruler body until the blue 0 circle sits at the centre of your ship. Now drag the orange handle at the far end: the ruler rotates while its 0 end stays fixed. Read distance in grid units (one square = one unit). Bubbles can travel 1–8 units.'],
 ['Fire a bubble','Choose <b>Fire</b>, enter your three-figure bearing and a range from 1 to 8 units, then choose <b>Launch bubble!</b> Your bubble flies in a straight line. If it crosses a creature within its range, you score a point. A near miss is still a miss.'],
 ['Steer the ship','Choose <b>Move</b>. Enter a bearing and a distance of 1–5 units. The ship sails in that direction. You cannot sail outside the playing area. Moving and firing each use one turn.'],
-['Survive the sillies!','After every valid order, surviving creatures swim closer. If one touches your ship, you lose a heart. Lose all three hearts and the game ends. Pop enough creatures and new ones arrive. Use <b>Maths help</b> any time for full explanations. Ready, captain?']
+['Progress through 12 gentle levels','Clear all the creatures in a level to move on. Every new level changes <b>just one thing</b>: there may be one more sea silly, slightly faster swimmers, or one extra creature with a <b>two-hit helmet</b>. A helmet hit still uses a turn, but does not earn a point until the creature is popped. Aim at the centre of the creature, not the helmet number.'],
+['Survive the sillies!','After each valid order, surviving creatures swim closer. If one touches your ship, you lose a heart. Lose all three hearts and the voyage ends. Clear all <b>12 levels</b> to win! Your protractor and ruler stay manual. Use <b>Maths help</b> whenever you need a refresher. Ready, captain?']
 ];let step=0;
 function safe(v,min,max){return Math.max(min,Math.min(max,v))}
 function pos(e,b,d){const a=b*Math.PI/180;return{x:e.x+Math.sin(a)*d*U,y:e.y-Math.cos(a)*d*U}}
 function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
-function spawn(n,at=0){for(let i=0;i<n;i++){let p,tries=0;do{const side=Math.floor(Math.random()*4);p={x:side===0?65:side===1?935:70+Math.random()*860,y:side===2?65:side===3?585:70+Math.random()*510};tries++}while(dist(p,ship)<260&&tries<50);enemies.push({x:p.x,y:p.y,type:Math.floor(Math.random()*3),bob:Math.random()*6.28,bornAt:at,mood:['cheeky','curious','grumpy'][i%3]})}}
+function spawnLevel(level,at=0){
+  const spec=window.BloopDifficulty.get(level);
+  for(let i=0;i<spec.count;i++){
+    let p,tries=0;
+    do{
+      const side=Math.floor(Math.random()*4);
+      p={x:side===0?65:side===1?935:70+Math.random()*860,
+         y:side===2?65:side===3?585:70+Math.random()*510};
+      tries++;
+    }while((dist(p,ship)<260||enemies.some(e=>dist(p,e)<70))&&tries<50);
+    const hp=i<spec.armoured?2:1;
+    enemies.push({x:p.x,y:p.y,type:Math.floor(Math.random()*3),
+      bob:Math.random()*6.28,bornAt:at,mood:['cheeky','curious','grumpy'][i%3],
+      hp,maxHp:hp});
+  }
+}
 function start(){
-  ship={x:500,y:325,heading:0};enemies=[];turn=1;score=0;hearts=3;finished=false;
+  ship={x:500,y:325,heading:0};enemies=[];turn=1;score=0;hearts=3;finished=false;won=false;
   shipMotion=null;shotMotion=null;impactMotion=null;waveMotion=null;hitGhost=null;
   collisionGhosts=[];pendingEnd=false;animating=false;animEnd=0;
   streak=0;bestStreak=0;waveNo=1;cues=[];speechCue=null;celebrationCue=null;damageUntil=0;
-  clearCelebrations();showPhase('🧭 Captain’s turn','ready');$('waveNo').textContent='1';
+  clearCelebrations();showPhase('🧭 Captain’s turn','ready');$('waveNo').textContent='1';$('levelMax').textContent=window.BloopDifficulty.maxLevel;$('levelRule').textContent=window.BloopDifficulty.summary(1);
   pro={x:500,y:325,a:0};ruler={x:320,y:560,a:0};
-  spawn(3);$('end').classList.remove('show');setLocked(false);
-  $('log').textContent='Ahoy! Measure a creature, then choose your order. Every order uses a turn.';
+  spawnLevel(1);$('end').classList.remove('show');$('end').dataset.outcome='';setLocked(false);
+  $('log').textContent='Level 1: Calm waters. Three sea sillies, one hit each. Measure a bearing and choose your order.';
   refresh();draw();
 }
 function setLocked(locked){
   for(const id of ['actionBtn','fireMode','moveMode','bearing','distance'])$(id).disabled=locked;
 }
 function showEnding(){
-  $('endTitle').textContent='Bloop! Shipwreck!';
-  $('endText').textContent='You bubbled '+score+' sea sillies. Try another voyage and sharpen those bearings!';
+  $('end').dataset.outcome=won?'victory':'loss';
+  $('endTitle').textContent=won?'🏆 Sea-sational victory!':'Bloop! Shipwreck!';
+  $('endText').textContent=won
+    ? 'All '+window.BloopDifficulty.maxLevel+' levels completed! You popped '+score+' sea sillies. What a captain!'
+    : 'You reached Level '+waveNo+' and popped '+score+' sea sillies. Try another voyage!';
   $('end').classList.add('show');
 }
 
@@ -123,14 +143,15 @@ function queueCue(kind,s,at,extra={}){
 function playCue(c,now){
   showPhase(c.text,c.kind);
   if(c.kind==='celebrate'&&!reducedMotion)$('scoreStat').classList.add('scorePulse');
+  if(c.kind==='armour')$('phaseRibbon').dataset.phase='armour';
   if(c.kind==='damage'&&!reducedMotion){
     $('sea').classList.add('hurt');$('heartStat').classList.add('hit');damageUntil=now+650;
   }
   if(c.kind==='wave'){
     $('waveNo').textContent=c.wave;
     if(!reducedMotion){
-      $('waveTitle').textContent='🌊 Wave '+c.wave+'!';
-      $('waveSubtitle').textContent='More sillies incoming!';
+      $('waveTitle').textContent='🏝️ Level '+c.wave+'!';
+      $('waveSubtitle').textContent=c.description||'One new challenge!';
       $('waveNotice').classList.add('show');
     }
   }
@@ -188,9 +209,23 @@ function order(){
       if(t>=0&&t<=length+16&&miss<=22&&t<bestT){best=enemy;bestT=t;bestMiss=miss;}
     }
     const endpoint={x:ship.x+ux*(best?bestT:length),y:ship.y+uy*(best?bestT:length)};
+    const helmetHit=!!best&&best.hp>1;
     shotMotion={from:oldShip,to:endpoint,start:now,duration:shotDuration,hit:!!best};
-    impactMotion={x:endpoint.x,y:endpoint.y,start:now+shotDuration,duration:reducedMotion?0:450,hit:!!best};
-    if(best){
+    impactMotion={x:endpoint.x,y:endpoint.y,start:now+shotDuration,
+      duration:reducedMotion?0:450,hit:!!best,armour:helmetHit};
+    if(helmetHit){
+      // A first helmet hit uses a full turn, but leaves the creature alive.
+      best.damageBefore=best.hp;
+      best.damageAt=now+shotDuration;
+      best.hp--;
+      best.mood='surprised';
+      // A hit on a helmet does not interrupt a successful pop streak.
+      speechCue={x:best.x,y:best.y,text:'My bubble helmet!',
+        start:now+shotDuration+50,duration:1000};
+      queueCue('armour','🛡️ Helmet cracked! One hit left.',now+shotDuration);
+      feedback='armour';
+      result='CLONK! You cracked a bubble helmet. One more accurate hit will pop this silly. No point yet. ';
+    }else if(best){
       hitGhost={...best};
       enemies.splice(enemies.indexOf(best),1);score++;
       streak++;bestStreak=Math.max(streak,bestStreak);
@@ -202,7 +237,7 @@ function order(){
       queueCue('celebrate',pinpoint?'⭐ Pinpoint pop!':'🎉 Lovely shot!',now+shotDuration);
       feedback='hit';
       result='POP! A sea silly was bubbled. +1 point! '+
-        (pinpoint?'Pinpoint pop! ':'')+(streak>=2?streak+' successful shots in a row! ':'');
+        (pinpoint?'Pinpoint pop! ':'')+(streak>=2?streak+' successful pops in a row! ':'');
     }else{
       streak=0;feedback='miss';
       queueCue('miss','💦 Splash! Check your measurement.',now+shotDuration);
@@ -218,7 +253,7 @@ function order(){
   // This preserves the exact collision and bearing rules from Pass 1.
   for(let i=enemies.length-1;i>=0;i--){
     const enemy=enemies[i],old=oldEnemyPositions.get(enemy);
-    const dd=dist(enemy,ship),speed=17+Math.min(12,Math.floor(turn/5)*2);
+    const dd=dist(enemy,ship),speed=window.BloopDifficulty.get(waveNo).speed;
     if(dd>0){
       enemy.x+=(ship.x-enemy.x)/dd*Math.min(speed,dd);
       enemy.y+=(ship.y-enemy.y)/dd*Math.min(speed,dd);
@@ -242,12 +277,20 @@ function order(){
       start:now+advanceDelay+advanceDuration,duration:1050};
   }
   if(enemies.length===0&&hearts>0){
-    const spawnAt=now+advanceDelay+advanceDuration+(reducedMotion?0:170);
-    spawn(3+Math.min(3,Math.floor(score/4)),spawnAt);
-    waveMotion={start:spawnAt};
-    waveNo++;
-    queueCue('wave','🌊 Wave '+waveNo+' arriving!',spawnAt,{wave:waveNo});
-    result+='Wave '+waveNo+': new sea sillies incoming! ';
+    if(waveNo===window.BloopDifficulty.maxLevel){
+      won=true;finished=true;pendingEnd=true;
+      result+='You cleared all '+waveNo+' levels! The silly seas are safe! ';
+    }else{
+      const spawnAt=now+advanceDelay+advanceDuration+(reducedMotion?0:170);
+      waveNo++;
+      const upcoming=window.BloopDifficulty.get(waveNo);
+      spawnLevel(waveNo,spawnAt);
+      waveMotion={start:spawnAt};
+      $('levelRule').textContent=window.BloopDifficulty.summary(waveNo);
+      queueCue('wave','🏝️ Level '+waveNo+'! '+window.BloopDifficulty.summary(waveNo),
+        spawnAt,{wave:waveNo,description:upcoming.description});
+      result+='Level '+waveNo+' — '+upcoming.description+' ';
+    }
   }
 
   if(!speechCue&&enemies.length&&turn%2===0){
@@ -264,7 +307,7 @@ function order(){
   if(!reducedMotion&&!finished)queueCue('ready','🧭 Captain’s turn',animEnd);
   animating=!reducedMotion;
   setLocked(animating);
-  if(reducedMotion&&pendingEnd){showEnding();pendingEnd=false;showPhase('💔 Shipwreck','damage');}
+  if(reducedMotion&&pendingEnd){showEnding();pendingEnd=false;showPhase(won?'🏆 Voyage complete!':'💔 Shipwreck',won?'celebrate':'damage');}
   message(result+' Turn '+turn+'.',feedback);refresh();tickCues(now);draw(now);
 }
 
@@ -322,7 +365,8 @@ function draw(now=performance.now()){
     }
     const age=now-(e.bornAt||0);
     const scale=e.bornAt&&!reducedMotion?(.35+.65*BloopArt.ease(age/380)):1;
-    BloopArt.drawCreature(ctx,{...e,x:p.x,y:p.y},artNow,scale);
+    const visibleHp=e.damageAt&&now<e.damageAt?e.damageBefore:e.hp;
+    BloopArt.drawCreature(ctx,{...e,x:p.x,y:p.y,hp:visibleHp},artNow,scale);
   }
   if(hitGhost&&shotMotion&&now<shotMotion.start+shotMotion.duration){
     BloopArt.drawCreature(ctx,hitGhost,artNow);
@@ -359,7 +403,7 @@ function frame(now){
   tickCues(now);
   if(animating&&now>=animEnd){
     animating=false;setLocked(false);
-    if(pendingEnd){showEnding();pendingEnd=false;showPhase('💔 Shipwreck','damage');}
+    if(pendingEnd){showEnding();pendingEnd=false;showPhase(won?'🏆 Voyage complete!':'💔 Shipwreck',won?'celebrate':'damage');}
   }
   draw(now);
   requestAnimationFrame(frame);
