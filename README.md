@@ -12,7 +12,7 @@ Production hostname: https://bearings.mrwalkermaths.com/
 
 ## Play
 
-Play at **https://bearings.mrwalkermaths.com/**. For offline/local use, open `index.html` in a modern browser and keep the accompanying `.css` and `.js` files in the same folder, including `boat-style.js`, `boat-studio.js`, and `boat-studio.css`. There are no external dependencies or build steps. Merges to `main` publish automatically through GitHub Pages Actions.
+Play at **https://bearings.mrwalkermaths.com/**. For offline/local use, open `index.html` in a modern browser and keep the accompanying `.css` and `.js` files in the same folder, including `boat-style.js`, `boat-studio.js`, `boat-studio.css`, `rewards.js` and `rewards.css`. There are no external dependencies or build steps. Merges to `main` publish automatically through GitHub Pages Actions.
 
 ## Boat Studio customisation (PR #8)
 
@@ -49,6 +49,37 @@ The new `tests/boat-studio.test.cjs` checks all preset categories, invalid style
 
 For manual QA, check the Boat Studio at laptop/tablet/mobile sizes; change options, save and reload; cancel mid-edit; try a randomly generated design; check that a renamed ship shows in the header; verify the boat stays centered on the ruler/protractor during Fire and Move; and confirm keyboard focus and scroll behaviour inside the modal.
 
+## Bonus stars and guaranteed firing-range enemies (PR #9)
+
+Two small changes make bearing practice more rewarding and reduce frustrating turns with no reachable target.
+
+### Earn bonus points with the ship
+
+- Every **defeated** creature drops a glowing golden **⭐ +2 bonus star**. The first hit on an armoured creature only cracks its helmet, so it does **not** drop a bonus.
+- Stars appear where a creature was popped, then **float towards the player's ship**. They settle within about **3.5 units** of the ship so a student can normally collect them with their next 1–5-unit MOVE.
+- **Only a valid MOVE** collects the reward, by sailing through or within **0.8 units** of the star. Passing close along the course counts; stopping precisely on top of the star is unnecessary.
+- Each collection adds **two bonus points** to the score. The original **+1 for popping** a creature remains; pop streaks and the one-change-per-level difficulty plan are unchanged.
+- Students have **four movement opportunities** to collect unclaimed stars. The total number still afloat appears below the score; older rewards drift away rather than filling the board.
+- At the end of Level 12, the player receives **one last MOVE** to collect the final star before the victory screen. Victory now reports both **creatures popped** and **total points**, so bonus points are not confused with enemy counts.
+
+### Prevent unreachable firing turns
+
+- Every new wave is placed in a ring roughly **3.6–7 units** from the ship, within the playable sea and spaced apart. This means that newly spawned enemies are targetable with the game's unchanged **8-unit maximum range**.
+- Sailing away can still increase the distance to enemies. When this would leave **all** remaining enemies beyond firing range, the **nearest** sea silly takes a visually animated catch-up current back to about **7 units** away during that normal enemy movement step. No targeting directions or automatic bearing answers are shown.
+- The current level's configured enemy count, helmet distribution and ordinary per-turn speed remain unchanged. The catch-up current is the same anti-frustration rule at every level, not an extra difficulty increase on a particular stage.
+
+### Testing and classroom QA
+
+Run from the repository root with Node 20+:
+
+```sh
+node --test tests/*.test.cjs
+```
+
+`tests/rewards.test.cjs` covers enemy placement even in map corners, the catch-up rule, four-turn pickup lifetime, collection along a sailing route, bonus scoring, no rewards for helmet cracks, and the final bonus move. Existing tests cover the game, 12-level progression, Boat Studio, protractor/ruler and single-screen layout.
+
+Check in a real browser that golden stars float from defeated enemies and then remain visible until the ship reaches them; bonus scores are readable in the ship's log and on-screen; the final level allows the bonus move; and every firing phase offers a reachable target. Confirm that students still measure every bearing and distance manually.
+
 ## Learning goals
 
 - Measure three-figure bearings clockwise from north.
@@ -64,7 +95,8 @@ For manual QA, check the Boat Studio at laptop/tablet/mobile sizes; change optio
 3. Type a three-digit bearing from `000` to `359` and a whole-number range/distance.
 4. **FIRE:** range 1–8 units, bubble follows a ray; a hit requires passing through a creature. **MOVE:** distance 1–5 units, must remain on the board. A valid order consumes one turn and moves the enemies, even if the bubble misses or only cracks a helmet.
 5. After every valid order, enemies approach at their **current level's fixed speed**. Each creature that gets close costs a heart. Lose three hearts to end the game. Clear a level to reach the next; defeat Level 12 to complete the voyage.
-6. Use **Tutorial** for a guided ten-step explanation and **Maths help** for optional conceptual guidance.
+6. Defeated creatures release glowing ⭐ bonus buoys. **Sail through** them on a MOVE phase to earn **+2 points**. Your sailing course can pass near the star; the ship need not stop exactly on it.
+7. Use **Tutorial** for a guided eleven-step explanation and **Maths help** for optional conceptual guidance.
 
 The game uses a scalable play canvas and a responsive layout. Boat designs are saved only in the student's current browser; no accounts or boat data are transmitted to a server.
 
