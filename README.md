@@ -88,7 +88,7 @@ Check in a real browser that golden stars float from defeated enemies and then r
 - The first eligible **MOVE** at Level 10 always displays a red circular **SQUID STRIKE** warning, so the new rule is explained before it can hurt the student. Subsequent eligible MOVE phases have a **36%** strike chance after at least **two hazard-free MOVE turns**.
 - A translucent **red danger circle**, warning pop-in and persistent red text under the MOVE controls appear **before the student enters a bearing**. The zone never appears on a FIRE phase or in Levels 1–9.
 - The squid tests only the **ship's final centre position after a valid MOVE**. If the ship stops inside or on the red circle, a large purple **tentacle strikes at the end of the sailing animation** and costs **one heart**. If the ship finishes outside, the attack misses—even when the sailing path passes through the red zone.
-- A safe 1–5-unit move always exists, including near corners. Students must work out the bearing and distance themselves with the draggable protractor/ruler; the game never gives an automatic dodge route or correct bearing.
+- A valid 1–5-unit move that ends **outside the red circle** always exists, including near corners. Students still need to watch for sea sillies and choose a sensible destination. They must work out the bearing and distance with the draggable protractor/ruler; the game never gives an automatic dodge route or correct bearing.
 - Invalid bearings, distances and off-map moves never trigger an attack or use a turn. The danger remains visible so students can correct their entry.
 - A final reward-only MOVE after the last sea silly is popped **does not** spawn a new danger zone. Losing all hearts still ends the voyage as before.
 
