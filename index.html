@@ -42,7 +42,7 @@ function pos(e,b,d){const a=b*Math.PI/180;return{x:e.x+Math.sin(a)*d*U,y:e.y-Mat
 function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
 function spawn(n,at=0){for(let i=0;i<n;i++){let p,tries=0;do{const side=Math.floor(Math.random()*4);p={x:side===0?65:side===1?935:70+Math.random()*860,y:side===2?65:side===3?585:70+Math.random()*510};tries++}while(dist(p,ship)<260&&tries<50);enemies.push({x:p.x,y:p.y,type:Math.floor(Math.random()*3),bob:Math.random()*6.28,bornAt:at})}}
 function start(){
-  ship={x:500,y:325};enemies=[];turn=1;score=0;hearts=3;finished=false;
+  ship={x:500,y:325,heading:0};enemies=[];turn=1;score=0;hearts=3;finished=false;
   shipMotion=null;shotMotion=null;impactMotion=null;waveMotion=null;hitGhost=null;
   collisionGhosts=[];pendingEnd=false;animating=false;animEnd=0;
   pro={x:500,y:325,a:0};ruler={x:520,y:440,a:0};
@@ -86,8 +86,12 @@ function order(){
   shipMotion=null;shotMotion=null;impactMotion=null;waveMotion=null;
   hitGhost=null;collisionGhosts=[];
   if(mode==='move'){
-    ship=dest;
-    shipMotion={from:oldShip,to:{...ship},start:now,duration:sailDuration};
+    const oldHeading=oldShip.heading||0;
+    const requested=Number(bearing)*Math.PI/180;
+    // Shortest visual turn to the compass heading, while the maths uses absolute north.
+    const delta=Math.atan2(Math.sin(requested-oldHeading),Math.cos(requested-oldHeading));
+    ship={...dest,heading:oldHeading+delta};
+    shipMotion={from:oldShip,to:{...ship},start:now,duration:sailDuration,headingFrom:oldHeading,headingDelta:delta};
     result='S.S. Wobble sailed '+distance+' unit'+(distance===1?'':'s')+' on bearing '+bearing+'°. ';
   }else{
     const dx=dest.x-ship.x,dy=dest.y-ship.y,length=Math.hypot(dx,dy);
@@ -183,6 +187,10 @@ function draw(now=performance.now()){
     BloopArt.drawDamage(ctx,ghost.impact,now);
   }
   const renderedShip=shipMotion?lerpPoint(shipMotion,now):ship;
+  if(shipMotion){
+    const progress=shipMotion.duration?BloopArt.clamp((now-shipMotion.start)/shipMotion.duration,0,1):1;
+    renderedShip.heading=shipMotion.headingFrom+shipMotion.headingDelta*BloopArt.ease(progress);
+  }
   const shipUnderway=shipMotion&&now>=shipMotion.start&&now<shipMotion.start+shipMotion.duration;
   if(shipUnderway){
     BloopArt.drawWake(ctx,shipMotion.from,renderedShip,
