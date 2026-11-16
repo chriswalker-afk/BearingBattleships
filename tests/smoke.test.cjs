@@ -201,6 +201,33 @@ test('valid actions alternate in normal animation mode only after unlocking', ()
   assert.match(g.e('phaseHeading').textContent,/FIRE/);
 });
 
+
+test('a syntactically valid but missed shot creates post-shot pop-in feedback',()=>{
+  const g=harness(false);
+  g.fire('180',1);
+  assert.equal(g.e('turn').textContent,2,'A missed shot uses a turn');
+  g.advance(750);
+  assert.match(g.e('errorPopTitle').textContent,/Bubble missed/);
+  assert.match(g.e('errorPopDetail').textContent,/bearing and range/);
+  assert.equal(g.e('score').textContent,0);
+  g.advance(2000);
+  assert.match(g.e('phaseHeading').textContent,/MOVE/);
+});
+
+test('off-map move is rejected without advancing or switching phases',()=>{
+  const g=harness(true);
+  g.fire('180',1);
+  g.move('180',5); // Ship has sailed from y=325 to y=575.
+  assert.equal(g.e('turn').textContent,3);
+  g.fire('180',1);
+  assert.match(g.e('phaseHeading').textContent,/MOVE/);
+  const before=g.e('turn').textContent;
+  g.move('180',2); // Would place the ship outside the 650px sea.
+  assert.equal(g.e('turn').textContent,before);
+  assert.match(g.e('errorPopTitle').textContent,/Off the map/);
+  assert.match(g.e('phaseHeading').textContent,/MOVE/);
+});
+
 test('new cartoon faces and comic overlays can render without exceptions', () => {
   const g = harness();
   for (let i = 0; i < 3; i++) {
