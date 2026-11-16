@@ -12,7 +12,19 @@ Production hostname: https://bearings.mrwalkermaths.com/
 
 ## Play
 
-Play at **https://bearings.mrwalkermaths.com/**. For offline/local use, open `index.html` in a modern browser and keep the accompanying `.css` and `.js` files in the same folder, including `boat-style.js`, `boat-studio.js`, `boat-studio.css`, `rewards.js` and `rewards.css`. There are no external dependencies or build steps. Merges to `main` publish automatically through GitHub Pages Actions.
+Play at **https://bearings.mrwalkermaths.com/**. For offline/local use, open `index.html` in a modern browser and keep the accompanying `.css` and `.js` files in the same folder, including `boat-style.js`, `boat-studio.js`, `boat-studio.css`, `rewards.js`, `rewards.css`, `scene-zoom.js` and `scene-zoom.css`. There are no external dependencies or build steps. Merges to `main` publish automatically through GitHub Pages Actions.
+
+## Ship-centred sea zoom
+
+Students can use **− / 100% / +** immediately below the sea board without covering any measuring instruments. The default **100%** shows the complete playing field; each click adjusts the scene by **25%** (100%, 125%, 150%, 175%, 200%), and pressing the percentage returns to the original full-map view. The minus/plus buttons disable automatically at their limits.
+
+The camera follows the **rendered boat position**, smoothly during sailing and clamped near the sea edges so the world never slides out of frame. The canvas's actual resolution and layout remain unchanged. The zoom is *view only*: all gameplay positions, the 50-pixel grid, three-figure bearings, 1–8-unit firing ranges, 1–5-unit sailing distances, star pickup routes, squid zones, hitboxes and difficulty settings keep their original **world coordinates**.
+
+The ruler and protractor are magnified using the same transform as the sea, and pointer coordinates are inverted back into the original world before dragging. At high zoom the ruler's existing eight-unit far-end orange rotation handle may be off-screen, so a **second small orange rotation grip** sits near its blue zero-end pivot. Both grips rotate around exactly the same zero, without changing the marked ruler length or scale. Zoom out to 100% whenever an enemy is off-screen.
+
+**Accessibility and persistence:** controls are regular keyboard-focusable buttons with descriptive accessible labels and a polite percentage announcement. Zoom is reset on a new game; it is not stored or associated with student data. The controls live in the footer and cannot intercept clicks meant for the ruler or protractor.
+
+**Regression:** run the Node test suite with command node --test tests/*.test.cjs. The scene-zoom.test.cjs cases check zoom limits, camera clamping near corners, the precise inverse transform on every zoom level, pointer dragging on a half-size screen, the near-zero ruler handle at 200%, protractor movement, unchanged firing, animated following and reset. The existing ruler, layout, gameplay, pickup, squid, Boat Studio and full-voyage tests continue unchanged apart from importing the camera module into their harnesses.
 
 ## Boat Studio customisation (PR #8)
 
@@ -115,7 +127,8 @@ For a real-browser check, reach Level 10 and verify the first warning is obvious
 5. After every valid order, enemies approach at their **current level's fixed speed**. Each creature that gets close costs a heart. Lose three hearts to end the game. Clear a level to reach the next; defeat Level 12 to complete the voyage.
 6. Defeated creatures release glowing ⭐ bonus buoys. **Sail through** them on a MOVE phase to earn **+2 points**. Your sailing course can pass near the star; the ship need not stop exactly on it.
 7. Starting in **Level 10**, look for a red squid-strike zone before MOVE. Finish the move outside it to avoid losing a heart.
-8. Use **Tutorial** for a guided twelve-step explanation and **Maths help** for optional conceptual guidance.
+8. Use **+ / −** under the sea to magnify the view in 25% steps (100–200%); select the percentage to reset to the full map. The camera follows the ship, and every bearing and grid distance remains unchanged. Use the new small orange near-end ruler rotation grip if the far-end handle is off-screen.
+9. Use **Tutorial** for a guided thirteen-step explanation and **Maths help** for optional conceptual guidance.
 
 The game uses a scalable play canvas and a responsive layout. Boat designs are saved only in the student's current browser; no accounts or boat data are transmitted to a server.
 
