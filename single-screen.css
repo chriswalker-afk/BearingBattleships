@@ -139,7 +139,7 @@ dialog { max-height: min(90dvh, 820px); overflow: auto; }
   .seafooter { justify-content: space-between; }
   .stack { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 8px; }
   .stack .missionPanel { grid-column: 1 / -1; }
-  .stack .toolPanel { grid-column: auto; }
+  .stack > .panel.toolPanel:last-child { grid-column: auto; }
   .stack .ordersPanel { grid-column: auto; }
   .missionPanel .log { min-height: 40px; max-height: 85px; }
 }
