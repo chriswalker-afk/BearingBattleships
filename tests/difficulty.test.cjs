@@ -98,13 +98,24 @@ function harness({shortVoyage=false}={}){
     assert.equal(typeof fn,'function','Missing click '+id);
     fn();
   }
+  let moveNumber=0;
+  function move(bearing='090',distance=1){
+    assert.match(element('phaseHeading').textContent,/MOVE/,'Only MOVE orders may sail');
+    element('bearing').value=bearing;
+    element('distance').value=distance;
+    click('actionBtn');
+  }
   function fire(bearing='000',range=6,align=true){
+    // Complete each mandatory movement turn before the next test shot.
+    if(element('phaseHeading').textContent.includes('MOVE')){
+      move(moveNumber++%2===0?'090':'270',1);
+    }
     if(align)win.__testing.lineup();
     element('bearing').value=bearing;
     element('distance').value=range;
     click('actionBtn');
   }
-  return {fire,click,e:element,win,step(ms=2500){time+=ms;if(raf)raf(time)}};
+  return {fire,move,click,e:element,win,step(ms=2500){time+=ms;if(raf)raf(time)}};
 }
 
 test('a bubble helmet takes two accurately measured shots without awarding an early point',()=>{
@@ -153,10 +164,15 @@ test('swim speed stays constant during a level and increases only at Level 3',()
   const g=harness();
   g.win.__testing.lineup();
   const first=g.win.__testing.enemies()[0].y;
+  let usedMove=0;
   for(let n=0;n<5;n++){
-    g.fire('180',1,false); // Fire away from all northern targets.
+    if(g.e('phaseHeading').textContent.includes('FIRE')){
+      g.fire('180',1,false); // Fire away from all northern targets.
+    }else{
+      g.move(usedMove++%2===0?'180':'000',1); // Sail directly N/S to keep northward enemies aligned.
+    }
     const after=g.win.__testing.enemies()[0].y;
-    assert.equal(Math.round(after-first),17*(n+1),'Level 1 speed constant at every turn');
+    assert.equal(Math.round(after-first),17*(n+1),'Level 1 speed constant on each turn');
   }
   assert.equal(Number(g.e('waveNo').textContent),1,'No silent level increase by turn count');
   const h=harness();
@@ -164,7 +180,8 @@ test('swim speed stays constant during a level and increases only at Level 3',()
   assert.equal(h.e('waveNo').textContent,3);
   h.win.__testing.lineup();
   const before=h.win.__testing.enemies()[0].y;
-  h.fire('180',1,false);
+  assert.match(h.e('phaseHeading').textContent,/MOVE/,'A move follows the level-clearing shot');
+  h.move('180',1);
   const after=h.win.__testing.enemies()[0].y;
   assert.equal(Math.round(after-before),21,'Level 3 has its first visible speed increase');
 });

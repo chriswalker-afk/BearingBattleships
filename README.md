@@ -4,7 +4,7 @@ A colourful, standalone browser game for Foundation Edexcel International GCSE M
 
 ## Play
 
-Open `index.html` in a modern browser. Keep the accompanying `pass-a.css`, `pass-a-art.js`, `pass-b.css`, `pass-b-juice.js`, `single-screen.css`, `single-screen.js`, `difficulty.css` and `difficulty.js` files beside it: they provide the illustrated theme, animations and responsive layout. No installation, server, build step or external dependencies are required. Once the feature branch is merged, enable **GitHub Pages → Deploy from a branch → main / (root)** in the repository settings to publish it.
+Open `index.html` in a modern browser. Keep the accompanying `pass-a.css`, `pass-a-art.js`, `pass-b.css`, `pass-b-juice.js`, `single-screen.css`, `single-screen.js`, `difficulty.css`, `difficulty.js` and `phase-toasts.css` files beside it: they provide the illustrated theme, animations and responsive layout. No installation, server, build step or external dependencies are required. Once the feature branch is merged, enable **GitHub Pages → Deploy from a branch → main / (root)** in the repository settings to publish it.
 
 ## Learning goals
 
@@ -17,11 +17,11 @@ Open `index.html` in a modern browser. Keep the accompanying `pass-a.css`, `pass
 ## Controls
 
 1. Use the draggable **protractor** and **ruler** over the board. Drag the protractor's body to move it and orange rim handle to rotate it. For the ruler, position the **blue 0 marker** at your ship by dragging the ruler body; drag the **orange handle at the far end (past 8)** to rotate about that 0 marker without shifting it.
-2. Choose **Fire** or **Move**.
+2. The **phase alternates automatically** each valid turn: **FIRE → MOVE → FIRE → MOVE**. The first turn is Fire. The highlighted phase and large pop-in tell you the current order; there is no manual phase switch.
 3. Type a three-digit bearing from `000` to `359` and a whole-number range/distance.
-4. **Fire:** range 1–8 units, bubble follows a ray; a hit requires passing through a creature. **Move:** distance 1–5 units, must remain on the board.
+4. **FIRE:** range 1–8 units, bubble follows a ray; a hit requires passing through a creature. **MOVE:** distance 1–5 units, must remain on the board. A valid order consumes one turn and moves the enemies, even if the bubble misses or only cracks a helmet.
 5. After every valid order, enemies approach at their **current level's fixed speed**. Each creature that gets close costs a heart. Lose three hearts to end the game. Clear a level to reach the next; defeat Level 12 to complete the voyage.
-6. Use **Tutorial** for a guided eight-step explanation and **Maths help** for optional conceptual guidance.
+6. Use **Tutorial** for a guided nine-step explanation and **Maths help** for optional conceptual guidance.
 
 All rendering is on one scalable canvas; the interface adapts to narrow screens. No player data is collected or sent.
 
@@ -83,7 +83,7 @@ Covers bearing validation, shots/streaks, waves, damage, reset, reduced-motion c
 The game now uses a compact **Captain's Bridge** alongside the sea:
 
 - **Mission status:** turn, score, hearts, level, current/best streak and a scrollable recent-message log.
-- **Captain's orders:** Fire / Move, three-figure bearing, range/distance and the main action button.
+- **Captain's orders:** a read-only Fire/Move phase indicator, three-figure bearing, range/distance and the main action button.
 - **Measuring tools:** one-tap protractor/ruler toggles with a short reminder to drag and rotate manually.
 - **Compass and scale:** always shown immediately beneath the board. Tutorial, detailed maths help and restart remain in the compact top bar.
 - Press **Enter** from either numeric field to take an order, as an alternative to clicking the action button.
@@ -166,6 +166,25 @@ node --test tests/*.test.cjs
 ```
 
 `tests/difficulty.test.cjs` verifies every scheduled transition, the first armour hit not awarding a point, the second hit removing a creature, level advancement, and the 12-level victory path. Existing smoke, ruler and viewport tests remain. Manual browser QA is still recommended, especially for helmet visibility with the protractor over the board, mobile sizing, and the learning pace at Levels 4, 7 and 10.
+
+## Alternating phases and clear pop-in warnings (PR #7)
+
+**Every valid turn alternates phases automatically**: Fire → Move → Fire → Move. The player begins in **Fire**. Students cannot choose to fire repeatedly or skip a movement turn. The current phase is shown in the Captain's Bridge heading and highlighted step, the persistent phase ribbon, and a brief visible **FIRE PHASE** or **MOVE PHASE** pop-in as the next turn begins. The pop-in plays after the previous turn's movement animation finishes, so it never announces a new playable turn while the controls are locked. Phase alternation carries across the 12 level boundaries.
+
+On an **invalid bearing**, the game shows a large red pop-in with the specific reason: missing three figures, invalid characters, or **360° should be 000°**. A correctly formatted shot that simply **misses** also produces a post-shot pop-in asking the student to check their bearing and range; that shot **does consume a turn** and never reveals the correct bearing. Invalid distances and off-board moves use the same style. The affected input is highlighted and remains editable. Errors also appear in the ship's log for accessibility. **Invalid orders do not consume a turn, move enemies or switch phase.** Correct the entry and retry.
+
+Pop-ins are non-interactive overlays; they fade without blocking the protractor/ruler or the single-screen controls. Reduced-motion mode shows the notice without sliding. The full nine-step tutorial and Maths Help sections now cover phase alternation, invalid bearings and how to correct them.
+
+### Manual QA
+
+1. Restart: confirm **FIRE PHASE** appears and the **Launch bubble!** action is available. Fire/Move labels cannot be clicked to skip a phase.
+2. Enter `45`, then `360`: each should produce a distinct red explanation, stay on FIRE and not advance the turn counter. Then try `045` as a valid bearing.
+3. Fire a valid shot, including a **miss**: once the action animation ends, the **MOVE PHASE** pop-in and green-highlighted step should appear.
+4. Enter a MOVE distance of 6 or a course that goes off the board: warning shown, no turn used. Enter a valid move: after the sailing animation, **FIRE PHASE** returns.
+5. Check alternating phases across a level transition and after cracking a two-hit helmet (helmet contact still uses a turn).
+6. Test reduced motion, screen readers, touch/keyboard input, tutorial and Maths Help. The game board must retain full manual measurement and no pre-shot guide.
+
+Regression command (Node 20+): `node --test tests/*.test.cjs`. The `.github/workflows/regression.yml` GitHub Actions workflow runs these tests on pull requests and pushes to `main`.
 
 ## Future ideas
 

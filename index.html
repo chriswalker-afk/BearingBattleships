@@ -2,9 +2,15 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#103b63"><title>Bloop! Bearing Battles</title>
 <style>
 :root{font-family:system-ui,"Trebuchet MS",sans-serif;color:#163554;background:#e8f7fa}*{box-sizing:border-box}body{margin:0}button,input{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:11px 15px;font-weight:800;background:#fff;color:#16466c;box-shadow:0 3px 0 #c2d4db}button:hover{filter:brightness(.95)}button:focus-visible,input:focus-visible{outline:3px solid #ffb830;outline-offset:2px}.shell{max-width:1500px;margin:auto;padding:15px}header{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}h1{margin:0;font-size:clamp(1.6rem,3vw,2.6rem);letter-spacing:-1px;color:#10476c}header p{margin:2px 0 0}.pill{background:#ffe38a;border-radius:99px;padding:6px 12px;font-weight:850}.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:16px;margin-top:14px}.seaWrap{min-width:0}.sea{position:relative;background:#91ddeb;border:8px solid #fff;border-radius:22px;box-shadow:0 8px 0 #c1d6dc;overflow:hidden;touch-action:none}canvas{display:block;width:100%;height:auto;aspect-ratio:1000/650;touch-action:none}.seafooter{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 4px}.compass{display:flex;align-items:center;gap:9px;font-weight:850;color:#16466c}.compass svg{width:72px;height:72px;flex:none}.panel{background:#fff;border-radius:20px;padding:18px;box-shadow:0 6px 0 #c9dfe1}.stack{display:flex;flex-direction:column;gap:14px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{border-radius:13px;background:#e8f6fa;padding:10px 4px;text-align:center;font-size:.8rem}.stat strong{display:block;font-size:1.45rem}.bar{display:flex;gap:8px;flex-wrap:wrap}.bar button{flex:1;padding:10px 6px}.active{background:#ffda79!important;color:#163554!important}.fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.fields label{display:grid;gap:5px;font-size:.88rem;font-weight:750}.fields input{min-width:0;border:2px solid #a8d4e0;border-radius:10px;padding:10px;background:#f6fcfe}h2{margin:0 0 9px;font-size:1.2rem}h3{margin:0 0 8px}p{line-height:1.5}.small{font-size:.85rem}.hint{background:#fff5cf;border-radius:12px;padding:11px;font-size:.9rem}.primary{background:#ffab59;color:#522c17}.secondary{background:#18618a;color:#fff}.muted{color:#5c7886}.log{min-height:77px;background:#eaf6f9;border-radius:12px;padding:12px;font-size:.93rem;font-weight:650}dialog{border:0;border-radius:20px;box-shadow:0 20px 100px #123b5e73;max-width:min(700px,94vw);max-height:90vh;padding:0;color:#183e57}dialog::backdrop{background:#0b2746a9}.modal{padding:22px}.modal h2{font-size:1.7rem}.modal .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.tutorialStep{padding:13px;background:#e8f6fa;border-radius:12px;min-height:135px}.badge{display:inline-block;padding:4px 9px;border-radius:25px;background:#ffdb82;font-size:.8rem;font-weight:bold}details{border-top:1px solid #c2dde3;padding:11px 0}summary{cursor:pointer;font-weight:800}ol,ul{line-height:1.65;padding-left:23px}.gameover{position:absolute;inset:0;background:#092a4fba;color:#fff;display:none;align-items:center;justify-content:center;text-align:center;flex-direction:column;padding:24px}.gameover.show{display:flex}.gameover h2{font-size:clamp(2rem,5vw,3.8rem)}.wide{width:100%}@media(max-width:950px){.layout{grid-template-columns:1fr}.panel{padding:13px}.stack{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.stack>.panel:last-child{grid-column:1/-1}}@media(max-width:570px){.stack{grid-template-columns:1fr}.shell{padding:8px}.sea{border-width:4px}.panel{padding:13px}.compass svg{width:58px;height:58px}.seafooter{font-size:.83rem}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
-</style><link rel="stylesheet" href="pass-a.css"><link rel="stylesheet" href="pass-b.css"><link rel="stylesheet" href="single-screen.css"><link rel="stylesheet" href="difficulty.css"></head><body><main class="shell">
+</style><link rel="stylesheet" href="pass-a.css"><link rel="stylesheet" href="pass-b.css"><link rel="stylesheet" href="single-screen.css"><link rel="stylesheet" href="difficulty.css"><link rel="stylesheet" href="phase-toasts.css"></head><body><main class="shell">
 <header><div><h1>🐙 Bloop! Bearing Battles</h1><p>Steer the S.S. Wobble. Outsmart the approaching sea sillies!</p></div><div class="bar"><button id="tutorialBtn" title="Open step-by-step tutorial">📖 Tutorial</button><button id="mathBtn" title="Learn about bearings and measuring">📐 Maths help</button><button id="resetBtn" title="Start a fresh voyage">↻ New game</button></div></header>
-<div class="layout"><div class="seaWrap"><div class="sea" id="sea"><div id="phaseRibbon" class="phaseRibbon" data-phase="ready" aria-hidden="true">🧭 Captain’s turn</div><div id="waveNotice" class="waveNotice" aria-hidden="true"><strong id="waveTitle">🏝️ Level 2!</strong><span id="waveSubtitle">One new challenge!</span></div><canvas id="board" width="1000" height="650" aria-label="Play area with your ship and approaching enemies. North is at the top. Use the draggable ruler and protractor to measure."></canvas><div id="end" class="gameover" role="status"><h2 id="endTitle"></h2><p id="endText"></p><button id="againBtn" class="primary">Try again!</button></div></div><div class="seafooter"><div class="compass"><svg viewBox="0 0 100 100" role="img" aria-label="North is up; east right, south down, west left"><circle cx="50" cy="50" r="45" fill="#fff" stroke="#115b85" stroke-width="4"/><path d="M50 9L61 52L50 44L39 52Z" fill="#ef7564"/><path d="M50 91L61 52L50 59L39 52Z" fill="#269bba"/><text x="50" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">N</text><text x="84" y="54" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">E</text><text x="50" y="90" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">S</text><text x="16" y="54" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">W</text></svg><span>North is up</span></div><span class="small muted">1 grid square = 1 unit · Bearings clockwise from N</span></div></div>
+<div class="layout"><div class="seaWrap"><div class="sea" id="sea"><div id="phaseRibbon" class="phaseRibbon" data-phase="ready" aria-hidden="true">🧭 Captain’s turn</div><div id="waveNotice" class="waveNotice" aria-hidden="true"><strong id="waveTitle">🏝️ Level 2!</strong><span id="waveSubtitle">One new challenge!</span></div><div id="phasePop" class="noticePop noticePop--phase" role="status" aria-live="polite" aria-atomic="true">
+  <strong id="phasePopTitle"></strong><span id="phasePopDetail"></span>
+</div>
+<div id="errorPop" class="noticePop noticePop--error" role="alert" aria-live="assertive" aria-atomic="true">
+  <strong id="errorPopTitle"></strong><span id="errorPopDetail"></span>
+</div>
+<canvas id="board" width="1000" height="650" aria-label="Play area with your ship and approaching enemies. North is at the top. Use the draggable ruler and protractor to measure."></canvas><div id="end" class="gameover" role="status"><h2 id="endTitle"></h2><p id="endText"></p><button id="againBtn" class="primary">Try again!</button></div></div><div class="seafooter"><div class="compass"><svg viewBox="0 0 100 100" role="img" aria-label="North is up; east right, south down, west left"><circle cx="50" cy="50" r="45" fill="#fff" stroke="#115b85" stroke-width="4"/><path d="M50 9L61 52L50 44L39 52Z" fill="#ef7564"/><path d="M50 91L61 52L50 59L39 52Z" fill="#269bba"/><text x="50" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">N</text><text x="84" y="54" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">E</text><text x="50" y="90" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">S</text><text x="16" y="54" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">W</text></svg><span>North is up</span></div><span class="small muted">1 grid square = 1 unit · Bearings clockwise from N</span></div></div>
 <aside class="stack" aria-label="Captain's bridge controls and status">
 <section class="panel missionPanel" aria-label="Mission status">
   <div class="panelHeading"><h2>⚓ Ship's log</h2><span class="micro" id="levelRule" title="This level’s new challenge">Gentle start</span></div>
@@ -20,13 +26,13 @@
   </div>
   <div class="log" id="log" aria-live="polite">Ahoy! Measure an angle, then choose your order.</div>
 </section>
-<section class="panel ordersPanel" aria-label="Choose ship order">
-  <h2>🎯 Captain's orders</h2>
-  <div class="bar" role="group" aria-label="Choose action">
-    <button class="active" id="fireMode" aria-pressed="true">🫧 Fire</button>
-    <button id="moveMode" aria-pressed="false">⛵ Move</button>
+<section class="panel ordersPanel" id="ordersPanel" data-phase="fire" aria-label="Current captain's order">
+  <h2 id="phaseHeading">🫧 FIRE PHASE</h2>
+  <div class="phaseSteps" role="group" aria-label="Turn phases alternate automatically">
+    <span class="phaseStep active" id="fireMode" aria-current="step">🫧 Fire</span>
+    <span class="phaseStep" id="moveMode" aria-current="false">⛵ Move</span>
   </div>
-  <p id="modeInfo" aria-live="polite">Launch a bubble at the bearing you enter. One target per shot.</p>
+  <p id="modeInfo" aria-live="polite">Fire now. Move on the next turn.</p>
   <div class="fields">
     <label>Bearing (3 figures, °)
       <input id="bearing" type="text" inputmode="numeric" maxlength="3" autocomplete="off" placeholder="e.g. 045" aria-describedby="bearingTip">
@@ -47,11 +53,13 @@
   <p class="toolHint"><strong>Ruler:</strong> place blue <strong>0 pivot</strong> on your ship; drag the orange far-end handle to rotate. Drag its body to move.</p>
 </section>
 </aside></div></main>
-<dialog id="tutorial"><div class="modal"><span class="badge" id="stepNo">Step 1 of 8</span><h2 id="stepTitle"></h2><div class="tutorialStep" id="stepBody"></div><div class="actions"><button id="prevStep">← Back</button><button id="nextStep" class="secondary">Next →</button><button id="closeTutorial">Close</button></div></div></dialog>
+<dialog id="tutorial"><div class="modal"><span class="badge" id="stepNo">Step 1 of 9</span><h2 id="stepTitle"></h2><div class="tutorialStep" id="stepBody"></div><div class="actions"><button id="prevStep">← Back</button><button id="nextStep" class="secondary">Next →</button><button id="closeTutorial">Close</button></div></div></dialog>
 <dialog id="maths"><div class="modal"><h2>📐 Bearings maths help</h2><p>These examples explain the skill without giving away where any creature is.</p>
 <details open><summary>What is a bearing?</summary><p>A bearing is an angle measured <b>clockwise from north</b>, written using <b>three figures</b>. For example, east is 090°, south is 180°, west is 270° and north is 000°.</p></details>
 <details><summary>How do I use the protractor?</summary><ol><li>Drag its centre onto your ship.</li><li>Rotate it so its 0° / N direction points upwards (north).</li><li>Read clockwise from north to the creature, using its position on the circular scale.</li><li>Type a three-figure bearing in Captain's orders.</li></ol><p>Think of 045° as halfway between north and east, while 315° is northwest.</p></details>
 <details><summary>How do I use the ruler?</summary><p>The ruler pivots around the <b>blue 0 mark at the centre of its short end</b>, not its middle. Drag its body to position that mark on your ship. Then drag the <b>orange handle on its far end</b> to turn the ruler towards a creature without shifting the 0 mark. Read distance from 0 along the marked edge; each grid square is 1 unit. Bubble range is up to 8 units; movement is limited to 1–5 units.</p></details>
+<details><summary>Why do turns alternate between Fire and Move?</summary><p>Each <b>valid turn</b> has a set phase: <b>Fire → Move → Fire → Move</b>. You start by firing. After you complete the order, surviving sea sillies swim closer and the next phase is announced. The highlighted phase and large action button show what you must do now. You cannot skip a phase. This continues across levels, including two-hit helmet enemies.</p><p>An invalid bearing, distance or off-map move does not use a turn or change your phase.</p></details>
+<details><summary>What does an incorrect bearing warning mean?</summary><p>Use a three-digit bearing from <b>000° to 359°</b> (e.g. 005°, 045°, 270°). North is 000°, not 360°. The warning pop-in explains whether digits are missing or the number is out of range. Correct the entry and try again: your turn is not lost.</p></details>
 <details><summary>How do three-figure bearings work?</summary><p>Always write three digits: 5° is <b>005°</b>, 45° is <b>045°</b>, and 120° remains <b>120°</b>. 360° points north too, but this game uses 000°.</p></details>
 <details><summary>What if I measure an angle anticlockwise?</summary><p>Bearings still go clockwise. If a direction is 40° anticlockwise from north, its bearing is 360° − 40° = <b>320°</b>.</p></details>
 <details><summary>Worked example: firing northeast</summary><p>A target is 3 squares east and 3 squares north of your ship. It is halfway between north and east: the bearing is <b>045°</b>. Its distance is about 4.2 units, so a bubble with range 5 units reaches it. This is a generic example, not a game hint.</p></details>
@@ -65,7 +73,7 @@
 const canvas=document.getElementById('board'),ctx=canvas.getContext('2d'),$=id=>document.getElementById(id),W=1000,H=650,U=50;
 let ship,enemies,turn,score,hearts,mode='fire',finished=false,won=false,showP=true,showR=true,drag=null;
 let shipMotion=null,shotMotion=null,impactMotion=null,waveMotion=null,hitGhost=null;
-let collisionGhosts=[],animating=false,animEnd=0,pendingEnd=false;
+let collisionGhosts=[],animating=false,animEnd=0,pendingEnd=false,pendingPhase=null;
 let streak=0,bestStreak=0,waveNo=1,cues=[],speechCue=null,celebrationCue=null,damageUntil=0;
 const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const RULER_LENGTH=8*U, RULER_HALF_WIDTH=20, RULER_HANDLE_X=RULER_LENGTH+18;
@@ -76,8 +84,9 @@ const tutorials=[
 ['Your maths mission','Bearings are angles measured <b>clockwise from north</b>. North is up, and the compass below the board always shows it. You must enter bearings using three figures, such as 045°, 090° or 275°.'],
 ['Measure with the protractor','Use the <b>Protractor</b> button to show it. Drag the transparent disk by its body until the centre is on your ship. Drag the orange circle on its rim to rotate it; keep the N/0° line pointing north. Read the angle clockwise towards a creature. There is no auto-aim.'],
 ['Measure with the ruler','<b>The small blue circle at 0 is the pivot.</b> Drag the ruler body until the blue 0 circle sits at the centre of your ship. Now drag the orange handle at the far end: the ruler rotates while its 0 end stays fixed. Read distance in grid units (one square = one unit). Bubbles can travel 1–8 units.'],
-['Fire a bubble','Choose <b>Fire</b>, enter your three-figure bearing and a range from 1 to 8 units, then choose <b>Launch bubble!</b> Your bubble flies in a straight line. If it crosses a creature within its range, you score a point. A near miss is still a miss.'],
-['Steer the ship','Choose <b>Move</b>. Enter a bearing and a distance of 1–5 units. The ship sails in that direction. You cannot sail outside the playing area. Moving and firing each use one turn.'],
+['Firing phase','Your first turn is a <b>FIRE PHASE</b>. You cannot choose the phase: the game alternates automatically. Use your protractor and ruler to measure a target, enter a three-figure bearing and a whole-number range of 1–8 units, then press <b>Launch bubble!</b>. A bubble travels in a straight line. Hitting a creature pops it, except for the first hit on a two-hit helmet.'],
+['Moving phase','After a valid firing turn, a clear pop-in announces <b>MOVE PHASE</b>. You must now sail. Measure the bearing you want to travel, then enter a three-figure bearing and a whole-number distance of 1–5 units. A move cannot leave the map. After a valid move, the game switches back to <b>FIRE PHASE</b>. Enemies move closer after either kind of turn.'],
+['Mistakes and pop-in warnings','Incorrect bearings trigger a clear red warning. Bearings are always <b>three figures</b>, measured clockwise from north: write <b>045°</b>, not 45°. North is <b>000°</b>, not 360°. Invalid bearings, distances and off-map moves do <b>not</b> use a turn, move enemies or change the current phase. Correct your input and try again.'],
 ['Progress through 12 gentle levels','Clear all the creatures in a level to move on. Every new level changes <b>just one thing</b>: there may be one more sea silly, slightly faster swimmers, or one extra creature with a <b>two-hit helmet</b>. A helmet hit still uses a turn, but does not earn a point until the creature is popped. Aim at the centre of the creature, not the helmet number.'],
 ['Survive the sillies!','After each valid order, surviving creatures swim closer. If one touches your ship, you lose a heart. Lose all three hearts and the voyage ends. Clear all <b>12 levels</b> to win! Your protractor and ruler stay manual. Use <b>Maths help</b> whenever you need a refresher. Ready, captain?']
 ];let step=0;
@@ -103,16 +112,18 @@ function spawnLevel(level,at=0){
 function start(){
   ship={x:500,y:325,heading:0};enemies=[];turn=1;score=0;hearts=3;finished=false;won=false;
   shipMotion=null;shotMotion=null;impactMotion=null;waveMotion=null;hitGhost=null;
-  collisionGhosts=[];pendingEnd=false;animating=false;animEnd=0;
+  collisionGhosts=[];pendingEnd=false;pendingPhase=null;animating=false;animEnd=0;
   streak=0;bestStreak=0;waveNo=1;cues=[];speechCue=null;celebrationCue=null;damageUntil=0;
-  clearCelebrations();showPhase('🧭 Captain’s turn','ready');$('waveNo').textContent='1';$('levelMax').textContent=window.BloopDifficulty.maxLevel;$('levelRule').textContent=window.BloopDifficulty.summary(1);
+  clearCelebrations();$('waveNo').textContent='1';$('levelMax').textContent=window.BloopDifficulty.maxLevel;$('levelRule').textContent=window.BloopDifficulty.summary(1);
   pro={x:500,y:325,a:0};ruler={x:320,y:560,a:0};
-  spawnLevel(1);$('end').classList.remove('show');$('end').dataset.outcome='';setLocked(false);
-  $('log').textContent='Level 1: Calm waters. Three sea sillies, one hit each. Measure a bearing and choose your order.';
+  spawnLevel(1);$('end').classList.remove('show');$('end').dataset.outcome='';
+  mode='fire';updateMode('fire');clearInputError();
+  setLocked(false);announcePhase();
+  $('log').textContent='Level 1: Calm waters. Your first turn is FIRE. Measure a three-figure bearing and range.';
   refresh();draw();
 }
 function setLocked(locked){
-  for(const id of ['actionBtn','fireMode','moveMode','bearing','distance'])$(id).disabled=locked;
+  for(const id of ['actionBtn','bearing','distance'])$(id).disabled=locked;
 }
 function showEnding(){
   $('end').dataset.outcome=won?'victory':'loss';
@@ -143,6 +154,7 @@ function queueCue(kind,s,at,extra={}){
 function playCue(c,now){
   showPhase(c.text,c.kind);
   if(c.kind==='celebrate'&&!reducedMotion)$('scoreStat').classList.add('scorePulse');
+  if(c.kind==='miss')announceMiss();
   if(c.kind==='armour')$('phaseRibbon').dataset.phase='armour';
   if(c.kind==='damage'&&!reducedMotion){
     $('sea').classList.add('hurt');$('heartStat').classList.add('hit');damageUntil=now+650;
@@ -164,21 +176,90 @@ function tickCues(now){
     $('sea').classList.remove('hurt');$('heartStat').classList.remove('hit');damageUntil=0;
   }
 }
-function updateMode(m){if(animating)return;mode=m;for(const [id,is] of [['fireMode',m==='fire'],['moveMode',m==='move']]){$(id).classList.toggle('active',is);$(id).setAttribute('aria-pressed',String(is))}$('modeInfo').textContent=m==='fire'?'Bubble along your chosen bearing (range 1–8).':'Sail along your bearing (distance 1–5).';$('actionBtn').textContent=m==='fire'?'Launch bubble!':'Sail away!';$('distance').max=m==='fire'?8:5;$('distance').placeholder=m==='fire'?'1–8':'1–5';$('distanceLabel').firstChild.textContent=m==='fire'?'Range (units)':'Distance (units)'}
+// The phase is set by the turn sequence, never by clicking a mode selector.
+function updateMode(next){
+  mode=next;
+  for(const [id,active] of [['fireMode',mode==='fire'],['moveMode',mode==='move']]){
+    $(id).classList.toggle('active',active);
+    $(id).setAttribute('aria-current',active?'step':'false');
+  }
+  $('ordersPanel').dataset.phase=mode;
+  $('phaseHeading').textContent=mode==='fire'?'🫧 FIRE PHASE':'⛵ MOVE PHASE';
+  $('modeInfo').textContent=mode==='fire'?
+    'Fire now. Move on the next turn.':'Move now. Fire on the next turn.';
+  $('actionBtn').textContent=mode==='fire'?'Launch bubble!':'Sail away!';
+  $('distance').max=mode==='fire'?8:5;
+  $('distance').placeholder=mode==='fire'?'1–8':'1–5';
+  $('distanceLabel').firstChild.textContent=mode==='fire'?'Range (units)':'Distance (units)';
+  $('bearing').value='';$('distance').value='';
+  clearInputError();
+  showPhase(mode==='fire'?'🫧 FIRE PHASE':'⛵ MOVE PHASE',
+    mode==='fire'?'ready-fire':'ready-move');
+}
+function restartNotice(which){
+  const node=$(which);
+  node.classList.remove('show');
+  // Reflow restarts the short CSS pop-in when a student makes the same error twice.
+  void node.offsetWidth;
+  node.classList.add('show');
+}
+function clearInputError(){
+  for(const id of ['bearing','distance'])$(id).setAttribute('aria-invalid','false');
+  $('errorPop').classList.remove('show');
+}
+function warn(title,detail,field,logText){
+  $('phasePop').classList.remove('show');
+  $('errorPopTitle').textContent=title;
+  $('errorPopDetail').textContent=detail;
+  restartNotice('errorPop');
+  if(field){
+    $(field).setAttribute('aria-invalid','true');
+    if(typeof $(field).focus==='function')$(field).focus({preventScroll:true});
+  }
+  message(logText||title+' '+detail,'error');
+}
+function announceMiss(){
+  $('phasePop').classList.remove('show');
+  $('errorPopTitle').textContent='💦 Bubble missed!';
+  $('errorPopDetail').textContent='Recheck the bearing and range. Turn counted.'+
+    (reducedMotion?' Next: '+(mode==='fire'?'FIRE':'MOVE')+' PHASE.':'');
+  restartNotice('errorPop');
+}
+function announcePhase(){
+  $('errorPop').classList.remove('show');
+  $('phasePop').dataset.phase=mode;
+  $('phasePopTitle').textContent=mode==='fire'?'🫧 FIRE PHASE':'⛵ MOVE PHASE';
+  $('phasePopDetail').textContent=mode==='fire'?
+    'Measure a target and launch a bubble.':'Measure a course and sail your ship.';
+  restartNotice('phasePop');
+}
+
 function order(){
   if(finished||animating)return;
   const bearing=$('bearing').value.trim(),distance=Number($('distance').value);
   const max=mode==='fire'?8:5;
+  clearInputError();
   if(!/^\d{3}$/.test(bearing)||Number(bearing)>359){
-    message('Use a three-figure bearing from 000 to 359, such as 045. No turn used.');return;
+    let detail;
+    if(bearing==='')detail='Enter three digits, for example 045°.';
+    else if(/^\d{1,2}$/.test(bearing))detail='Use three figures: '+bearing+'° is written '+bearing.padStart(3,'0')+'°.';
+    else if(bearing==='360')detail='North is written 000°, not 360°.';
+    else detail='Use exactly three digits from 000° to 359°.';
+    warn('⚠️ Check your bearing',detail,'bearing','Incorrect bearing. '+detail+' No turn used.');
+    return;
   }
-  if(!Number.isInteger(distance)||distance<1||distance>max){
-    message('Enter a whole-number '+(mode==='fire'?'range from 1 to 8':'distance from 1 to 5')+'. No turn used.');return;
+  if($('distance').value===''||!Number.isInteger(distance)||distance<1||distance>max){
+    const detail='Enter a whole number from 1 to '+max+' '+(mode==='fire'?'for bubble range.':'for sailing distance.');
+    warn('⚠️ Check your '+(mode==='fire'?'range':'distance'),detail,'distance',detail+' No turn used.');
+    return;
   }
   const dest=pos(ship,Number(bearing),distance);
   if(mode==='move'&&(dest.x<35||dest.x>965||dest.y<35||dest.y>615)){
-    message('That course sails off the map. Try a different bearing or distance. No turn used.');return;
+    warn('⚠️ Off the map','Choose a shorter distance or a bearing that keeps you in the sea.',
+      'distance','That course would leave the map. No turn used; MOVE PHASE continues.');
+    return;
   }
+  $('phasePop').classList.remove('show');
   const now=performance.now(),oldShip={...ship};
   cues=[];speechCue=null;celebrationCue=null;damageUntil=0;clearCelebrations();
   showPhase(mode==='fire'?'🫧 Bubble launched!':'⛵ Sailing away!',mode==='fire'?'shoot':'sail');
@@ -303,11 +384,21 @@ function order(){
     }
   }
   if(hearts<=0){finished=true;pendingEnd=true;}
+  // A completed order always spends one turn, whether the shot hit, missed,
+  // cracked armour or the ship sailed. Switch only if the voyage continues.
+  const nextMode=mode==='fire'?'move':'fire';
   animEnd=now+advanceDelay+advanceDuration+(reducedMotion?0:560);
-  if(!reducedMotion&&!finished)queueCue('ready','🧭 Captain’s turn',animEnd);
+  if(!reducedMotion&&!finished)queueCue('ready',
+    nextMode==='fire'?'🫧 FIRE PHASE':'⛵ MOVE PHASE',animEnd);
   animating=!reducedMotion;
   setLocked(animating);
-  if(reducedMotion&&pendingEnd){showEnding();pendingEnd=false;showPhase(won?'🏆 Voyage complete!':'💔 Shipwreck',won?'celebrate':'damage');}
+  if(reducedMotion&&pendingEnd){
+    showEnding();pendingEnd=false;
+    showPhase(won?'🏆 Voyage complete!':'💔 Shipwreck',won?'celebrate':'damage');
+  }else if(!finished){
+    if(reducedMotion){updateMode(nextMode);announcePhase();}
+    else pendingPhase=nextMode;
+  }
   message(result+' Turn '+turn+'.',feedback);refresh();tickCues(now);draw(now);
 }
 
@@ -403,7 +494,12 @@ function frame(now){
   tickCues(now);
   if(animating&&now>=animEnd){
     animating=false;setLocked(false);
-    if(pendingEnd){showEnding();pendingEnd=false;showPhase(won?'🏆 Voyage complete!':'💔 Shipwreck',won?'celebrate':'damage');}
+    if(pendingEnd){
+      showEnding();pendingEnd=false;
+      showPhase(won?'🏆 Voyage complete!':'💔 Shipwreck',won?'celebrate':'damage');
+    }else if(pendingPhase){
+      updateMode(pendingPhase);pendingPhase=null;announcePhase();
+    }
   }
   draw(now);
   requestAnimationFrame(frame);
@@ -428,7 +524,12 @@ canvas.addEventListener('pointerdown',e=>{
 });
 canvas.addEventListener('pointermove',e=>{if(!drag)return;const p=pointer(e),t=drag.tool==='pro'?pro:ruler;if(drag.kind==='move'){t.x=safe(p.x-drag.dx,0,W);t.y=safe(p.y-drag.dy,0,H)}else{const ang=Math.atan2(p.y-t.y,p.x-t.x);t.a=drag.tool==='pro'?ang+Math.PI/2:ang}draw()});
 function endDrag(){drag=null}canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',endDrag);
-$('actionBtn').addEventListener('click',order);for(const id of ['bearing','distance'])$(id).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();order()}});$('fireMode').addEventListener('click',()=>updateMode('fire'));$('moveMode').addEventListener('click',()=>updateMode('move'));$('resetBtn').addEventListener('click',start);$('againBtn').addEventListener('click',start);
+$('actionBtn').addEventListener('click',order);
+for(const id of ['bearing','distance']){
+  $(id).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();order();}});
+  $(id).addEventListener('input',()=>{$(id).setAttribute('aria-invalid','false');$('errorPop').classList.remove('show');});
+}
+$('resetBtn').addEventListener('click',start);$('againBtn').addEventListener('click',start);
 $('protractorBtn').addEventListener('click',()=>{showP=!showP;$('protractorBtn').classList.toggle('active',showP);$('protractorBtn').setAttribute('aria-pressed',String(showP));draw()});$('rulerBtn').addEventListener('click',()=>{showR=!showR;$('rulerBtn').classList.toggle('active',showR);$('rulerBtn').setAttribute('aria-pressed',String(showR));draw()});
 function tutorialStep(){const s=tutorials[step];$('stepNo').textContent='Step '+(step+1)+' of '+tutorials.length;$('stepTitle').textContent=s[0];$('stepBody').innerHTML='<p>'+s[1]+'</p>';$('prevStep').disabled=step===0;$('nextStep').textContent=step===tutorials.length-1?'Start playing!':'Next →'}
 $('tutorialBtn').onclick=()=>{step=0;tutorialStep();$('tutorial').showModal()};$('prevStep').onclick=()=>{step=Math.max(0,step-1);tutorialStep()};$('nextStep').onclick=()=>{if(step===tutorials.length-1)$('tutorial').close();else{step++;tutorialStep()}};$('closeTutorial').onclick=()=>$('tutorial').close();$('mathBtn').onclick=()=>$('maths').showModal();$('closeMath').onclick=()=>$('maths').close();for(const d of [$('tutorial'),$('maths')])d.addEventListener('click',e=>{if(e.target===d)d.close()});

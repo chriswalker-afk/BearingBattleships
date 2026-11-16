@@ -81,14 +81,25 @@ function harness(reducedMotion = false) {
     assert.equal(typeof fn, 'function', 'Missing click handler: ' + id);
     fn();
   }
+  let moveCount=0;
+  function move(bearing='090',distance=1){
+    assert.match(element('phaseHeading').textContent,/MOVE/,'A MOVE turn must be active');
+    element('bearing').value=bearing;
+    element('distance').value=distance;
+    click('actionBtn');
+  }
   function fire(bearing = '000', distance = 6) {
+    // Old tests exercise multiple hits; fulfil the mandatory movement between them.
+    if(element('phaseHeading').textContent.includes('MOVE')){
+      move(moveCount++%2===0?'090':'270',1);advance();
+    }
     if (bearing === '000' && Number(distance) === 6) win.__testLineup();
     element('bearing').value = bearing;
     element('distance').value = distance;
     click('actionBtn');
   }
   function advance(ms = 2500) { clock += ms; if (frame) frame(clock); }
-  return { e: element, click, fire, advance, frameCount: () => frames,
+  return { e: element, click, fire, move, advance, frameCount: () => frames,
     ctx, win, paints: () => paints, dialogs, lineUp: () => win.__testLineup() };
 }
 
@@ -104,7 +115,7 @@ test('manual bearing entry remains strictly three figures', () => {
   assert.equal(g.e('score').textContent, 1);
 });
 
-test('three pops earn streak, start level 2 and reset streak after a miss', () => {
+test('three pops with required moves earn streak and reach level 2', () => {
   const g = harness();
   for (let i = 1; i <= 3; i++) {
     g.fire(); assert.equal(g.e('score').textContent, i);
@@ -145,12 +156,76 @@ test('reduced motion disables RAF and large effects without disabling play', () 
   assert.equal(g.e('score').textContent, 1);
   assert.equal(g.e('actionBtn').disabled, false);
   assert.equal(g.e('waveNotice').classes.has('show'), false);
-  g.click('moveMode');
-  g.e('bearing').value = '180';
-  g.e('distance').value = 1;
-  g.click('actionBtn');
+  g.move('180', 1);
   assert.equal(g.e('turn').textContent, 3);
   assert.equal(g.frameCount(), 0);
+});
+
+
+test('invalid bearings show pop-in guidance without changing phase or using a turn', () => {
+  const g=harness(true);
+  assert.match(g.e('phaseHeading').textContent,/FIRE/);
+  assert.match(g.e('phasePopTitle').textContent,/FIRE/);
+  g.fire('45',4);
+  assert.equal(g.e('turn').textContent,1);
+  assert.equal(g.e('errorPopTitle').textContent,'⚠️ Check your bearing');
+  assert.match(g.e('errorPopDetail').textContent,/045/);
+  assert.ok(g.e('errorPop').classes.has('show'));
+  assert.match(g.e('phaseHeading').textContent,/FIRE/);
+  g.fire('360',4);
+  assert.match(g.e('errorPopDetail').textContent,/000/);
+  assert.equal(g.e('turn').textContent,1);
+  g.fire('000',6);
+  assert.match(g.e('phaseHeading').textContent,/MOVE/);
+  assert.match(g.e('phasePopTitle').textContent,/MOVE/);
+  g.move('000',6);
+  assert.equal(g.e('turn').textContent,2);
+  assert.match(g.e('errorPopTitle').textContent,/distance/);
+  assert.match(g.e('phaseHeading').textContent,/MOVE/);
+  g.move('180',1);
+  assert.equal(g.e('turn').textContent,3);
+  assert.match(g.e('phaseHeading').textContent,/FIRE/);
+});
+
+test('valid actions alternate in normal animation mode only after unlocking', () => {
+  const g=harness(false);
+  g.fire('180',1);
+  assert.match(g.e('phaseHeading').textContent,/FIRE/,'Still FIRE while animating');
+  assert.equal(g.e('actionBtn').disabled,true);
+  g.advance();
+  assert.match(g.e('phaseHeading').textContent,/MOVE/);
+  assert.match(g.e('phasePopTitle').textContent,/MOVE/);
+  g.move('090',1);
+  assert.match(g.e('phaseHeading').textContent,/MOVE/,'Still MOVE while animating');
+  g.advance();
+  assert.match(g.e('phaseHeading').textContent,/FIRE/);
+});
+
+
+test('a syntactically valid but missed shot creates post-shot pop-in feedback',()=>{
+  const g=harness(false);
+  g.fire('180',1);
+  assert.equal(g.e('turn').textContent,2,'A missed shot uses a turn');
+  g.advance(750);
+  assert.match(g.e('errorPopTitle').textContent,/Bubble missed/);
+  assert.match(g.e('errorPopDetail').textContent,/bearing and range/);
+  assert.equal(g.e('score').textContent,0);
+  g.advance(2000);
+  assert.match(g.e('phaseHeading').textContent,/MOVE/);
+});
+
+test('off-map move is rejected without advancing or switching phases',()=>{
+  const g=harness(true);
+  g.fire('180',1);
+  g.move('180',5); // Ship has sailed from y=325 to y=575.
+  assert.equal(g.e('turn').textContent,3);
+  g.fire('180',1);
+  assert.match(g.e('phaseHeading').textContent,/MOVE/);
+  const before=g.e('turn').textContent;
+  g.move('180',2); // Would place the ship outside the 650px sea.
+  assert.equal(g.e('turn').textContent,before);
+  assert.match(g.e('errorPopTitle').textContent,/Off the map/);
+  assert.match(g.e('phaseHeading').textContent,/MOVE/);
 });
 
 test('new cartoon faces and comic overlays can render without exceptions', () => {
