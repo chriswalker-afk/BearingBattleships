@@ -64,6 +64,8 @@ test('star buoy floats within next MOVE reach, and sailing through collects +2',
   assert.equal(through.collected.length,1);
   assert.equal(through.bonus,2);
   assert.equal(through.remaining.length,0);
+  assert.ok(R.routeFraction(pickup,ship,{x:500,y:125})>0,
+    'Collection animation remains visible until the route reaches the star');
   const away=R.collectOnMove([pickup],ship,{x:700,y:325},1);
   assert.equal(away.bonus,0);
   assert.equal(away.remaining.length,1);
@@ -196,5 +198,5 @@ test('last pop gives a final MOVE chance to collect the star before victory',()=
   assert.equal(g.el('score').textContent,3);
   assert.equal(g.el('pickupCount').textContent,0);
   assert.equal(g.el('end').dataset.outcome,'victory');
-  assert.match(g.el('endText').textContent,/popped 1 sea sillies and earned 3 points/);
+  assert.match(g.el('endText').textContent,/popped 1 sea silly and earned 3 points/);
 });
