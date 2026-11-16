@@ -148,6 +148,13 @@
     enemy.x=point.x;enemy.y=point.y;enemy.pathProgress=next;
     return point;
   }
+  function hasTarget(map,ship,enemies){
+    // Only require a FIRE turn when a guardian is actually within the same
+    // open channel and 8-unit range. Do not reveal angles or mark targets.
+    return enemies.some(enemy=>
+      distance(ship,enemy)<=8*U &&
+      !visibleRay(map,ship,enemy).blocked);
+  }
   function isExit(map,ship){
     return distance(map.exit,ship)<=PORTAL_RADIUS;
   }
@@ -315,7 +322,7 @@
   validate();
   window.BloopMaze=Object.freeze({
     levels:maps,maxLevel:maps.length,get,validate,inChannel,moveClear,
-    visibleRay,pointAt,progressAt,enemySpawns,advanceEnemy,isExit,pickup,
+    visibleRay,pointAt,progressAt,enemySpawns,advanceEnemy,hasTarget,isExit,pickup,
     draw,drawPortal,drawSpaceAura,PORTAL_RADIUS
   });
 })();
