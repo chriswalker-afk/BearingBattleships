@@ -242,7 +242,7 @@ function order(){
   if(!/^\d{3}$/.test(bearing)||Number(bearing)>359){
     let detail;
     if(bearing==='')detail='Enter three digits, for example 045°.';
-    else if(/^\d{1,2}$/.test(bearing))detail='Use three figures: 45° is written 045°.';
+    else if(/^\d{1,2}$/.test(bearing))detail='Use three figures: '+bearing+'° is written '+bearing.padStart(3,'0')+'°.';
     else if(bearing==='360')detail='North is written 000°, not 360°.';
     else detail='Use exactly three digits from 000° to 359°.';
     warn('⚠️ Check your bearing',detail,'bearing','Incorrect bearing. '+detail+' No turn used.');
