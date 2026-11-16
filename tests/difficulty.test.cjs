@@ -85,7 +85,10 @@ function harness({shortVoyage=false}={}){
   const anchor='start();if(!reducedMotion)requestAnimationFrame(frame);})();';
   assert.ok(game[1].includes(anchor),'Known entrypoint not found');
   const gameSource=game[1].replace(anchor,
-    "window.__testing={lineup(){for(const e of enemies){e.x=ship.x;e.y=ship.y-220;e.motion=null;}}};"+anchor);
+    "window.__testing={"+
+    "lineup(){for(const e of enemies){e.x=ship.x;e.y=ship.y-220;e.motion=null;}},"+
+    "enemies(){return enemies.map(e=>({x:e.x,y:e.y,hp:e.hp,maxHp:e.maxHp}));}"+
+    "};"+anchor);
   vm.runInContext(gameSource,ctx,{filename:'index.html'});
   function click(id){
     const node=element(id),fn=events.get(id+':click')||node.onclick;
@@ -141,6 +144,40 @@ test('all 12 levels are winnable with exactly the configured number of hits',()=
   assert.equal(g.e('end').dataset.outcome,'victory');
   assert.ok(g.e('end').classList.contains('show'));
   assert.match(g.e('endTitle').textContent,/victory/i);
+});
+
+test('swim speed stays constant during a level and increases only at Level 3',()=>{
+  const g=harness();
+  g.win.__testing.lineup();
+  const first=g.win.__testing.enemies()[0].y;
+  for(let n=0;n<5;n++){
+    g.fire('180',1,false); // Fire away from all northern targets.
+    const after=g.win.__testing.enemies()[0].y;
+    assert.equal(Math.round(after-first),17*(n+1),'Level 1 speed constant at every turn');
+  }
+  assert.equal(Number(g.e('waveNo').textContent),1,'No silent level increase by turn count');
+  const h=harness();
+  for(let i=0;i<3+4;i++)h.fire();
+  assert.equal(h.e('waveNo').textContent,3);
+  h.win.__testing.lineup();
+  const before=h.win.__testing.enemies()[0].y;
+  h.fire('180',1,false);
+  const after=h.win.__testing.enemies()[0].y;
+  assert.equal(Math.round(after-before),21,'Level 3 has its first visible speed increase');
+});
+
+test('new creature counts and helmet quantities match the configured level',()=>{
+  const g=harness();
+  for(let stage=1;stage<=4;stage++){
+    const spec=g.win.BloopDifficulty.get(stage);
+    const enemies=g.win.__testing.enemies();
+    assert.equal(enemies.length,spec.count,'Enemy count on level '+stage);
+    assert.equal(enemies.filter(e=>e.maxHp===2).length,spec.armoured,
+      'Two-hit enemies on level '+stage);
+    if(stage<4){
+      for(let n=0;n<spec.count+spec.armoured;n++)g.fire();
+    }
+  }
 });
 
 test('ending the final level does not incorrectly award Level 13',()=>{
