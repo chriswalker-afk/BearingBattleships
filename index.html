@@ -221,7 +221,8 @@ function warn(title,detail,field,logText){
 function announceMiss(){
   $('phasePop').classList.remove('show');
   $('errorPopTitle').textContent='💦 Bubble missed!';
-  $('errorPopDetail').textContent='Recheck the bearing and range. The turn still counts.';
+  $('errorPopDetail').textContent='Recheck the bearing and range. Turn counted.'+
+    (reducedMotion?' Next: '+(mode==='fire'?'FIRE':'MOVE')+' PHASE.':'');
   restartNotice('errorPop');
 }
 function announcePhase(){
