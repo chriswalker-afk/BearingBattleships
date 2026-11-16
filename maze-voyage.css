@@ -25,7 +25,7 @@
 body:has(#mazeModeBtn[aria-pressed="true"]) #sea{
   border-color:#d8f6fb;
 }
-@media (max-width:1180px){
+@media (max-width:825px){
   header{flex-wrap:wrap;gap:7px}
   .gameModeSwitch{order:3;width:100%;justify-content:center}
 }
