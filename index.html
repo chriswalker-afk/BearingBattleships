@@ -2,8 +2,8 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#103b63"><title>Bloop! Bearing Battles</title>
 <style>
 :root{font-family:system-ui,"Trebuchet MS",sans-serif;color:#163554;background:#e8f7fa}*{box-sizing:border-box}body{margin:0}button,input{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:11px 15px;font-weight:800;background:#fff;color:#16466c;box-shadow:0 3px 0 #c2d4db}button:hover{filter:brightness(.95)}button:focus-visible,input:focus-visible{outline:3px solid #ffb830;outline-offset:2px}.shell{max-width:1500px;margin:auto;padding:15px}header{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}h1{margin:0;font-size:clamp(1.6rem,3vw,2.6rem);letter-spacing:-1px;color:#10476c}header p{margin:2px 0 0}.pill{background:#ffe38a;border-radius:99px;padding:6px 12px;font-weight:850}.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:16px;margin-top:14px}.seaWrap{min-width:0}.sea{position:relative;background:#91ddeb;border:8px solid #fff;border-radius:22px;box-shadow:0 8px 0 #c1d6dc;overflow:hidden;touch-action:none}canvas{display:block;width:100%;height:auto;aspect-ratio:1000/650;touch-action:none}.seafooter{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 4px}.compass{display:flex;align-items:center;gap:9px;font-weight:850;color:#16466c}.compass svg{width:72px;height:72px;flex:none}.panel{background:#fff;border-radius:20px;padding:18px;box-shadow:0 6px 0 #c9dfe1}.stack{display:flex;flex-direction:column;gap:14px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{border-radius:13px;background:#e8f6fa;padding:10px 4px;text-align:center;font-size:.8rem}.stat strong{display:block;font-size:1.45rem}.bar{display:flex;gap:8px;flex-wrap:wrap}.bar button{flex:1;padding:10px 6px}.active{background:#ffda79!important;color:#163554!important}.fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.fields label{display:grid;gap:5px;font-size:.88rem;font-weight:750}.fields input{min-width:0;border:2px solid #a8d4e0;border-radius:10px;padding:10px;background:#f6fcfe}h2{margin:0 0 9px;font-size:1.2rem}h3{margin:0 0 8px}p{line-height:1.5}.small{font-size:.85rem}.hint{background:#fff5cf;border-radius:12px;padding:11px;font-size:.9rem}.primary{background:#ffab59;color:#522c17}.secondary{background:#18618a;color:#fff}.muted{color:#5c7886}.log{min-height:77px;background:#eaf6f9;border-radius:12px;padding:12px;font-size:.93rem;font-weight:650}dialog{border:0;border-radius:20px;box-shadow:0 20px 100px #123b5e73;max-width:min(700px,94vw);max-height:90vh;padding:0;color:#183e57}dialog::backdrop{background:#0b2746a9}.modal{padding:22px}.modal h2{font-size:1.7rem}.modal .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.tutorialStep{padding:13px;background:#e8f6fa;border-radius:12px;min-height:135px}.badge{display:inline-block;padding:4px 9px;border-radius:25px;background:#ffdb82;font-size:.8rem;font-weight:bold}details{border-top:1px solid #c2dde3;padding:11px 0}summary{cursor:pointer;font-weight:800}ol,ul{line-height:1.65;padding-left:23px}.gameover{position:absolute;inset:0;background:#092a4fba;color:#fff;display:none;align-items:center;justify-content:center;text-align:center;flex-direction:column;padding:24px}.gameover.show{display:flex}.gameover h2{font-size:clamp(2rem,5vw,3.8rem)}.wide{width:100%}@media(max-width:950px){.layout{grid-template-columns:1fr}.panel{padding:13px}.stack{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.stack>.panel:last-child{grid-column:1/-1}}@media(max-width:570px){.stack{grid-template-columns:1fr}.shell{padding:8px}.sea{border-width:4px}.panel{padding:13px}.compass svg{width:58px;height:58px}.seafooter{font-size:.83rem}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
-</style><link rel="stylesheet" href="pass-a.css"><link rel="stylesheet" href="pass-b.css"><link rel="stylesheet" href="single-screen.css"><link rel="stylesheet" href="difficulty.css"><link rel="stylesheet" href="phase-toasts.css"></head><body><main class="shell">
-<header><div><h1>🐙 Bloop! Bearing Battles</h1><p>Steer the S.S. Wobble. Outsmart the approaching sea sillies!</p></div><div class="bar"><button id="tutorialBtn" title="Open step-by-step tutorial">📖 Tutorial</button><button id="mathBtn" title="Learn about bearings and measuring">📐 Maths help</button><button id="resetBtn" title="Start a fresh voyage">↻ New game</button></div></header>
+</style><link rel="stylesheet" href="pass-a.css"><link rel="stylesheet" href="pass-b.css"><link rel="stylesheet" href="single-screen.css"><link rel="stylesheet" href="difficulty.css"><link rel="stylesheet" href="phase-toasts.css"><link rel="stylesheet" href="boat-studio.css"></head><body><main class="shell">
+<header><div><h1>🐙 Bloop! Bearing Battles</h1><p>Steer the <span id="playerBoatName">S.S. Wobble</span>. Outsmart the approaching sea sillies!</p></div><div class="bar"><button id="boatStudioBtn" title="Personalise your boat">🎨 Boat Studio</button><button id="tutorialBtn" title="Open step-by-step tutorial">📖 Tutorial</button><button id="mathBtn" title="Learn about bearings and measuring">📐 Maths help</button><button id="resetBtn" title="Start a fresh voyage">↻ New game</button></div></header>
 <div class="layout"><div class="seaWrap"><div class="sea" id="sea"><div id="phaseRibbon" class="phaseRibbon" data-phase="ready" aria-hidden="true">🧭 Captain’s turn</div><div id="waveNotice" class="waveNotice" aria-hidden="true"><strong id="waveTitle">🏝️ Level 2!</strong><span id="waveSubtitle">One new challenge!</span></div><div id="phasePop" class="noticePop noticePop--phase" role="status" aria-live="polite" aria-atomic="true">
   <strong id="phasePopTitle"></strong><span id="phasePopDetail"></span>
 </div>
@@ -67,7 +67,41 @@
 <details><summary>Why might a shot miss?</summary><p>Check that your protractor is centred on the ship, 0° points north, you have measured clockwise, and your range is long enough. A bubble travels in a straight line along the bearing you enter.</p></details>
 <details><summary>Challenge: reverse bearings</summary><p>The bearing from A to B is 070°. From B to A, turn 180°: the reverse bearing is <b>250°</b>. If the original bearing is over 180°, subtract 180° instead.</p></details>
 <div class="actions"><button class="secondary" id="closeMath">Back to game</button></div></div></dialog>
-<script src="pass-a-art.js"></script><script src="pass-b-juice.js"></script><script src="difficulty.js"></script>
+<dialog id="boatStudio" class="boatStudioDialog" aria-labelledby="boatStudioTitle">
+  <div class="modal">
+    <div class="studioHeader">
+      <h2 id="boatStudioTitle">🎨 Boat Studio</h2>
+      <button type="button" id="boatStudioClose" aria-label="Close Boat Studio">✕ Close</button>
+    </div>
+    <p class="studioIntro">Make your captain's boat your own! These changes are only for looks — bearings, speed and hit detection stay the same.</p>
+    <div class="studioColumns">
+      <div class="studioPreviewWrap">
+        <canvas id="boatPreview" class="studioPreview" width="480" height="280" role="img" aria-label="Preview of your customised boat on the ocean"></canvas>
+        <span id="boatPreviewName" class="studioPreviewName">S.S. Wobble</span>
+        <span class="studioPreviewCaption">Preview only — save to use this design in the game</span>
+      </div>
+      <div class="studioControls">
+        <label class="studioNameLabel" for="boatNameInput">Your boat's name
+          <input id="boatNameInput" class="studioNameInput" type="text" maxlength="18" autocomplete="off" spellcheck="false" placeholder="S.S. Wobble">
+        </label>
+        <fieldset class="studioField"><legend>🎨 Hull colour</legend><div class="studioOptions" id="boatHullChoices"></div></fieldset>
+        <fieldset class="studioField"><legend>🏠 Cabin</legend><div class="studioOptions" id="boatCabinChoices"></div></fieldset>
+        <fieldset class="studioField"><legend>🚩 Flag</legend><div class="studioOptions" id="boatFlagChoices"></div></fieldset>
+        <fieldset class="studioField"><legend>😊 Face</legend><div class="studioOptions" id="boatFaceChoices"></div></fieldset>
+        <fieldset class="studioField"><legend>✨ Decoration</legend><div class="studioOptions" id="boatAccessoryChoices"></div></fieldset>
+      </div>
+    </div>
+    <p id="boatStudioStatus" class="studioStatus">All designs are free and purely cosmetic.</p>
+    <div class="studioActions">
+      <button type="button" class="studioRandom" id="boatStudioRandom">🎲 Surprise me</button>
+      <button type="button" class="studioReset" id="boatStudioReset">↺ Reset design</button>
+      <button type="button" id="boatStudioCancel">Cancel</button>
+      <button type="button" class="studioSave" id="boatStudioSave">✓ Save boat</button>
+    </div>
+  </div>
+</dialog>
+<div id="boatStudioStatusLive" class="srOnly" role="status" aria-live="polite" aria-atomic="true"></div>
+<script src="boat-style.js"></script><script src="pass-a-art.js"></script><script src="pass-b-juice.js"></script><script src="difficulty.js"></script>
 <script>
 (()=>{'use strict';
 const canvas=document.getElementById('board'),ctx=canvas.getContext('2d'),$=id=>document.getElementById(id),W=1000,H=650,U=50;
@@ -479,7 +513,7 @@ function draw(now=performance.now()){
     BloopArt.drawWake(ctx,shipMotion.from,renderedShip,
       (now-shipMotion.start)/shipMotion.duration,'ship');
   }
-  BloopArt.drawBoat(ctx,renderedShip,artNow,shipUnderway);
+  BloopArt.drawBoat(ctx,renderedShip,artNow,shipUnderway,window.BloopBoat?.getCurrent?.());
   BloopArt.drawProjectile(ctx,shotMotion,now);
   BloopArt.drawImpact(ctx,impactMotion,now);
   // All comic reactions are post-order, brief, and never show an aiming direction.
@@ -534,4 +568,4 @@ $('protractorBtn').addEventListener('click',()=>{showP=!showP;$('protractorBtn')
 function tutorialStep(){const s=tutorials[step];$('stepNo').textContent='Step '+(step+1)+' of '+tutorials.length;$('stepTitle').textContent=s[0];$('stepBody').innerHTML='<p>'+s[1]+'</p>';$('prevStep').disabled=step===0;$('nextStep').textContent=step===tutorials.length-1?'Start playing!':'Next →'}
 $('tutorialBtn').onclick=()=>{step=0;tutorialStep();$('tutorial').showModal()};$('prevStep').onclick=()=>{step=Math.max(0,step-1);tutorialStep()};$('nextStep').onclick=()=>{if(step===tutorials.length-1)$('tutorial').close();else{step++;tutorialStep()}};$('closeTutorial').onclick=()=>$('tutorial').close();$('mathBtn').onclick=()=>$('maths').showModal();$('closeMath').onclick=()=>$('maths').close();for(const d of [$('tutorial'),$('maths')])d.addEventListener('click',e=>{if(e.target===d)d.close()});
 start();if(!reducedMotion)requestAnimationFrame(frame);})();
-</script><script src="single-screen.js"></script></body></html>
+</script><script src="boat-studio.js"></script><script src="single-screen.js"></script></body></html>
