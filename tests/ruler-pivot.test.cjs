@@ -72,6 +72,9 @@ function harness(rect = { left: 0, top: 0, width: 1000, height: 650 }) {
   vm.runInContext(art, context, { filename: 'pass-a-art.js' });
   vm.runInContext(juice, context, { filename: 'pass-b-juice.js' });
   vm.runInContext(difficulty, context, { filename: 'difficulty.js' });
+  // In the browser window IS global; this VM harness uses a separate window stub.
+  sandbox.BloopArt=win.BloopArt;
+  sandbox.BloopJuice=win.BloopJuice;
   vm.runInContext(inline[1], context, { filename: 'index.html' });
 
   function pointer(type, wx, wy) {
