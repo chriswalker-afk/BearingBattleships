@@ -1,4 +1,11 @@
 /* Boat Studio: a spacious, keyboard-friendly preview and selection modal. */
+header #boatStudioBtn{
+ background:linear-gradient(180deg,#fff2c5,#ffdfad);
+ color:#704d2e;border:2px solid #fff7d9;
+ box-shadow:0 3px 0 #dcb17a;
+}
+header #boatStudioBtn:hover:not(:disabled){background:#ffedb2}
+
 .boatStudioDialog {
   max-width: min(890px, 96vw);width: min(890px, 96vw);
   max-height: min(92dvh, 900px);overflow-y: auto;
