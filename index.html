@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#103b63"><title>Bloop! Bearing Battles</title>
 <style>
 :root{font-family:system-ui,"Trebuchet MS",sans-serif;color:#163554;background:#e8f7fa}*{box-sizing:border-box}body{margin:0}button,input{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:11px 15px;font-weight:800;background:#fff;color:#16466c;box-shadow:0 3px 0 #c2d4db}button:hover{filter:brightness(.95)}button:focus-visible,input:focus-visible{outline:3px solid #ffb830;outline-offset:2px}.shell{max-width:1500px;margin:auto;padding:15px}header{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}h1{margin:0;font-size:clamp(1.6rem,3vw,2.6rem);letter-spacing:-1px;color:#10476c}header p{margin:2px 0 0}.pill{background:#ffe38a;border-radius:99px;padding:6px 12px;font-weight:850}.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:16px;margin-top:14px}.seaWrap{min-width:0}.sea{position:relative;background:#91ddeb;border:8px solid #fff;border-radius:22px;box-shadow:0 8px 0 #c1d6dc;overflow:hidden;touch-action:none}canvas{display:block;width:100%;height:auto;aspect-ratio:1000/650;touch-action:none}.seafooter{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 4px}.compass{display:flex;align-items:center;gap:9px;font-weight:850;color:#16466c}.compass svg{width:72px;height:72px;flex:none}.panel{background:#fff;border-radius:20px;padding:18px;box-shadow:0 6px 0 #c9dfe1}.stack{display:flex;flex-direction:column;gap:14px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{border-radius:13px;background:#e8f6fa;padding:10px 4px;text-align:center;font-size:.8rem}.stat strong{display:block;font-size:1.45rem}.bar{display:flex;gap:8px;flex-wrap:wrap}.bar button{flex:1;padding:10px 6px}.active{background:#ffda79!important;color:#163554!important}.fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.fields label{display:grid;gap:5px;font-size:.88rem;font-weight:750}.fields input{min-width:0;border:2px solid #a8d4e0;border-radius:10px;padding:10px;background:#f6fcfe}h2{margin:0 0 9px;font-size:1.2rem}h3{margin:0 0 8px}p{line-height:1.5}.small{font-size:.85rem}.hint{background:#fff5cf;border-radius:12px;padding:11px;font-size:.9rem}.primary{background:#ffab59;color:#522c17}.secondary{background:#18618a;color:#fff}.muted{color:#5c7886}.log{min-height:77px;background:#eaf6f9;border-radius:12px;padding:12px;font-size:.93rem;font-weight:650}dialog{border:0;border-radius:20px;box-shadow:0 20px 100px #123b5e73;max-width:min(700px,94vw);max-height:90vh;padding:0;color:#183e57}dialog::backdrop{background:#0b2746a9}.modal{padding:22px}.modal h2{font-size:1.7rem}.modal .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.tutorialStep{padding:13px;background:#e8f6fa;border-radius:12px;min-height:135px}.badge{display:inline-block;padding:4px 9px;border-radius:25px;background:#ffdb82;font-size:.8rem;font-weight:bold}details{border-top:1px solid #c2dde3;padding:11px 0}summary{cursor:pointer;font-weight:800}ol,ul{line-height:1.65;padding-left:23px}.gameover{position:absolute;inset:0;background:#092a4fba;color:#fff;display:none;align-items:center;justify-content:center;text-align:center;flex-direction:column;padding:24px}.gameover.show{display:flex}.gameover h2{font-size:clamp(2rem,5vw,3.8rem)}.wide{width:100%}@media(max-width:950px){.layout{grid-template-columns:1fr}.panel{padding:13px}.stack{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.stack>.panel:last-child{grid-column:1/-1}}@media(max-width:570px){.stack{grid-template-columns:1fr}.shell{padding:8px}.sea{border-width:4px}.panel{padding:13px}.compass svg{width:58px;height:58px}.seafooter{font-size:.83rem}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
-</style><link rel="stylesheet" href="pass-a.css"><link rel="stylesheet" href="pass-b.css"><link rel="stylesheet" href="single-screen.css"><link rel="stylesheet" href="difficulty.css"><link rel="stylesheet" href="phase-toasts.css"><link rel="stylesheet" href="boat-studio.css"><link rel="stylesheet" href="rewards.css"><link rel="stylesheet" href="squid-strike.css"></head><body><main class="shell">
+</style><link rel="stylesheet" href="pass-a.css"><link rel="stylesheet" href="pass-b.css"><link rel="stylesheet" href="single-screen.css"><link rel="stylesheet" href="difficulty.css"><link rel="stylesheet" href="phase-toasts.css"><link rel="stylesheet" href="boat-studio.css"><link rel="stylesheet" href="rewards.css"><link rel="stylesheet" href="squid-strike.css"><link rel="stylesheet" href="scene-zoom.css"></head><body><main class="shell">
 <header><div><h1>🐙 Bloop! Bearing Battles</h1><p>Steer the <span id="playerBoatName">S.S. Wobble</span>. Outsmart the approaching sea sillies!</p></div><div class="bar"><button id="boatStudioBtn" title="Personalise your boat">🎨 Boat Studio</button><button id="tutorialBtn" title="Open step-by-step tutorial">📖 Tutorial</button><button id="mathBtn" title="Learn about bearings and measuring">📐 Maths help</button><button id="resetBtn" title="Start a fresh voyage">↻ New game</button></div></header>
 <div class="layout"><div class="seaWrap"><div class="sea" id="sea"><div id="phaseRibbon" class="phaseRibbon" data-phase="ready" aria-hidden="true">🧭 Captain’s turn</div><div id="waveNotice" class="waveNotice" aria-hidden="true"><strong id="waveTitle">🏝️ Level 2!</strong><span id="waveSubtitle">One new challenge!</span></div><div id="phasePop" class="noticePop noticePop--phase" role="status" aria-live="polite" aria-atomic="true">
   <strong id="phasePopTitle"></strong><span id="phasePopDetail"></span>
@@ -10,7 +10,12 @@
 <div id="errorPop" class="noticePop noticePop--error" role="alert" aria-live="assertive" aria-atomic="true">
   <strong id="errorPopTitle"></strong><span id="errorPopDetail"></span>
 </div>
-<canvas id="board" width="1000" height="650" aria-label="Play area with your ship and approaching enemies. North is at the top. Use the draggable ruler and protractor to measure."></canvas><div id="end" class="gameover" role="status"><h2 id="endTitle"></h2><p id="endText"></p><button id="againBtn" class="primary">Try again!</button></div></div><div class="seafooter"><div class="compass"><svg viewBox="0 0 100 100" role="img" aria-label="North is up; east right, south down, west left"><circle cx="50" cy="50" r="45" fill="#fff" stroke="#115b85" stroke-width="4"/><path d="M50 9L61 52L50 44L39 52Z" fill="#ef7564"/><path d="M50 91L61 52L50 59L39 52Z" fill="#269bba"/><text x="50" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">N</text><text x="84" y="54" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">E</text><text x="50" y="90" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">S</text><text x="16" y="54" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">W</text></svg><span>North is up</span></div><span class="small muted">1 square = 1 unit · ⭐ Sail through bonus stars for +2</span></div></div>
+<canvas id="board" width="1000" height="650" aria-label="Play area with your ship and approaching enemies. North is at the top. Use the draggable ruler and protractor to measure."></canvas><div id="end" class="gameover" role="status"><h2 id="endTitle"></h2><p id="endText"></p><button id="againBtn" class="primary">Try again!</button></div></div><div class="seafooter"><div class="compass"><svg viewBox="0 0 100 100" role="img" aria-label="North is up; east right, south down, west left"><circle cx="50" cy="50" r="45" fill="#fff" stroke="#115b85" stroke-width="4"/><path d="M50 9L61 52L50 44L39 52Z" fill="#ef7564"/><path d="M50 91L61 52L50 59L39 52Z" fill="#269bba"/><text x="50" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">N</text><text x="84" y="54" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">E</text><text x="50" y="90" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">S</text><text x="16" y="54" text-anchor="middle" font-size="12" font-weight="bold" fill="#174764">W</text></svg><span>North is up</span></div><div class="zoomControls" role="group" aria-label="Sea scene zoom">
+        <button type="button" id="zoomOutBtn" title="Zoom out (towards full map)" aria-label="Zoom out sea scene" disabled>−</button>
+        <button type="button" id="zoomResetBtn" title="Reset view to 100%" aria-label="Zoom 100 percent. Reset to full map">100%</button>
+        <button type="button" id="zoomInBtn" title="Zoom in towards your ship" aria-label="Zoom in sea scene">+</button>
+      </div><span id="zoomAnnouncement" class="srOnly" role="status" aria-live="polite" aria-atomic="true"></span>
+      <span class="small muted">1 square = 1 unit · ⭐ Sail through bonus stars for +2</span></div></div>
 <aside class="stack" aria-label="Captain's bridge controls and status">
 <section class="panel missionPanel" aria-label="Mission status">
   <div class="panelHeading"><h2>⚓ Ship's log</h2><span class="micro" id="levelRule" title="This level’s new challenge">Gentle start</span></div>
@@ -54,11 +59,12 @@
   <p class="toolHint"><strong>Ruler:</strong> place blue <strong>0 pivot</strong> on your ship; drag the orange far-end handle to rotate. Drag its body to move.</p>
 </section>
 </aside></div></main>
-<dialog id="tutorial"><div class="modal"><span class="badge" id="stepNo">Step 1 of 12</span><h2 id="stepTitle"></h2><div class="tutorialStep" id="stepBody"></div><div class="actions"><button id="prevStep">← Back</button><button id="nextStep" class="secondary">Next →</button><button id="closeTutorial">Close</button></div></div></dialog>
+<dialog id="tutorial"><div class="modal"><span class="badge" id="stepNo">Step 1 of 13</span><h2 id="stepTitle"></h2><div class="tutorialStep" id="stepBody"></div><div class="actions"><button id="prevStep">← Back</button><button id="nextStep" class="secondary">Next →</button><button id="closeTutorial">Close</button></div></div></dialog>
 <dialog id="maths"><div class="modal"><h2>📐 Bearings maths help</h2><p>These examples explain the skill without giving away where any creature is.</p>
 <details open><summary>What is a bearing?</summary><p>A bearing is an angle measured <b>clockwise from north</b>, written using <b>three figures</b>. For example, east is 090°, south is 180°, west is 270° and north is 000°.</p></details>
 <details><summary>How do I use the protractor?</summary><ol><li>Drag its centre onto your ship.</li><li>Rotate it so its 0° / N direction points upwards (north).</li><li>Read clockwise from north to the creature, using its position on the circular scale.</li><li>Type a three-figure bearing in Captain's orders.</li></ol><p>Think of 045° as halfway between north and east, while 315° is northwest.</p></details>
 <details><summary>How do I use the ruler?</summary><p>The ruler pivots around the <b>blue 0 mark at the centre of its short end</b>, not its middle. Drag its body to position that mark on your ship. Then drag the <b>orange handle on its far end</b> to turn the ruler towards a creature without shifting the 0 mark. Read distance from 0 along the marked edge; each grid square is 1 unit. Bubble range is up to 8 units; movement is limited to 1–5 units.</p></details>
+<details><summary>What do the + and − sea zoom buttons do?</summary><p>Use <b>+</b> to magnify the sea and <b>−</b> to step back out. The percentage button returns to the <b>100% full-map view</b>; the maximum is <b>200%</b>. The view follows your ship as it sails. Your ruler, protractor, grid and sea creatures all magnify together, so <b>one square is still one unit</b> and your three-figure bearings and firing distances stay unchanged. At higher zoom levels some enemies may be outside the visible area: zoom out to 100% to find them again.</p></details>
 <details><summary>Why do turns alternate between Fire and Move?</summary><p>Each <b>valid turn</b> has a set phase: <b>Fire → Move → Fire → Move</b>. You start by firing. After you complete the order, surviving sea sillies swim closer and the next phase is announced. The highlighted phase and large action button show what you must do now. You cannot skip a phase. This continues across levels, including two-hit helmet enemies.</p><p>An invalid bearing, distance or off-map move does not use a turn or change your phase.</p></details>
 <details><summary>What does an incorrect bearing warning mean?</summary><p>Use a three-digit bearing from <b>000° to 359°</b> (e.g. 005°, 045°, 270°). North is 000°, not 360°. The warning pop-in explains whether digits are missing or the number is out of range. Correct the entry and try again: your turn is not lost.</p></details>
 <details><summary>How do three-figure bearings work?</summary><p>Always write three digits: 5° is <b>005°</b>, 45° is <b>045°</b>, and 120° remains <b>120°</b>. 360° points north too, but this game uses 000°.</p></details>
@@ -104,12 +110,13 @@
   </div>
 </dialog>
 <div id="boatStudioStatusLive" class="srOnly" role="status" aria-live="polite" aria-atomic="true"></div>
-<script src="boat-style.js"></script><script src="rewards.js"></script><script src="squid-strike.js"></script><script src="pass-a-art.js"></script><script src="pass-b-juice.js"></script><script src="difficulty.js"></script>
+<script src="boat-style.js"></script><script src="rewards.js"></script><script src="squid-strike.js"></script><script src="scene-zoom.js"></script><script src="pass-a-art.js"></script><script src="pass-b-juice.js"></script><script src="difficulty.js"></script>
 <script>
 (()=>{'use strict';
 const canvas=document.getElementById('board'),ctx=canvas.getContext('2d'),$=id=>document.getElementById(id),W=1000,H=650,U=50;
 let ship,enemies,pickups,collectedPickupGhosts,pops,moveCount,pickupSerial,turn,score,hearts,mode='fire',finished=false,won=false,showP=true,showR=true,drag=null;
 let squidZone=null,squidStrike=null,squidSeen=false,squidCooldown=0;
+let sceneZoom=1,sceneCamera={x:W/2,y:H/2};
 let shipMotion=null,shotMotion=null,impactMotion=null,waveMotion=null,hitGhost=null;
 let collisionGhosts=[],animating=false,animEnd=0,pendingEnd=false,pendingPhase=null;
 let streak=0,bestStreak=0,waveNo=1,cues=[],speechCue=null,celebrationCue=null,damageUntil=0;
@@ -123,6 +130,7 @@ const tutorials=[
 ['Your maths mission','Bearings are angles measured <b>clockwise from north</b>. North is up, and the compass below the board always shows it. You must enter bearings using three figures, such as 045°, 090° or 275°.'],
 ['Measure with the protractor','Use the <b>Protractor</b> button to show it. Drag the transparent disk by its body until the centre is on your ship. Drag the orange circle on its rim to rotate it; keep the N/0° line pointing north. Read the angle clockwise towards a creature. There is no auto-aim.'],
 ['Measure with the ruler','<b>The small blue circle at 0 is the pivot.</b> Drag the ruler body until the blue 0 circle sits at the centre of your ship. Now drag the orange handle at the far end: the ruler rotates while its 0 end stays fixed. Read distance in grid units (one square = one unit). Bubbles can travel 1–8 units.'],
+['Zoom the sea scene','Use the <b>− and + buttons</b> under the sea to zoom from <b>100% (full map)</b> up to <b>200%</b>. The percentage button resets the view to 100%. The camera follows your ship while you sail, so nearby creatures and measuring tools become easier to see. <b>Bearings, grid units, shot range, ship movement and enemy hitboxes never change.</b> Zoom back to 100% to see every enemy on the whole map.'],
 ['Firing phase','Your first turn is a <b>FIRE PHASE</b>. You cannot choose the phase: the game alternates automatically. Use your protractor and ruler to measure a target, enter a three-figure bearing and a whole-number range of 1–8 units, then press <b>Launch bubble!</b>. A bubble travels in a straight line. Hitting a creature pops it, except for the first hit on a two-hit helmet.'],
 ['Moving phase','After a valid firing turn, a clear pop-in announces <b>MOVE PHASE</b>. You must now sail. Measure the bearing you want to travel, then enter a three-figure bearing and a whole-number distance of 1–5 units. A move cannot leave the map. After a valid move, the game switches back to <b>FIRE PHASE</b>. Enemies move closer after either kind of turn.'],
 ['Mistakes and pop-in warnings','Incorrect bearings trigger a clear red warning. Bearings are always <b>three figures</b>, measured clockwise from north: write <b>045°</b>, not 45°. North is <b>000°</b>, not 360°. Invalid bearings, distances and off-map moves do <b>not</b> use a turn, move enemies or change the current phase. Correct your input and try again.'],
@@ -146,12 +154,30 @@ function spawnLevel(level,at=0){
       hp,maxHp:hp});
   }
 }
+function updateZoomControls(){
+  const percent=Math.round(sceneZoom*100);
+  $('zoomOutBtn').disabled=sceneZoom<=window.BloopZoom.MIN;
+  $('zoomInBtn').disabled=sceneZoom>=window.BloopZoom.MAX;
+  $('zoomResetBtn').textContent=percent+'%';
+  $('zoomResetBtn').setAttribute('aria-label',
+    'Sea scene zoom '+percent+' percent. Reset to 100 percent');
+  $('zoomResetBtn').disabled=sceneZoom===1;
+  $('zoomAnnouncement').textContent='Sea scene zoom '+percent+' percent';
+}
+function setZoom(next){
+  const value=window.BloopZoom.normalise(next);
+  if(value===sceneZoom)return;
+  sceneZoom=value;
+  updateZoomControls();
+  draw();
+}
 function start(){
   ship={x:500,y:325,heading:0};enemies=[];pickups=[];collectedPickupGhosts=[];pops=0;moveCount=0;pickupSerial=0;turn=1;score=0;hearts=3;finished=false;won=false;
   shipMotion=null;shotMotion=null;impactMotion=null;waveMotion=null;hitGhost=null;
   collisionGhosts=[];pendingEnd=false;pendingPhase=null;animating=false;animEnd=0;
   streak=0;bestStreak=0;waveNo=1;cues=[];speechCue=null;celebrationCue=null;damageUntil=0;
   squidZone=null;squidStrike=null;squidSeen=false;squidCooldown=0;
+  sceneZoom=1;sceneCamera={x:W/2,y:H/2};updateZoomControls();
   clearCelebrations();$('waveNo').textContent='1';$('levelMax').textContent=window.BloopDifficulty.maxLevel;$('levelRule').textContent=window.BloopDifficulty.summary(1);
   pro={x:500,y:325,a:0};ruler={x:320,y:560,a:0};
   spawnLevel(1);$('end').classList.remove('show');$('end').dataset.outcome='';
@@ -566,6 +592,12 @@ function lerpPoint(m,now){
 }
 function draw(now=performance.now()){
   const artNow=reducedMotion?0:now;
+  // The ship, all sea objects and the physical measuring tools share exactly
+  // one world transform. The camera follows the rendered ship while sailing.
+  const cameraTarget=shipMotion?lerpPoint(shipMotion,now):ship;
+  sceneCamera=window.BloopZoom.cameraFor(cameraTarget,sceneZoom,W,H);
+  ctx.save();
+  window.BloopZoom.apply(ctx,sceneCamera,sceneZoom,W,H);
   BloopArt.drawSea(ctx,artNow,W,H,U);
   if(squidZone)window.BloopSquid.drawWarning(ctx,squidZone,now,reducedMotion);
   if(squidStrike&&now<squidStrike.at)
@@ -619,6 +651,7 @@ function draw(now=performance.now()){
   }
   // Physical measuring tools are drawn last: their ticks remain readable.
   instruments();
+  ctx.restore();
 }
 function frame(now){
   tickCues(now);
@@ -635,10 +668,14 @@ function frame(now){
   requestAnimationFrame(frame);
 }
 
-function pointer(e){const b=canvas.getBoundingClientRect();return{x:(e.clientX-b.left)*W/b.width,y:(e.clientY-b.top)*H/b.height}}
+function pointer(e){
+  const b=canvas.getBoundingClientRect();
+  const pixel={x:(e.clientX-b.left)*W/b.width,y:(e.clientY-b.top)*H/b.height};
+  return window.BloopZoom.canvasToWorld(pixel,sceneCamera,sceneZoom,W,H);
+}
 function rotatePoint(p,c,a){const x=p.x-c.x,y=p.y-c.y;return{x:x*Math.cos(-a)-y*Math.sin(-a),y:x*Math.sin(-a)+y*Math.cos(-a)}}
 // Hit testing uses the same 0-end origin and far handle as the drawing.
-function rulerHandleRadius(){const rect=canvas.getBoundingClientRect();return Math.min(60,Math.max(22,20*W/Math.max(1,rect.width)))}
+function rulerHandleRadius(){const rect=canvas.getBoundingClientRect();return Math.min(60,Math.max(19,20*W/Math.max(1,rect.width)/sceneZoom))}
 canvas.addEventListener('pointerdown',e=>{
   const p=pointer(e),pr=rotatePoint(p,pro,pro.a),rr=rotatePoint(p,ruler,ruler.a);
   if(showR&&Math.hypot(rr.x-RULER_HANDLE_X,rr.y)<rulerHandleRadius()){
@@ -654,6 +691,9 @@ canvas.addEventListener('pointerdown',e=>{
 });
 canvas.addEventListener('pointermove',e=>{if(!drag)return;const p=pointer(e),t=drag.tool==='pro'?pro:ruler;if(drag.kind==='move'){t.x=safe(p.x-drag.dx,0,W);t.y=safe(p.y-drag.dy,0,H)}else{const ang=Math.atan2(p.y-t.y,p.x-t.x);t.a=drag.tool==='pro'?ang+Math.PI/2:ang}draw()});
 function endDrag(){drag=null}canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',endDrag);
+$('zoomOutBtn').addEventListener('click',()=>setZoom(sceneZoom-window.BloopZoom.STEP));
+$('zoomInBtn').addEventListener('click',()=>setZoom(sceneZoom+window.BloopZoom.STEP));
+$('zoomResetBtn').addEventListener('click',()=>setZoom(1));
 $('actionBtn').addEventListener('click',order);
 for(const id of ['bearing','distance']){
   $(id).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();order();}});
