@@ -187,6 +187,35 @@ function setZoom(next){
   updateZoomControls();
   draw();
 }
+function enterMazeLevel(level){
+  // A warp portal creates the next curated map only AFTER the preceding
+  // sailing animation finishes, so the scenery never jumps mid-turn.
+  waveNo=level;mazeMap=window.BloopMaze.get(level);
+  ship={...mazeMap.start,heading:0};
+  enemies=[];pickups=[];collectedPickupGhosts=[];moveCount=0;
+  spawnLevel(level);
+  pro={x:ship.x,y:ship.y,a:0};
+  ruler={x:ship.x,y:Math.min(615,ship.y+135),a:0};
+  shipMotion=null;shotMotion=null;impactMotion=null;hitGhost=null;
+  collisionGhosts=[];waveMotion=null;pendingPhase=null;
+  squidZone=null;squidStrike=null;
+  sceneZoom=1;sceneCamera={x:W/2,y:H/2};updateZoomControls();
+  $('waveNo').textContent=level;
+  $('levelRule').textContent=mazeMap.name;
+  $('levelIcon').textContent=mazeMap.palette.icon;
+  $('waveTitle').textContent=mazeMap.palette.icon+' Level '+level+' — '+mazeMap.name;
+  $('waveSubtitle').textContent=mazeMap.description;
+  if(!reducedMotion)$('waveNotice').classList.add('show');
+  message('🌀 '+mazeMap.name+'. '+mazeMap.description+
+    ' Defeat the guards and sail to the portal.','wave');
+  refresh();
+}
+function switchGameMode(next){
+  if(next!==gameMode){
+    gameMode=next;
+    start(); // Switching modes deliberately starts a fresh, independent voyage.
+  }
+}
 function start(){
   pendingMazeLevel=null;
   mazeMap=gameMode==='maze'?window.BloopMaze.get(1):null;
@@ -389,6 +418,12 @@ function order(){
       'distance','That course would leave the map. No turn used; MOVE PHASE continues.');
     return;
   }
+  if(mode==='move'&&mazeMap&&!window.BloopMaze.moveClear(mazeMap,ship,dest)){
+    warn('🪨 Channel blocked!',
+      'A bank, reef, island or asteroid blocks this straight route. Measure a bearing that stays in the open channel.',
+      'bearing','That course crosses solid terrain. No turn used: MOVE PHASE continues.');
+    return;
+  }
   $('phasePop').classList.remove('show');
   const now=performance.now(),oldShip={...ship};
   cues=[];speechCue=null;celebrationCue=null;damageUntil=0;clearCelebrations();
@@ -454,13 +489,17 @@ function order(){
   }else{
     const dx=dest.x-ship.x,dy=dest.y-ship.y,length=Math.hypot(dx,dy);
     const ux=dx/length,uy=dy/length;
+    const ray=mazeMap?window.BloopMaze.visibleRay(mazeMap,ship,dest):
+      {length,blocked:false};
     let best=null,bestT=Infinity,bestMiss=Infinity;
     for(const enemy of enemies){
       const vx=enemy.x-ship.x,vy=enemy.y-ship.y,t=vx*ux+vy*uy;
       const miss=Math.abs(vx*uy-vy*ux);
-      if(t>=0&&t<=length+16&&miss<=22&&t<bestT){best=enemy;bestT=t;bestMiss=miss;}
+      if(t>=0&&t<=length+16&&t<=ray.length+(ray.blocked?0:16)&&miss<=22&&t<bestT){
+        best=enemy;bestT=t;bestMiss=miss;
+      }
     }
-    const endpoint={x:ship.x+ux*(best?bestT:length),y:ship.y+uy*(best?bestT:length)};
+    const endpoint={x:ship.x+ux*(best?bestT:ray.length),y:ship.y+uy*(best?bestT:ray.length)};
     const helmetHit=!!best&&best.hp>1;
     shotMotion={from:oldShip,to:endpoint,start:now,duration:shotDuration,hit:!!best};
     impactMotion={x:endpoint.x,y:endpoint.y,start:now+shotDuration,
@@ -480,8 +519,10 @@ function order(){
     }else if(best){
       hitGhost={...best};
       enemies.splice(enemies.indexOf(best),1);score++;pops++;
-      pickups.push(window.BloopRewards.pickupFromPop(
-        ship,best,now+shotDuration,moveCount,++pickupSerial));
+      pickups.push(mazeMap?
+        window.BloopMaze.pickup(best,now+shotDuration,moveCount,++pickupSerial):
+        window.BloopRewards.pickupFromPop(
+          ship,best,now+shotDuration,moveCount,++pickupSerial));
       // Keep the board readable if students choose not to collect salvage.
       if(pickups.length>10)pickups.shift();
       streak++;bestStreak=Math.max(streak,bestStreak);
@@ -497,7 +538,9 @@ function order(){
     }else{
       streak=0;feedback='miss';
       queueCue('miss','💦 Splash! Check your measurement.',now+shotDuration);
-      result='Sploosh! Your bubble missed. Recheck your bearing and range. ';
+      result=ray.blocked?
+        'SPLASH! The bubble struck a solid bank or asteroid. Sail along the channel to get a clear shot. ':
+        'Sploosh! Your bubble missed. Recheck your bearing and range. ';
     }
   }
 
@@ -509,10 +552,14 @@ function order(){
   // This preserves the exact collision and bearing rules from Pass 1.
   for(let i=enemies.length-1;i>=0;i--){
     const enemy=enemies[i],old=oldEnemyPositions.get(enemy);
-    const dd=dist(enemy,ship),speed=window.BloopDifficulty.get(waveNo).speed;
-    if(dd>0){
-      enemy.x+=(ship.x-enemy.x)/dd*Math.min(speed,dd);
-      enemy.y+=(ship.y-enemy.y)/dd*Math.min(speed,dd);
+    if(mazeMap){
+      window.BloopMaze.advanceEnemy(mazeMap,enemy,ship);
+    }else{
+      const dd=dist(enemy,ship),speed=window.BloopDifficulty.get(waveNo).speed;
+      if(dd>0){
+        enemy.x+=(ship.x-enemy.x)/dd*Math.min(speed,dd);
+        enemy.y+=(ship.y-enemy.y)/dd*Math.min(speed,dd);
+      }
     }
     enemy.motion={from:old,to:{x:enemy.x,y:enemy.y},start:now+advanceDelay,duration:advanceDuration};
     enemy.mood=dist(enemy,ship)<170?'surprised':['curious','cheeky','grumpy'][(turn+enemy.type)%3];
@@ -521,14 +568,28 @@ function order(){
       collisionGhosts.push({creature:{...enemy},motion:enemy.motion,impact:{
         x:ship.x,y:ship.y,start:now+advanceDelay+advanceDuration,duration:reducedMotion?0:450
       }});
-      enemies.splice(i,1);hearts=Math.max(0,hearts-1);bumps++;
+      if(mazeMap){
+        // A guard that bonks the ship retreats along the CHANNEL but remains
+        // alive. It cannot unlock the portal without being bubbled.
+        const d=window.BloopMaze.progressAt(mazeMap,ship);
+        const own=enemy.pathProgress;
+        const retreat=own<d?Math.max(0,d-170):Math.min(mazeMap.length,d+170);
+        const back=window.BloopMaze.pointAt(mazeMap,retreat);
+        enemy.x=back.x;enemy.y=back.y;enemy.pathProgress=retreat;
+        enemy.motion={from:old,to:back,start:now+advanceDelay,
+          duration:advanceDuration};
+        if(!bumps)hearts=Math.max(0,hearts-1);
+      }else{
+        enemies.splice(i,1);hearts=Math.max(0,hearts-1);
+      }
+      bumps++;
     }
   }
   // Before the next FIRE phase, at least one creature must be within range.
   // A gentle catch-up current is animated as part of the existing enemy step.
   // This applies equally on all 12 levels and never changes the shot range.
   const upcomingMode=mode==='fire'?'move':'fire';
-  if(upcomingMode==='fire'&&enemies.length){
+  if(!mazeMap&&upcomingMode==='fire'&&enemies.length){
     const surfer=window.BloopRewards.bringNearestIntoRange(ship,enemies,oldEnemyPositions);
     if(surfer)result+='🌊 A sea silly caught the current and swam into range! ';
   }
@@ -540,7 +601,26 @@ function order(){
     speechCue={x:ship.x,y:ship.y,text:'Ow, my biscuits!',
       start:now+advanceDelay+advanceDuration,duration:1050};
   }
-  if(enemies.length===0&&hearts>0){
+  if(mazeMap&&hearts>0){
+    if(!enemies.length&&mode==='fire'){
+      result+='🌀 EXIT UNLOCKED! Follow the maze channel and sail into the whirlpool portal. ';
+      queueCue('celebrate','🌀 Exit portal unlocked!',now+shotDuration);
+    }
+    if(mode==='move'&&window.BloopMaze.isExit(mazeMap,ship)){
+      if(enemies.length){
+        result+='🔒 Portal locked! Defeat '+enemies.length+
+          ' remaining guardian'+(enemies.length===1?'':'s')+' first. ';
+      }else if(waveNo===window.BloopMaze.maxLevel){
+        won=true;finished=true;pendingEnd=true;
+        result+='🚀 The space warp opens! You escaped the final maze. ';
+      }else{
+        pendingMazeLevel=waveNo+1;
+        result+='🌀 Into the portal! Next: '+
+          window.BloopMaze.get(pendingMazeLevel).name+'. ';
+      }
+    }
+  }
+  if(!mazeMap&&enemies.length===0&&hearts>0){
     if(waveNo===window.BloopDifficulty.maxLevel){
       if(mode==='fire'){
         // Give students a final MOVE to claim the last enemy's dropped star.
@@ -575,7 +655,11 @@ function order(){
   if(hearts<=0){finished=true;pendingEnd=true;}
   // A completed order always spends one turn, whether the shot hit, missed,
   // cracked armour or the ship sailed. Switch only if the voyage continues.
-  const nextMode=mode==='fire'?'move':'fire';
+  // With all maze guardians defeated, keep MOVE active until the exit;
+  // students do not waste empty firing turns on the way to the portal.
+  const nextMode=pendingMazeLevel?'fire':
+    mazeMap&&!enemies.length?'move':
+    mode==='fire'?'move':'fire';
   animEnd=now+advanceDelay+advanceDuration+(reducedMotion?0:560);
   if(!reducedMotion&&!finished)queueCue('ready',
     nextMode==='fire'?'🫧 FIRE PHASE':'⛵ MOVE PHASE',animEnd);
@@ -585,8 +669,13 @@ function order(){
     showEnding();pendingEnd=false;
     showPhase(won?'🏆 Voyage complete!':'💔 Shipwreck',won?'celebrate':'damage');
   }else if(!finished){
-    if(reducedMotion){updateMode(nextMode);announcePhase();}
-    else pendingPhase=nextMode;
+    if(reducedMotion){
+      if(pendingMazeLevel){
+        const level=pendingMazeLevel;pendingMazeLevel=null;
+        enterMazeLevel(level);
+      }
+      updateMode(nextMode);announcePhase();
+    }else pendingPhase=nextMode;
   }
   message(result+' Turn '+turn+'.',feedback);refresh();tickCues(now);draw(now);
 }
@@ -649,7 +738,12 @@ function draw(now=performance.now()){
   sceneCamera=window.BloopZoom.cameraFor(cameraTarget,sceneZoom,W,H);
   ctx.save();
   window.BloopZoom.apply(ctx,sceneCamera,sceneZoom,W,H);
-  BloopArt.drawSea(ctx,artNow,W,H,U);
+  if(mazeMap){
+    window.BloopMaze.draw(ctx,mazeMap,artNow);
+    window.BloopMaze.drawPortal(ctx,mazeMap,enemies.length===0,artNow);
+  }else{
+    BloopArt.drawSea(ctx,artNow,W,H,U);
+  }
   if(squidZone)window.BloopSquid.drawWarning(ctx,squidZone,now,reducedMotion);
   if(squidStrike&&now<squidStrike.at)
     window.BloopSquid.drawWarning(ctx,squidStrike.zone,now,reducedMotion);
@@ -692,6 +786,8 @@ function draw(now=performance.now()){
       (now-shipMotion.start)/shipMotion.duration,'ship');
   }
   BloopArt.drawBoat(ctx,renderedShip,artNow,shipUnderway,window.BloopBoat?.getCurrent?.());
+  if(mazeMap&&mazeMap.theme==='space')
+    window.BloopMaze.drawSpaceAura(ctx,renderedShip,artNow);
   if(squidStrike)window.BloopSquid.drawTentacle(ctx,squidStrike,now,reducedMotion);
   BloopArt.drawProjectile(ctx,shotMotion,now);
   BloopArt.drawImpact(ctx,impactMotion,now);
@@ -708,7 +804,11 @@ function frame(now){
   tickCues(now);
   if(animating&&now>=animEnd){
     animating=false;setLocked(false);
-    if(pendingEnd){
+    if(pendingMazeLevel&&!pendingEnd){
+      const level=pendingMazeLevel;pendingMazeLevel=null;
+      enterMazeLevel(level);
+      updateMode('fire');announcePhase();
+    }else if(pendingEnd){
       showEnding();pendingEnd=false;
       showPhase(won?'🏆 Voyage complete!':'💔 Shipwreck',won?'celebrate':'damage');
     }else if(pendingPhase){
@@ -747,6 +847,8 @@ function endDrag(){drag=null}canvas.addEventListener('pointerup',endDrag);canvas
 $('zoomOutBtn').addEventListener('click',()=>setZoom(sceneZoom-window.BloopZoom.STEP));
 $('zoomInBtn').addEventListener('click',()=>setZoom(sceneZoom+window.BloopZoom.STEP));
 $('zoomResetBtn').addEventListener('click',()=>setZoom(1));
+$('openSeaModeBtn').addEventListener('click',()=>switchGameMode('sea'));
+$('mazeModeBtn').addEventListener('click',()=>switchGameMode('maze'));
 $('actionBtn').addEventListener('click',order);
 for(const id of ['bearing','distance']){
   $(id).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();order();}});
