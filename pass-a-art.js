@@ -92,57 +92,149 @@
     c.restore();
   }
 
-  function drawBoat(c, ship, now, underway = false) {
+  function drawBoat(c, ship, now, underway = false, custom = null) {
+    // Boat Studio changes only the painting. Position, heading, scale and
+    // measurement geometry are still controlled exclusively by the game.
+    const design = custom && typeof custom === 'object' ? custom : {};
+    const colors = window.BloopBoat && window.BloopBoat.paint
+      ? window.BloopBoat.paint(design)
+      : { hullLight:'#ffb58c', hullMid:'#ec7776', hullShade:'#b75176',
+          deck:'#fff2d5', flag:'#fada70', line:'#174e71' };
     const bob = Math.sin(now * .0027) * 2;
     const roll = Math.sin(now * .0019 + .7) * .025;
     c.save(); c.translate(ship.x, ship.y);
-    // Boat's position is fixed; only its drawing rocks a few pixels.
+
     oval(c, 0, 27, 38, 13, 'rgba(13,95,136,.18)');
-    for (let side of [-1, 1]) {
-      c.beginPath(); c.arc(side * 26, 20, 15, .1, Math.PI - .1);
-      c.strokeStyle = 'rgba(255,255,255,.50)'; c.lineWidth = underway ? 4 : 2.5; c.stroke();
+    for (const side of [-1,1]) {
+      c.beginPath();c.arc(side*26,20,15,.1,Math.PI-.1);
+      c.strokeStyle='rgba(255,255,255,.50)';
+      c.lineWidth=underway?4:2.5;c.stroke();
     }
-    c.translate(0, bob); c.rotate((ship.heading || 0) + roll);
-    c.shadowColor = 'rgba(12,62,95,.22)'; c.shadowBlur = 13; c.shadowOffsetY = 5;
+    c.translate(0,bob);c.rotate((ship.heading||0)+roll);
+    c.shadowColor='rgba(12,62,95,.22)';c.shadowBlur=13;c.shadowOffsetY=5;
 
-    // Rounded sturdy toy-boat hull with pointed bow, north-facing in all states.
-    const hull = c.createLinearGradient(-30, -22, 30, 30);
-    hull.addColorStop(0, '#ffad80'); hull.addColorStop(.58, '#ec6866'); hull.addColorStop(1, '#ba4d70');
-    c.beginPath(); c.moveTo(0, -35);
-    c.bezierCurveTo(18, -28, 31, -2, 28, 13);
-    c.quadraticCurveTo(24, 31, 0, 32);
-    c.quadraticCurveTo(-24, 31, -28, 13);
-    c.bezierCurveTo(-31, -3, -18, -29, 0, -35);
-    c.closePath();
-    c.fillStyle = hull; c.fill(); c.strokeStyle = '#174e71'; c.lineWidth = 3.6; c.stroke();
-    c.shadowBlur = 0; c.shadowOffsetY = 0;
+    // The hull is the SAME physical shape regardless of colour or accessories.
+    const hull = c.createLinearGradient(-30,-22,30,30);
+    hull.addColorStop(0,colors.hullLight);
+    hull.addColorStop(.58,colors.hullMid);
+    hull.addColorStop(1,colors.hullShade);
+    c.beginPath();c.moveTo(0,-35);
+    c.bezierCurveTo(18,-28,31,-2,28,13);
+    c.quadraticCurveTo(24,31,0,32);
+    c.quadraticCurveTo(-24,31,-28,13);
+    c.bezierCurveTo(-31,-3,-18,-29,0,-35);
+    c.closePath();c.fillStyle=hull;c.fill();c.strokeStyle=colors.line;c.lineWidth=3.6;c.stroke();
+    c.shadowBlur=0;c.shadowOffsetY=0;
 
-    c.fillStyle = '#ffefd1'; c.beginPath();
-    c.moveTo(0, -25); c.quadraticCurveTo(18, -18, 19, -3);
-    c.lineTo(17, 17); c.quadraticCurveTo(0, 24, -17, 17);
-    c.lineTo(-19, -3); c.quadraticCurveTo(-18, -18, 0, -25); c.fill();
+    // Original bright deck stays readable with all hull palettes.
+    c.fillStyle=colors.deck;c.beginPath();
+    c.moveTo(0,-25);c.quadraticCurveTo(18,-18,19,-3);
+    c.lineTo(17,17);c.quadraticCurveTo(0,24,-17,17);
+    c.lineTo(-19,-3);c.quadraticCurveTo(-18,-18,0,-25);c.fill();
 
-    // Cabin, mast and flapping flag.
-    rounded(c, -13, -1, 26, 15, 6, '#fffdf4', '#1e5677', 2);
-    rounded(c, -9, 2, 18, 9, 3, '#83d8e4', '#21688e', 1.7);
-    c.strokeStyle = '#174967'; c.lineWidth = 3; c.beginPath();
-    c.moveTo(0, -25); c.lineTo(0, -52); c.stroke();
-    const flagWave = Math.sin(now * .006) * 3;
-    c.beginPath(); c.moveTo(2, -51); c.lineTo(23 + flagWave, -46); c.lineTo(2, -38); c.closePath();
-    c.fillStyle = '#fada70'; c.fill(); c.strokeStyle = '#bd7944'; c.lineWidth = 1.5; c.stroke();
-
-    // Friendly expressive face painted onto the stern.
-    for (const xx of [-9, 9]) {
-      oval(c, xx, 23, 4.7, 5.6, '#ffffff', '#1b4d68', 1);
-      oval(c, xx + 1, 23.4, 2.3, 3.2, '#1d415b');
+    // Three different cabin styles; none changes the measurement position.
+    if (design.cabin === 'portholes') {
+      rounded(c,-14,-2,28,16,5,'#fff9e9','#1e5677',2);
+      for (const x of [-7,7]) {
+        oval(c,x,5,4.5,4.6,'#6fc7d9','#1c6587',1.7);
+        oval(c,x-1,4,1.2,1.5,'#f2ffff');
+      }
+    } else if (design.cabin === 'lookout') {
+      rounded(c,-12,-11,24,25,5,'#fffaf1','#1e5677',2.5);
+      rounded(c,-9,-7,18,10,4,'#82dcec','#1e5677',1.5);
+      rounded(c,-7,7,14,5,2,'#ffd68d','#a37d5e',1);
+      c.strokeStyle='#155878';c.lineWidth=2;
+      c.beginPath();c.moveTo(-13,-12);c.lineTo(13,-12);c.stroke();
+    } else {
+      rounded(c,-13,-1,26,15,6,'#fffdf4','#1e5677',2);
+      rounded(c,-9,2,18,9,3,'#83d8e4','#21688e',1.7);
     }
-    c.beginPath(); c.arc(0, 23, 3.2, 0, Math.PI); c.strokeStyle = '#553657'; c.lineWidth = 1.8; c.stroke();
-    oval(c, 20, -3, 3.4, 3.4, '#ffd65c');
-    oval(c, -20, -3, 3.4, 3.4, '#ffd65c');
+
+    // The tiny north-facing mast and flag; flags may have different patterns.
+    c.strokeStyle='#174967';c.lineWidth=3;c.beginPath();
+    c.moveTo(0,-25);c.lineTo(0,-52);c.stroke();
+    const flagWave=Math.sin(now*.006)*3;
+    c.beginPath();c.moveTo(2,-51);c.lineTo(23+flagWave,-46);
+    c.lineTo(2,-38);c.closePath();
+    c.fillStyle=colors.flag;c.fill();c.strokeStyle='#9d7265';c.lineWidth=1.4;c.stroke();
+    if (design.flag === 'checker') {
+      c.save();c.clip();
+      c.fillStyle='#fff8db';c.fillRect(4,-51,7,7);c.fillRect(12,-44,8,8);
+      c.fillStyle='#7f65ad';c.fillRect(12,-51,8,7);c.restore();
+    } else if (design.flag === 'starry') {
+      c.fillStyle='#fff3a9';c.beginPath();
+      for(let i=0;i<10;i++){
+        const a=-Math.PI/2+i*Math.PI/5,r=i%2?2.3:4.4;
+        const x=13+Math.cos(a)*r,y=-45+Math.sin(a)*r;
+        if(i===0)c.moveTo(x,y);else c.lineTo(x,y);
+      }
+      c.closePath();c.fill();
+    } else if (design.flag === 'rainbow') {
+      c.save();c.clip();
+      for(const [i,col] of ['#ffce72','#9be3c2','#8ccfea','#bb9fe9'].entries()){
+        c.fillStyle=col;c.fillRect(5+i*5,-52,5,17);
+      }
+      c.restore();
+    } else if(design.flag === 'ocean') {
+      c.strokeStyle='#fff9db';c.lineWidth=2;
+      c.beginPath();c.arc(12,-46,3.1,Math.PI*.1,Math.PI*.9);c.stroke();
+    }
+
+    // Four different facial expressions on the stern. Cosmetic only.
+    const face=design.face||'happy';
+    for(const x of [-9,9]){
+      if(face==='wink'&&x===-9) {
+        c.strokeStyle='#1b4d68';c.lineWidth=2.4;
+        c.beginPath();c.moveTo(x-4,23);c.quadraticCurveTo(x,20,x+4,23);c.stroke();
+      }else if(face==='brave') {
+        rounded(c,x-5,21,10,5,2,'#213f59','#203e54',1);
+        c.strokeStyle='#243f55';c.lineWidth=1.6;c.beginPath();
+        c.moveTo(x-5,18);c.lineTo(x+4,19.5);c.stroke();
+      }else{
+        oval(c,x,23,face==='surprised'?5:4.7,face==='surprised'?7:5.6,
+          '#ffffff','#1b4d68',1);
+        oval(c,x+1,23.4,2.3,face==='surprised'?3.5:3.2,'#1d415b');
+      }
+    }
+    c.strokeStyle='#553657';c.lineWidth=1.8;
+    if(face==='surprised'){
+      oval(c,0,27,3.3,4.1,'#70445a','#553657',1.5);
+    }else if(face==='brave'){
+      c.beginPath();c.moveTo(-4,29);c.lineTo(4,29);c.stroke();
+    }else{
+      c.beginPath();c.arc(0,23,face==='wink'?4.7:3.2,0,Math.PI);c.stroke();
+    }
+
+    // Decorations stay inside the same hull footprint and cannot change hitboxes.
+    if(design.accessory==='lifebuoy'){
+      oval(c,-20,7,7.2,7.2,'#fff8f0','#ea6867',3.4);
+      oval(c,-20,7,3.2,3.2,'#82d4e3','#ffffff',1);
+    }else if(design.accessory==='star'){
+      c.fillStyle='#f8cd58';c.strokeStyle='#ae7948';c.lineWidth=1.5;
+      c.beginPath();
+      for(let i=0;i<10;i++){
+        const a=i*Math.PI/5-Math.PI/2,r=i%2?3.1:6.5;
+        const x=19+Math.cos(a)*r,y=9+Math.sin(a)*r;
+        if(i===0)c.moveTo(x,y);else c.lineTo(x,y);
+      }c.closePath();c.fill();c.stroke();
+    }else if(design.accessory==='heart'){
+      c.save();c.translate(19,8);c.scale(.55,.55);
+      c.beginPath();c.moveTo(0,10);
+      c.bezierCurveTo(-18,0,-12,-12,0,-5);
+      c.bezierCurveTo(12,-12,18,0,0,10);
+      c.fillStyle='#f16f97';c.strokeStyle='#a84b72';c.lineWidth=2;c.fill();c.stroke();c.restore();
+    }else if(design.accessory==='stripes'){
+      c.strokeStyle='#fff5d7';c.lineWidth=3.4;c.lineCap='round';
+      for(const x of [-10,0,10]){
+        c.beginPath();c.moveTo(x,-29);c.lineTo(x,-19);c.stroke();
+      }
+    }
+    oval(c,20,-3,3.4,3.4,'#ffd65c');
+    oval(c,-20,-3,3.4,3.4,'#ffd65c');
     c.restore();
   }
 
-  // Pass B: extra expressions, kept within each creature's original hitbox.
+    // Pass B: extra expressions, kept within each creature's original hitbox.
   function eyes(c, left, right, y, blink, mood = 'curious') {
     for (const x of [left, right]) {
       if (blink || (mood === 'cheeky' && x === left)) {

@@ -1,0 +1,69 @@
+/* Boat Studio: a spacious, keyboard-friendly preview and selection modal. */
+header #boatStudioBtn{
+ background:linear-gradient(180deg,#fff2c5,#ffdfad);
+ color:#704d2e;border:2px solid #fff7d9;
+ box-shadow:0 3px 0 #dcb17a;
+}
+header #boatStudioBtn:hover:not(:disabled){background:#ffedb2}
+
+.boatStudioDialog {
+  max-width: min(890px, 96vw);width: min(890px, 96vw);
+  max-height: min(92dvh, 900px);overflow-y: auto;
+  border: 4px solid #fff9df;border-radius: 25px;
+  box-shadow: 0 18px 90px #082d55a3;
+}
+.boatStudioDialog .modal {padding: clamp(14px,2.2vw,24px)}
+.studioHeader {display:flex;align-items:center;justify-content:space-between;gap:12px}
+.studioHeader h2{font-size:clamp(1.4rem,2.5vw,1.95rem);margin:0}
+.studioIntro{margin:5px 0 13px;color:#517388;font-weight:650;font-size:.88rem}
+.studioColumns{display:grid;grid-template-columns:minmax(240px,0.9fr) minmax(0,1.1fr);gap:17px;align-items:start}
+.studioPreviewWrap{position:sticky;top:0;background:#ebf9fb;border:2px solid #ccebee;border-radius:18px;padding:11px;box-shadow:0 4px 0 #bbdfe3}
+.studioPreview{display:block;width:100%;height:auto;aspect-ratio:480/280;border-radius:13px;background:#7bd1df}
+.studioPreviewName{display:block;color:#17587a;font:900 1.16rem ui-rounded,"Trebuchet MS",system-ui,sans-serif;text-align:center;overflow-wrap:anywhere;margin:9px 0 0}
+.studioPreviewCaption{display:block;text-align:center;font-size:.74rem;color:#618196;margin:3px 0 2px}
+.studioControls{display:flex;flex-direction:column;gap:8px;min-width:0}
+.studioNameLabel{display:grid;gap:4px;font-size:.84rem;font-weight:850;color:#285a72}
+.studioNameInput{width:100%;background:#fff;border:2px solid #b4dce7;border-radius:11px;padding:8px 10px;min-height:39px;color:#174765}
+.studioNameInput:focus{border-color:#50afbf}
+.studioField{border:1px solid #d2ebec;border-radius:12px;padding:8px 9px;background:#fafefe;min-width:0}
+.studioField legend{padding:0 5px;color:#205d7b;font-size:.85rem;font-weight:900}
+.studioOptions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.studioOption{
+  background:#f0f8fa;color:#285a71;border:2px solid #d3e8ed;
+  border-radius:10px;padding:6px 3px;box-shadow:none;
+  min-height:52px;display:flex;align-items:center;justify-content:center;
+  gap:3px;flex-direction:column;font-size:.7rem;font-weight:800;text-align:center;
+  transition:background-color .16s ease,border-color .16s ease,transform .16s ease
+}
+.studioOption:hover{background:#fdf8df}
+.studioOption.selected{
+  border-color:#eeb36c;background:#fff2c8;
+  box-shadow:inset 0 0 0 1px #fbd78c;
+  color:#764a2d
+}
+.studioOptionIcon{display:block;font-size:1.1rem;line-height:1.15}
+.studioOptionSwatch{width:25px;height:18px;border:2px solid #fff;border-radius:7px;box-shadow:0 0 0 1px #92aabb}
+.studioOptionLabel{max-width:100%;overflow-wrap:anywhere}
+.studioActions{display:flex;flex-wrap:wrap;gap:7px;justify-content:flex-end;margin-top:14px}
+.studioActions button{font-size:.86rem;min-height:39px;padding:8px 10px}
+.studioActions .studioSave{background:#f6aa66;color:#653d25}
+.studioActions .studioRandom{background:#dff1ff;color:#245677}
+.studioActions .studioReset{background:#fff6dd;color:#705d36}
+.studioStatus{font-size:.79rem;color:#597d8c;margin:9px 0 0;min-height:19px}
+.srOnly{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;clip-path:inset(50%)}
+#playerBoatName{font-weight:800}
+@media(max-width:750px){
+  .studioColumns{grid-template-columns:1fr;gap:10px}
+  .studioPreviewWrap{position:static;max-width:min(420px,100%);margin:auto;width:100%}
+  .studioOption{min-height:49px}
+  .boatStudioDialog{max-height:92dvh}
+}
+@media(max-width:470px){
+  .studioActions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .studioActions button{min-width:0;padding:7px}
+  .studioOptions{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .studioPreviewWrap{padding:7px}
+}
+@media(prefers-reduced-motion:reduce){
+ .studioOption{transition:none}
+}
