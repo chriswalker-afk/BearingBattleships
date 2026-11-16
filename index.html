@@ -183,7 +183,7 @@ function refresh(){
 function message(s,kind='neutral'){$('log').textContent=s;$('log').dataset.feedback=kind}
 function showPhase(s,kind){$('phaseRibbon').textContent=s;$('phaseRibbon').dataset.phase=kind}
 function clearCelebrations(){
-  for(const [id,name] of [['sea','hurt'],['heartStat','hit'],['scoreStat','scorePulse'],['waveNotice','show']]){
+  for(const [id,name] of [['sea','hurt'],['sea','squidDodged'],['heartStat','hit'],['scoreStat','scorePulse'],['waveNotice','show']]){
     $(id).classList.remove(name);
   }
 }
@@ -194,7 +194,9 @@ function playCue(c,now){
   showPhase(c.text,c.kind);
   if((c.kind==='celebrate'||c.kind==='pickup')&&!reducedMotion)$('scoreStat').classList.add('scorePulse');
   if(c.kind==='miss')announceMiss();
-  if(c.kind==='squid-dodge'&&!reducedMotion)$('sea').classList.add('squidDodged');
+  if(c.kind==='squid-dodge'&&!reducedMotion){
+    $('sea').classList.add('squidDodged');damageUntil=now+650;
+  }
   if(c.kind==='armour')$('phaseRibbon').dataset.phase='armour';
   if(c.kind==='damage'&&!reducedMotion){
     $('sea').classList.add('hurt');$('heartStat').classList.add('hit');damageUntil=now+650;
@@ -213,7 +215,7 @@ function tickCues(now){
     if(!c.done&&now>=c.at){c.done=true;playCue(c,now);}
   }
   if(damageUntil&&now>=damageUntil){
-    $('sea').classList.remove('hurt');$('heartStat').classList.remove('hit');damageUntil=0;
+    $('sea').classList.remove('hurt');$('sea').classList.remove('squidDodged');$('heartStat').classList.remove('hit');damageUntil=0;
   }
 }
 // The phase is set by the turn sequence, never by clicking a mode selector.
