@@ -102,7 +102,7 @@
       c.beginPath(); c.arc(side * 26, 20, 15, .1, Math.PI - .1);
       c.strokeStyle = 'rgba(255,255,255,.50)'; c.lineWidth = underway ? 4 : 2.5; c.stroke();
     }
-    c.translate(0, bob); c.rotate(roll);
+    c.translate(0, bob); c.rotate((ship.heading || 0) + roll);
     c.shadowColor = 'rgba(12,62,95,.22)'; c.shadowBlur = 13; c.shadowOffsetY = 5;
 
     // Rounded sturdy toy-boat hull with pointed bow, north-facing in all states.
