@@ -7,6 +7,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const root = path.resolve(__dirname,'..');
 const rewardsCode = fs.readFileSync(path.join(root,'rewards.js'),'utf8');
+const squidCode = fs.readFileSync(path.join(root,'squid-strike.js'),'utf8');
 const artCode = fs.readFileSync(path.join(root,'pass-a-art.js'),'utf8');
 const juiceCode = fs.readFileSync(path.join(root,'pass-b-juice.js'),'utf8');
 const difficultyCode = fs.readFileSync(path.join(root,'difficulty.js'),'utf8');
@@ -113,6 +114,7 @@ function harness({lastLevel=false}={}){
   vm.runInContext(juiceCode,sandbox);
   vm.runInContext(difficultyCode,sandbox);
   vm.runInContext(rewardsCode,sandbox);
+  vm.runInContext(squidCode,sandbox);
   sandbox.BloopArt=win.BloopArt;
   sandbox.BloopJuice=win.BloopJuice;
   if(lastLevel)win.BloopDifficulty={...win.BloopDifficulty,maxLevel:1};
