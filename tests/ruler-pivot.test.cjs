@@ -171,6 +171,11 @@ test('firing and protractor/ruler toggles retain previous gameplay', () => {
   const before = g.frames.length;
   g.click('protractorBtn');
   assert.equal(g.frames.length, before, 'Hidden ruler does not draw');
+  g.click('rulerBtn'); // Turn the ruler back on so new-frame assertions are meaningful.
+  g.pointer('pointerdown', 320, 560);
+  g.pointer('pointermove', 420, 450);
+  g.pointer('pointerup', 420, 450);
+  close(g.frame().x, 420, 'ruler was moved before reset');
   g.click('resetBtn');
   close(g.frame().x, 320, 'reset restores ruler 0 x');
   close(g.frame().y, 560, 'reset restores ruler 0 y');
