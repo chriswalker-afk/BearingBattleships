@@ -10,6 +10,7 @@ const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const inline = html.match(/<script>\s*([\s\S]*?)<\/script>/);
 const art = fs.readFileSync(path.join(root, 'pass-a-art.js'), 'utf8');
 const juice = fs.readFileSync(path.join(root, 'pass-b-juice.js'), 'utf8');
+const difficulty = fs.readFileSync(path.join(root, 'difficulty.js'), 'utf8');
 
 function harness(reducedMotion = false) {
   assert.ok(inline, 'Expected inline gameplay script');
@@ -60,6 +61,7 @@ function harness(reducedMotion = false) {
   const context = vm.createContext(sandbox);
   vm.runInContext(art, context, { filename: 'pass-a-art.js' });
   vm.runInContext(juice, context, { filename: 'pass-b-juice.js' });
+  vm.runInContext(difficulty, context, { filename: 'difficulty.js' });
   vm.runInContext(inline[1], context, { filename: 'index.html' });
   function click(id) {
     const e = element(id), fn = listeners.get(id + ':click') || e.onclick;
