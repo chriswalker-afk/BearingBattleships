@@ -4,7 +4,7 @@ A colourful, standalone browser game for Foundation Edexcel International GCSE M
 
 ## Play
 
-Open `index.html` in a modern browser. Keep `pass-a.css` and `pass-a-art.js` beside it: they provide the illustrated theme and canvas animations. No installation, server, build step or external dependencies are required. Once the feature branch is merged, enable **GitHub Pages → Deploy from a branch → main / (root)** in the repository settings to publish it.
+Open `index.html` in a modern browser. Keep the accompanying `pass-a.css`, `pass-a-art.js`, `pass-b.css`, `pass-b-juice.js`, `single-screen.css` and `single-screen.js` files beside it: they provide the illustrated theme, animations and responsive layout. No installation, server, build step or external dependencies are required. Once the feature branch is merged, enable **GitHub Pages → Deploy from a branch → main / (root)** in the repository settings to publish it.
 
 ## Learning goals
 
