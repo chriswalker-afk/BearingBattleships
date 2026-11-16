@@ -98,7 +98,9 @@ function harness({shortVoyage=false}={}){
   const gameSource=game[1].replace(anchor,
     "window.__testing={"+
     "lineup(){for(const e of enemies){e.x=ship.x;e.y=ship.y-220;e.motion=null;}},"+
-    "enemies(){return enemies.map(e=>({x:e.x,y:e.y,hp:e.hp,maxHp:e.maxHp}));}"+
+    "enemies(){return enemies.map(e=>({x:e.x,y:e.y,hp:e.hp,maxHp:e.maxHp}));},"+
+    "zone(){return squidZone?{...squidZone}:null;},"+
+    "ship(){return {...ship};}"+
     "};"+anchor);
   vm.runInContext(gameSource,ctx,{filename:'index.html'});
   function click(id){
@@ -116,7 +118,22 @@ function harness({shortVoyage=false}={}){
   function fire(bearing='000',range=6,align=true){
     // Complete each mandatory movement turn before the next test shot.
     if(element('phaseHeading').textContent.includes('MOVE')){
-      move(moveNumber++%2===0?'090':'270',1);
+      const zone=win.__testing.zone();
+      if(zone){
+        const ship=win.__testing.ship(),Q=win.BloopSquid;
+        const options=[
+          ['090',{x:ship.x+200,y:ship.y}],
+          ['270',{x:ship.x-200,y:ship.y}],
+          ['000',{x:ship.x,y:ship.y-200}],
+          ['180',{x:ship.x,y:ship.y+200}]
+        ];
+        const escape=options.find(([,p])=>p.x>=35&&p.x<=965&&
+          p.y>=35&&p.y<=615&&!Q.within(p,zone));
+        assert.ok(escape,'There must be a legal squid-dodging bearing');
+        move(escape[0],4);
+      }else{
+        move(moveNumber++%2===0?'090':'270',1);
+      }
     }
     if(align)win.__testing.lineup();
     element('bearing').value=bearing;
