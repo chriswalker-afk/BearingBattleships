@@ -72,9 +72,9 @@
       c.fillStyle = ['#fff5a0', '#ffa3a7', '#ffffff', '#a6e9ed'][i % 4]; c.fill();
       c.restore();
     }
-    // Reward wording is strictly post-shot, never an angle preview.
-    if (item.pinpoint || item.streak >= 2) {
-      const label = item.pinpoint ? 'PINPOINT POP!' : 'POP STREAK!';
+    // Labels appear only after an action; they never give aiming information.
+    if (item.label || item.pinpoint || item.streak >= 2) {
+      const label = item.label || (item.pinpoint ? 'PINPOINT POP!' : 'POP STREAK!');
       c.font = '900 18px system-ui'; c.textAlign = 'center';
       c.lineWidth = 4.5; c.strokeStyle = '#16567a'; c.fillStyle = '#fff9cd';
       c.strokeText(label, 0, -61 - 15 * t); c.fillText(label, 0, -61 - 15 * t);
