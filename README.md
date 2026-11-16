@@ -2,6 +2,14 @@
 
 A colourful, standalone browser game for Foundation Edexcel International GCSE Mathematics A (4MA1) students learning bearings.
 
+## Live hosting and custom domain
+
+The site is published automatically to GitHub Pages on pushes to `main` by [the publishing workflow](.github/workflows/publish-pages.yml). Cloudflare DNS contains a DNS-only CNAME for `bearings.mrwalkermaths.com` pointing to `chriswalker-afk.github.io`, consistent with the other Mr Walker Maths subdomains.
+
+**One-time GitHub Pages domain setting:** visit [Repository Settings → Pages](https://github.com/chriswalker-afk/BearingBattleships/settings/pages). Under **Custom domain**, enter `bearings.mrwalkermaths.com` and select **Save**. GitHub requires this even when a `CNAME` file exists alongside an Actions-based Pages deployment. Once DNS checks and certificate provisioning complete, switch on **Enforce HTTPS** if the option is available.
+
+Production hostname: https://bearings.mrwalkermaths.com/
+
 ## Play
 
 Open `index.html` in a modern browser. Keep the accompanying `pass-a.css`, `pass-a-art.js`, `pass-b.css`, `pass-b-juice.js`, `single-screen.css`, `single-screen.js`, `difficulty.css`, `difficulty.js` and `phase-toasts.css` files beside it: they provide the illustrated theme, animations and responsive layout. No installation, server, build step or external dependencies are required. Once the feature branch is merged, enable **GitHub Pages → Deploy from a branch → main / (root)** in the repository settings to publish it.
