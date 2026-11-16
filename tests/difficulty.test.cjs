@@ -122,16 +122,24 @@ function harness({shortVoyage=false}={}){
       const zone=win.__testing.zone();
       if(zone){
         const ship=win.__testing.ship(),Q=win.BloopSquid;
-        const options=[
-          ['090',{x:ship.x+200,y:ship.y}],
-          ['270',{x:ship.x-200,y:ship.y}],
-          ['000',{x:ship.x,y:ship.y-200}],
-          ['180',{x:ship.x,y:ship.y+200}]
-        ];
-        const escape=options.find(([,p])=>p.x>=35&&p.x<=965&&
-          p.y>=35&&p.y<=615&&!Q.within(p,zone));
+        const nearby=win.__testing.enemies();
+        const options=[];
+        for(const distance of [3,4,5]){
+          for(const [bearing,dx,dy] of [
+            ['090',1,0],['270',-1,0],['000',0,-1],['180',0,1]
+          ]){
+            const p={x:ship.x+dx*distance*50,y:ship.y+dy*distance*50};
+            if(p.x>=35&&p.x<=965&&p.y>=35&&p.y<=615&&!Q.within(p,zone)){
+              const clearance=nearby.length?
+                Math.min(...nearby.map(e=>Math.hypot(p.x-e.x,p.y-e.y))):999;
+              options.push({bearing,distance,clearance});
+            }
+          }
+        }
+        options.sort((a,b)=>b.clearance-a.clearance);
+        const escape=options[0];
         assert.ok(escape,'There must be a legal squid-dodging bearing');
-        move(escape[0],4);
+        move(escape.bearing,escape.distance);
         assert.equal(win.__testing.strike().hit,false,
           'A legal escape bearing avoids the squid entirely');
       }else{
