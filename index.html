@@ -127,7 +127,7 @@ function order(){
       collisionGhosts.push({creature:{...enemy},motion:enemy.motion,impact:{
         x:ship.x,y:ship.y,start:now+advanceDelay+advanceDuration,duration:reducedMotion?0:450
       }});
-      enemies.splice(i,1);hearts--;bumps++;
+      enemies.splice(i,1);hearts=Math.max(0,hearts-1);bumps++;
     }
   }
   if(bumps)result+=bumps===1?'A silly bonked your ship! −1 heart. ':bumps+' sillies bonked your ship! −'+bumps+' hearts. ';
@@ -213,5 +213,5 @@ $('actionBtn').addEventListener('click',order);$('fireMode').addEventListener('c
 $('protractorBtn').addEventListener('click',()=>{showP=!showP;$('protractorBtn').classList.toggle('active',showP);$('protractorBtn').setAttribute('aria-pressed',String(showP));draw()});$('rulerBtn').addEventListener('click',()=>{showR=!showR;$('rulerBtn').classList.toggle('active',showR);$('rulerBtn').setAttribute('aria-pressed',String(showR));draw()});
 function tutorialStep(){const s=tutorials[step];$('stepNo').textContent='Step '+(step+1)+' of '+tutorials.length;$('stepTitle').textContent=s[0];$('stepBody').innerHTML='<p>'+s[1]+'</p>';$('prevStep').disabled=step===0;$('nextStep').textContent=step===tutorials.length-1?'Start playing!':'Next →'}
 $('tutorialBtn').onclick=()=>{step=0;tutorialStep();$('tutorial').showModal()};$('prevStep').onclick=()=>{step=Math.max(0,step-1);tutorialStep()};$('nextStep').onclick=()=>{if(step===tutorials.length-1)$('tutorial').close();else{step++;tutorialStep()}};$('closeTutorial').onclick=()=>$('tutorial').close();$('mathBtn').onclick=()=>$('maths').showModal();$('closeMath').onclick=()=>$('maths').close();for(const d of [$('tutorial'),$('maths')])d.addEventListener('click',e=>{if(e.target===d)d.close()});
-start();requestAnimationFrame(frame);})();
+start();if(!reducedMotion)requestAnimationFrame(frame);})();
 </script></body></html>
