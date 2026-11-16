@@ -419,8 +419,14 @@ function order(){
   }
   if(enemies.length===0&&hearts>0){
     if(waveNo===window.BloopDifficulty.maxLevel){
-      won=true;finished=true;pendingEnd=true;
-      result+='You cleared all '+waveNo+' levels! The silly seas are safe! ';
+      if(mode==='fire'){
+        // Give students a final MOVE to claim the last enemy's dropped star.
+        // No new enemies appear, and no extra shooting turn is required.
+        result+='Final bonus voyage! One last MOVE to pick up a star before victory. ';
+      }else{
+        won=true;finished=true;pendingEnd=true;
+        result+='You cleared all '+waveNo+' levels! The silly seas are safe! ';
+      }
     }else{
       const spawnAt=now+advanceDelay+advanceDuration+(reducedMotion?0:170);
       waveNo++;
